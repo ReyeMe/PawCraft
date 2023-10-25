@@ -1,0 +1,33 @@
+﻿namespace PawCraft.Tools
+{
+    using PawCraft.Level;
+    using System;
+    using System.ComponentModel;
+    using System.ComponentModel.DataAnnotations;
+    using System.Drawing;
+
+    /// <summary>
+    /// Dig a hill
+    /// </summary>
+    public class RaiseTool : AreaToolBase
+    {
+        /// <summary>
+        /// Gets or sets maximal hill level
+        /// </summary>
+        [DisplayName("Max level")]
+        [Range(0, 31)]
+        public int MaxLevel { get; set; } = 31;
+
+        /// <summary>
+        /// Apply tool to target tile
+        /// </summary>
+        /// <param name="targetTile">Target tile to apply tool to</param>
+        /// <param name="pickedTile">Picked tile (ussualy in middle of the area picker)</param>
+        /// <param name="levelData">Level data</param>
+        protected override void ApplyToTile(Point targetTile, Point pickedTile, LevelData levelData)
+        {
+            int current = Math.Min(levelData[targetTile.X, targetTile.Y].Depth + 1, this.MaxLevel);
+            levelData.TileData[LevelData.GeTileArrayIndex(targetTile.X, targetTile.Y)].Depth = (byte)Math.Max(Math.Min(current, 31), 0);
+        }
+    }
+}
