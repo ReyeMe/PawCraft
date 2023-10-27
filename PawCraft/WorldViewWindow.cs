@@ -9,14 +9,26 @@
     using System.Collections.Generic;
     using System.Drawing;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Windows.Forms;
+    using System.Windows.Media.Media3D;
+    using SWI = System.Windows.Input;
 
     /// <summary>
     /// World view window
     /// </summary>
     public partial class WorldViewWindow : ContainedForm
     {
+        private readonly Dictionary<Keys, bool> movementKeys = new Dictionary<Keys, bool>
+        {
+            { Keys.W, false },
+            { Keys.A, false },
+            { Keys.S, false },
+            { Keys.D, false },
+            { Keys.Q, false },
+            { Keys.E, false },
+            { Keys.ShiftKey, false },
+        };
+
         /// <summary>
         /// Tile map container
         /// </summary>
@@ -28,19 +40,14 @@
         private Point? lastMousePosition;
 
         /// <summary>
-        /// Current tile
-        /// </summary>
-        private Point? tileLocation;
-
-        /// <summary>
         /// Last tile
         /// </summary>
         private Point? lastTileLocation;
 
         /// <summary>
-        /// Gets loaded textures
+        /// Current tile
         /// </summary>
-        public TextureHandler TextureAtlas { get; private set; }
+        private Point? tileLocation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WorldViewWindow"/> class
@@ -66,6 +73,28 @@
         }
 
         /// <summary>
+        /// Gets loaded textures
+        /// </summary>
+        public TextureHandler TextureAtlas { get; private set; }
+
+        /// <summary>
+        /// Handle keyboard input
+        /// </summary>
+        /// <param name="key">Changed key</param>
+        /// <param name="state">Key state</param>
+        /// <returns><see langword="true"/> if handled</returns>
+        public bool HandleInput(Keys key, SWI.KeyStates state)
+        {
+            if (this.movementKeys.ContainsKey(key))
+            {
+                this.movementKeys[key] = state == SWI.KeyStates.Down;
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Reload tile data
         /// </summary>
         public void ReloadTileData()
@@ -78,10 +107,26 @@
                 {
                     this.tileContainer.Children.Add(
                         new Rendering.Tile(
-                            ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData, 
+                            ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData,
                             new Point(x, y),
                             this));
                 }
+            }
+        }
+
+        /// <summary>
+        /// Apply tool
+        /// </summary>
+        /// <param name="sender">GL control</param>
+        /// <param name="e">Mouse event</param>
+        private void ApplyTool(object sender, MouseEventArgs e)
+        {
+            if (Control.MouseButtons == MouseButtons.Left && this.tileLocation.HasValue)
+            {
+                this.lastTileLocation = this.tileLocation;
+                ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool?.Apply(
+                    this.tileLocation.Value,
+                    ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData);
             }
         }
 
@@ -163,12 +208,75 @@
         }
 
         /// <summary>
+        /// Handle keyboard movement
+        /// </summary>
+        private void HandleKeyboardMovement()
+        {
+            LookAtCamera camera = this.glControl.Scene.CurrentCamera as LookAtCamera;
+            Vertex up = new Vertex(0.0f, 0.0f, 1.0f);
+            Vertex current = camera.Target - camera.Position;
+            Vertex side = current.VectorProduct(up);
+            Vertex sideUp = current.VectorProduct(side);
+            current.Normalize();
+            side.Normalize();
+            sideUp.Normalize();
+            float speedMultiplier = this.movementKeys[Keys.ShiftKey] ? 2.0f : 1.0f;
+
+            if (this.movementKeys[Keys.W])
+            {
+                current *= 0.3f * speedMultiplier;
+            }
+            else if (this.movementKeys[Keys.S])
+            {
+                current *= -0.3f * speedMultiplier;
+            }
+            else
+            {
+                current *= 0.0f;
+            }
+
+            if (this.movementKeys[Keys.A])
+            {
+                side *= -0.3f * speedMultiplier;
+            }
+            else if (this.movementKeys[Keys.D])
+            {
+                side *= 0.3f * speedMultiplier;
+            }
+            else
+            {
+                side *= 0.0f;
+            }
+
+            if (this.movementKeys[Keys.Q])
+            {
+                sideUp *= -0.3f * speedMultiplier;
+            }
+            else if (this.movementKeys[Keys.E])
+            {
+                sideUp *= 0.3f * speedMultiplier;
+            }
+            else
+            {
+                sideUp *= 0.0f;
+            }
+
+            camera.Target += current + side + sideUp;
+            camera.Position += current + side + sideUp;
+        }
+
+        /// <summary>
         /// Redraw scene
         /// </summary>
         /// <param name="sender">GL control</param>
         /// <param name="args">Draw event arguments</param>
         private void Redraw(object sender, RenderEventArgs args)
         {
+            if (this.ContainsFocus)
+            {
+                this.HandleKeyboardMovement();
+            }
+
             if (this.tileLocation != null)
             {
                 ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool?.Draw3D(
@@ -184,22 +292,6 @@
             else
             {
                 this.Text = "3D";
-            }
-        }
-
-        /// <summary>
-        /// Apply tool
-        /// </summary>
-        /// <param name="sender">GL control</param>
-        /// <param name="e">Mouse event</param>
-        private void ApplyTool(object sender, MouseEventArgs e)
-        {
-            if (Control.MouseButtons == MouseButtons.Left && this.tileLocation.HasValue)
-            {
-                this.lastTileLocation = this.tileLocation;
-                ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool?.Apply(
-                    this.tileLocation.Value,
-                    ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData);
             }
         }
     }

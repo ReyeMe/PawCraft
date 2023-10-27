@@ -171,8 +171,11 @@
         {
             Keys keyCode = (Keys)(int)m.WParam & Keys.KeyCode;
 
+            // Handle keyboard event
             if ((m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP) && (!this.heldKeys.ContainsKey(keyCode) || this.heldKeys[keyCode] != m.Msg))
             {
+                System.Windows.Input.KeyStates state = m.Msg == WM_KEYUP ? System.Windows.Input.KeyStates.None : System.Windows.Input.KeyStates.Down;
+
                 if (m.Msg == WM_KEYUP && this.heldKeys.ContainsKey(keyCode))
                 {
                     this.heldKeys.Remove(keyCode);
@@ -182,7 +185,14 @@
                     this.heldKeys[keyCode] = m.Msg;
                 }
 
-                if (this.activeEditorTool?.OnKeyChanged(keyCode, m.Msg == WM_KEYUP ? System.Windows.Input.KeyStates.None : System.Windows.Input.KeyStates.Down) ?? false)
+                // Tool keyboard input
+                if (this.activeEditorTool?.OnKeyChanged(keyCode, state) ?? false)
+                {
+                    return true;
+                }
+
+                // 3D editor keyboard input
+                if (((WorldViewWindow)this.WorldView).HandleInput(keyCode, state))
                 {
                     return true;
                 }
