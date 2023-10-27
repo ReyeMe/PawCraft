@@ -26,6 +26,11 @@
         private const int WM_KEYUP = 0x101;
 
         /// <summary>
+        /// Currently held keys
+        /// </summary>
+        private Dictionary<Keys, int> heldKeys = new Dictionary<Keys, int>();
+
+        /// <summary>
         /// Window loaded
         /// </summary>
         private readonly bool loaded;
@@ -158,11 +163,6 @@
         public ContainedForm WorldView { get; }
 
         /// <summary>
-        /// Last keyboard message
-        /// </summary>
-        private int lastkeyboardMessage = -1;
-
-        /// <summary>
         /// Filter messages
         /// </summary>
         /// <param name="m">System message</param>
@@ -171,11 +171,18 @@
         {
             Keys keyCode = (Keys)(int)m.WParam & Keys.KeyCode;
 
-            if ((m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP) && m.Msg != this.lastkeyboardMessage)
+            if ((m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP) && (!this.heldKeys.ContainsKey(keyCode) || this.heldKeys[keyCode] != m.Msg))
             {
-                this.lastkeyboardMessage = m.Msg;
+                if (m.Msg == WM_KEYUP && this.heldKeys.ContainsKey(keyCode))
+                {
+                    this.heldKeys.Remove(keyCode);
+                }
+                else
+                {
+                    this.heldKeys[keyCode] = m.Msg;
+                }
 
-                if (this.activeEditorTool?.OnKeyChanged(keyCode) ?? false)
+                if (this.activeEditorTool?.OnKeyChanged(keyCode, m.Msg == WM_KEYUP ? System.Windows.Input.KeyStates.None : System.Windows.Input.KeyStates.Down) ?? false)
                 {
                     return true;
                 }

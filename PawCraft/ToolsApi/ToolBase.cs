@@ -4,6 +4,7 @@
     using System;
     using System.Drawing;
     using System.Windows.Forms;
+    using System.Windows.Input;
 
     /// <summary>
     /// Tool base class
@@ -48,8 +49,9 @@
         /// Keyboard key state changed
         /// </summary>
         /// <param name="keyCode">Pressed keys</param>
+        /// <param name="state">Key state</param>
         /// <returns><see langword="true"/> if keyboard was handled</returns>
-        public virtual bool OnKeyChanged(Keys keyCode)
+        public virtual bool OnKeyChanged(Keys keyCode, KeyStates state)
         {
             return false;
         }

@@ -8,6 +8,7 @@
     using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
+    using System.Windows.Input;
 
     /// <summary>
     /// Paint texture onto terrain
@@ -110,12 +111,13 @@
         /// Keyboard key state changed
         /// </summary>
         /// <param name="keyCode">Pressed keys</param>
+        /// <param name="state">Key state</param>
         /// <returns><see langword="true"/> if keyboard was handled</returns>
-        public override bool OnKeyChanged(Keys keyCode)
+        public override bool OnKeyChanged(Keys keyCode, KeyStates state)
         {
             if (keyCode.HasFlag(Keys.ControlKey))
             {
-                this.rotationMode = !this.rotationMode;
+                this.rotationMode = state == KeyStates.Down;
 
                 if (this.rotationMode)
                 {
