@@ -115,7 +115,7 @@
         /// <returns><see langword="true"/> if keyboard was handled</returns>
         public override bool OnKeyChanged(Keys keyCode, KeyStates state)
         {
-            if (keyCode.HasFlag(Keys.ControlKey))
+            if (keyCode == Keys.ControlKey)
             {
                 this.rotationMode = state == KeyStates.Down;
 
