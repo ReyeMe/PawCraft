@@ -26,11 +26,6 @@
         private const int WM_KEYUP = 0x101;
 
         /// <summary>
-        /// Currently held keys
-        /// </summary>
-        private Dictionary<Keys, int> heldKeys = new Dictionary<Keys, int>();
-
-        /// <summary>
         /// Window loaded
         /// </summary>
         private readonly bool loaded;
@@ -39,6 +34,16 @@
         /// Current active tool
         /// </summary>
         private ToolBase activeEditorTool;
+
+        /// <summary>
+        /// Currently held keys
+        /// </summary>
+        private Dictionary<Keys, int> heldKeys = new Dictionary<Keys, int>();
+
+        /// <summary>
+        /// Help window instance
+        /// </summary>
+        private HelpWindow helpWindow = null;
 
         /// <summary>
         /// Current tool window position
@@ -455,6 +460,27 @@
         private void ToolStatusTextChanged(object sender, string e)
         {
             this.toolStatusLabel.Text = string.IsNullOrWhiteSpace(e) ? string.Empty : e;
+        }
+
+        /// <summary>
+        /// View help file
+        /// </summary>
+        /// <param name="sender">Tool strip button</param>
+        /// <param name="e">Empty event</param>
+        private void ViewHelp(object sender, EventArgs e)
+        {
+            if (this.helpWindow == null)
+            {
+                this.helpWindow = new HelpWindow { Owner = this };
+                this.helpWindow.Closed += (helpWindowInstance, helpEvent) =>
+                {
+                    this.helpWindow = null;
+                };
+
+                this.helpWindow.Show();
+            }
+
+            this.helpWindow.Focus();
         }
     }
 }

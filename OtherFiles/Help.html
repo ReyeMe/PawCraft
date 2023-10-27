@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>PawCraft help file</title>
+    <style>
+        html, body {
+            font-family: Arial;
+            user-select: none;
+        }
+
+        body {
+            margin: 0;
+            user-select: none;
+            min-width: 590px;
+        }
+
+        .panel {
+            position: absolute;
+            top: 0px;
+            bottom: 0px;
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .leftPanel {
+            left: 0px;
+            width: 200px;
+            border-right: 1px solid darkcyan;
+            background-color: ghostwhite;
+        }
+
+        .contentPanel {
+            left: 200px;
+            right: 0px;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            user-select: text;
+            border-left: 1px solid darkcyan;
+        }
+
+        #Header {
+            background-color: blanchedalmond;
+            border-bottom: 1px solid darkcyan;
+            font-weight: bold;
+            padding: 0px 0px 0px 5px;
+        }
+
+        .leftPanel > h3 {
+            background-color: antiquewhite;
+            font-family: fantasy;
+            font-size: 24px;
+            padding: 5px;
+            margin: 0px;
+            border-bottom: 1px solid darkcyan;
+        }
+
+        #Pages > div {
+            padding: 5px;
+        }
+
+            #Pages > div > h1 {
+                padding: 0px;
+                margin: 0px;
+            }
+
+            #Pages > div > h2 {
+                padding: 0px;
+                margin: 0px;
+            }
+
+        ul {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        li {
+            margin: 0px 0px 4px 0px;
+            padding: 3px 3px 3px 7px;
+            list-style-type: none;
+            cursor: pointer;
+        }
+
+            li:hover {
+                background-color: floralwhite;
+                padding: 3px 3px 3px 15px;
+            }
+
+        td:first-child {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="panel leftPanel">
+        <h3>PawCraft Help</h3>
+        <ul id="MainMenu">
+            <li data-page="Home">Home</li>
+            <li data-page="Keyboard">Keyboard bindings</li>
+            <li data-page="Tools">Tools</li>
+        </ul>
+    </div>
+    <div class="panel contentPanel">
+        <div id="Header">
+            Home
+        </div>
+        <div id="Pages">
+            <div id="Home">
+                <h1>Welcome to PawCraft</h1>
+                <p>
+                    This document contains some basic help for this program.
+                </p>
+            </div>
+            <div id="Keyboard">
+                <h2>3D view</h2>
+                <p>Camera Movement:</p>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th width="100">Key</th>
+                            <th width="350">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>W</td>
+                            <td>Move forward</td>
+                        </tr>
+                        <tr>
+                            <td>S</td>
+                            <td>Move backwards</td>
+                        </tr>
+                        <tr>
+                            <td>A</td>
+                            <td>Step left</td>
+                        </tr>
+                        <tr>
+                            <td>D</td>
+                            <td>Step right</td>
+                        </tr>
+                        <tr>
+                            <td>Q</td>
+                            <td>Move up</td>
+                        </tr>
+                        <tr>
+                            <td>E</td>
+                            <td>Move down</td>
+                        </tr>
+                        <tr>
+                            <td>SHIFT</td>
+                            <td>When combined with other movement keys it makes the camera move faster</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p>Editing:</p>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th width="100">Key</th>
+                            <th width="350">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="2">Comming soon...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr />
+
+                <h2>Paint tool</h2>
+                <table border="1">
+                    <thead>
+                        <tr>
+                            <th width="100">Key</th>
+                            <th width="350">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CTRL</td>
+                            <td>Hold to switch to rotation mode</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="Tools">
+                <h2>Cursor tool</h2>
+                <p>
+                    This tool does absolutely nothing.
+                </p>
+                <hr />
+                <h2>Raise tool</h2>
+                <p>
+                    This tool raises terrain within area defined by <u><i>Radius</i></u> field.<br />
+                    The maximum height limit of the affected terrain can be set by <u><i>Max level</i></u> field.
+                </p>
+                <hr />
+                <h2>Dig tool</h2>
+                <p>
+                    This tool lowers terrain within area defined by <u><i>Radius</i></u> field.
+                </p>
+                <hr />
+                <h2>Paint tool</h2>
+                <p>
+                    Using this tool you can draw and rotate texture on the terrain.<br />
+                    To Rotate a texture, hold <u><i>CTRL</i></u> key while kliking the tile using <u><i>Left mouse button</i></u>.<br />
+                    Textures can be selected either by choosing their name in combo box, or by clickin on their preview in the Paint tool window.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var listItems = document.getElementById("MainMenu").getElementsByTagName("li");
+        for (var i = 0; i <= listItems.length - 1; i++) {
+
+            if (listItems[i].getAttribute("data-page") !== "Home") {
+                document.getElementById(listItems[i].getAttribute("data-page")).style.display = "none";
+            }
+
+            listItems[i].onclick = function () {
+                var pages = document.getElementById("Pages").getElementsByTagName("div");
+
+                for (var i = 0; i <= pages.length - 1; i++) {
+                    pages[i].style.display = "none";
+                }
+
+                var page = this.getAttribute("data-page");
+                document.getElementById(page).style.display = "block";
+                document.getElementById("Header").innerHTML = this.innerHTML;
+            }
+        }
+    </script>
+</body>
+</html>

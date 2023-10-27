@@ -36,7 +36,9 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutBtn = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.keyboardBindingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editorTools = new System.Windows.Forms.ToolStrip();
             this.pointerTool = new System.Windows.Forms.ToolStripButton();
             this.raiseTool = new System.Windows.Forms.ToolStripButton();
@@ -53,7 +55,7 @@
             // 
             this.editorMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.aboutBtn});
+            this.helpToolStripMenuItem});
             this.editorMenu.Location = new System.Drawing.Point(0, 0);
             this.editorMenu.Name = "editorMenu";
             this.editorMenu.Size = new System.Drawing.Size(800, 24);
@@ -104,12 +106,28 @@
             this.saveAsToolStripMenuItem.Text = "Save &As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsLevel);
             // 
-            // aboutBtn
+            // helpToolStripMenuItem
             // 
-            this.aboutBtn.Name = "aboutBtn";
-            this.aboutBtn.Size = new System.Drawing.Size(52, 20);
-            this.aboutBtn.Text = "&About";
-            this.aboutBtn.Click += new System.EventHandler(this.AboutBtnClick);
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.keyboardBindingToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "&Help";
+            // 
+            // keyboardBindingToolStripMenuItem
+            // 
+            this.keyboardBindingToolStripMenuItem.Name = "keyboardBindingToolStripMenuItem";
+            this.keyboardBindingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.keyboardBindingToolStripMenuItem.Text = "&View help";
+            this.keyboardBindingToolStripMenuItem.Click += new System.EventHandler(this.ViewHelp);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Text = "&About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutBtnClick);
             // 
             // editorTools
             // 
@@ -214,13 +232,15 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveAsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem aboutBtn;
         private System.Windows.Forms.ToolStripButton paintTool;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton pointerTool;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel toolStatusLabel;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem keyboardBindingToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
 
