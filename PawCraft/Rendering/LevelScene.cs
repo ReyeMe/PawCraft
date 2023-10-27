@@ -145,7 +145,7 @@
             }
 
             //  If the element is volume bound, render the volume.
-            if (sceneElement is ICustomVolumeBound || sceneElement is IVolumeBound)
+            if (sceneElement is ICustomVolumeBound || sceneElement is IVolumeBound || sceneElement is IRenderable)
             {
                 if (sceneElement is ICustomVolumeBound)
                 {
@@ -167,6 +167,18 @@
 
                     //  Render the bounding volume.
                     ((IVolumeBound)sceneElement).BoundingVolume.Render(this.CurrentOpenGLContext, RenderMode.HitTest);
+
+                    //  Increment the name.
+                    currentName++;
+                }
+                else if (sceneElement is IRenderable)
+                {
+                    //  Load and map the name.
+                    this.CurrentOpenGLContext.LoadName(currentName);
+                    hitMap[currentName] = sceneElement;
+
+                    //  Render the bounding volume.
+                    ((IRenderable)sceneElement).Render(this.CurrentOpenGLContext, RenderMode.HitTest);
 
                     //  Increment the name.
                     currentName++;

@@ -9,10 +9,8 @@
     using System.Collections.Generic;
     using System.Drawing;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Windows.Forms;
-    using System.Windows.Forms.VisualStyles;
-    using System.Windows.Media.Media3D;
-    using GL = SharpGL.OpenGL;
 
     /// <summary>
     /// World view window
@@ -40,6 +38,11 @@
         private Point? lastTileLocation;
 
         /// <summary>
+        /// Gets loaded textures
+        /// </summary>
+        public TextureHandler TextureAtlas { get; private set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="WorldViewWindow"/> class
         /// </summary>
         public WorldViewWindow()
@@ -49,9 +52,14 @@
                 ((LookAtCamera)this.glControl.Scene.CurrentCamera).Position = new Vertex(20.0f, 20.0f, 4.0f);
                 ((LookAtCamera)this.glControl.Scene.CurrentCamera).Target = new Vertex(0.0f, 0.0f, 0.0f);
 
-                TextureHandler.LoadTextures(this.glControl.OpenGL);
+                this.TextureAtlas = new TextureHandler(this.glControl.OpenGL);
                 this.glControl.Scene.SceneContainer.AddChild(new Rendering.GridLines(this.glControl.OpenGL));
                 this.glControl.Scene.SceneContainer.AddChild(this.tileContainer);
+            };
+
+            this.FormClosing += (sender, e) =>
+            {
+                this.TextureAtlas.Dispose();
             };
 
             this.InitializeComponent();
@@ -68,7 +76,11 @@
             {
                 for (int y = 0; y < LevelData.MapDimensionSize; y++)
                 {
-                    this.tileContainer.Children.Add(new Rendering.Tile(((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData, new Point(x, y)));
+                    this.tileContainer.Children.Add(
+                        new Rendering.Tile(
+                            ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData, 
+                            new Point(x, y),
+                            this));
                 }
             }
         }

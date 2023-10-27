@@ -1,28 +1,30 @@
 ﻿namespace PawCraft.Tools
 {
     using PawCraft.Level;
+    using PawCraft.ToolsApi;
     using SharpGL;
-    using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Drawing;
     using System.Linq;
-    using System.Reflection.Emit;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     /// <summary>
     /// Paint texture onto terrain
     /// </summary>
+    [ToolDialog(Type = typeof(PaintToolDialog))]
     public class PaintTool : AreaToolBase
     {
+        /// <summary>
+        /// Are we in rotation mode?
+        /// </summary>
+        private bool rotationMode = false;
+
         /// <summary>
         /// Texture index to paint
         /// </summary>
         [DisplayName("Texture")]
-        [Range(0,255)]
+        [Range(0, 255)]
         public int TextureIndex { get; set; }
 
         /// <summary>
@@ -32,10 +34,10 @@
         /// <param name="level">Level data</param>
         public override void Apply(Point targetTile, LevelData level)
         {
-            if (Control.ModifierKeys == Keys.Control)
+            if (this.rotationMode)
             {
                 int tileIndex = LevelData.GeTileArrayIndex(targetTile.X, targetTile.Y);
-                
+
                 if (level.TileData[tileIndex].TextureIndex == this.TextureIndex)
                 {
                     int rot = (int)level.TileData[tileIndex].RotateTexture + 1;
@@ -52,9 +54,16 @@
             }
         }
 
+        /// <summary>
+        /// Draw tool in 2D view
+        /// </summary>
+        /// <param name="gr">Bitmap graphics</param>
+        /// <param name="targetTile">X and Y location of the tile</param>
+        /// <param name="bitmapScale">by how much to scale X and Y to get real bitmap coordinates</param>
+        /// <param name="level">Level data</param>
         public override void Draw2D(Graphics gr, Point targetTile, int bitmapScale, LevelData level)
         {
-            if (Control.ModifierKeys == Keys.Control)
+            if (this.rotationMode)
             {
                 int halfScale = (bitmapScale / 2);
                 int grX = (targetTile.X * bitmapScale) + halfScale;
@@ -69,9 +78,15 @@
             }
         }
 
+        /// <summary>
+        /// Draw tool in 3d view
+        /// </summary>
+        /// <param name="gl">OpenGL instance</param>
+        /// <param name="targetTile">X and Y location of the tile</param>
+        /// <param name="level">Level data</param>
         public override void Draw3D(OpenGL gl, Point targetTile, LevelData level)
         {
-            if (Control.ModifierKeys == Keys.Control)
+            if (this.rotationMode)
             {
                 double maxDepth = 2.0f;
                 float tileMiddleDepth = (float)level.GetTileVerticeHeights(targetTile.X, targetTile.Y).Sum() / 4.0f;
@@ -91,6 +106,46 @@
             }
         }
 
+        /// <summary>
+        /// Keyboard key state changed
+        /// </summary>
+        /// <param name="keyCode">Pressed keys</param>
+        /// <returns><see langword="true"/> if keyboard was handled</returns>
+        public override bool OnKeyChanged(Keys keyCode)
+        {
+            if (keyCode.HasFlag(Keys.ControlKey))
+            {
+                this.rotationMode = !this.rotationMode;
+
+                if (this.rotationMode)
+                {
+                    this.OnToolStatusTextChanged("Release [CTRL] to return to paint mode.");
+                }
+                else
+                {
+                    this.OnToolStatusTextChanged("Hold [CTRL] to enter rotation mode.");
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Tool is starting
+        /// </summary>
+        public override void Starting()
+        {
+            this.OnToolStatusTextChanged("Hold [CTRL] to enter rotation mode.");
+        }
+
+        /// <summary>
+        /// Apply tool to target tile
+        /// </summary>
+        /// <param name="targetTile">Target tile to apply tool to</param>
+        /// <param name="pickedTile">Picked tile (ussualy in middle of the area picker)</param>
+        /// <param name="levelData">Level data</param>
         protected override void ApplyToTile(Point targetTile, Point pickedTile, LevelData levelData)
         {
             levelData.TileData[LevelData.GeTileArrayIndex(targetTile.X, targetTile.Y)].TextureIndex = (byte)this.TextureIndex;

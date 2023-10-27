@@ -1,7 +1,9 @@
-﻿namespace PawCraft.Tools
+﻿namespace PawCraft.ToolsApi
 {
     using PawCraft.Level;
+    using System;
     using System.Drawing;
+    using System.Windows.Forms;
 
     /// <summary>
     /// Tool base class
@@ -12,6 +14,11 @@
         /// Pen used to draw 2D tool DM
         /// </summary>
         protected static readonly Pen ToolPen = new Pen(Color.Yellow, 1.0f);
+
+        /// <summary>
+        /// Tool status text changed event
+        /// </summary>
+        public event EventHandler<string> ToolStatusTextChanged;
 
         /// <summary>
         /// Apply tool to the target tile
@@ -36,5 +43,40 @@
         /// <param name="targetTile">X and Y location of the tile</param>
         /// <param name="level">Level data</param>
         public abstract void Draw3D(SharpGL.OpenGL gl, Point targetTile, LevelData level);
+
+        /// <summary>
+        /// Keyboard key state changed
+        /// </summary>
+        /// <param name="keyCode">Pressed keys</param>
+        /// <returns><see langword="true"/> if keyboard was handled</returns>
+        public virtual bool OnKeyChanged(Keys keyCode)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Tool is starting
+        /// </summary>
+        public virtual void Starting()
+        {
+            // Do nothing
+        }
+
+        /// <summary>
+        /// Tool is stopping
+        /// </summary>
+        public virtual void Stopping()
+        {
+            // Do nothing
+        }
+
+        /// <summary>
+        /// Tool status text has changed
+        /// </summary>
+        /// <param name="newText">New text</param>
+        protected void OnToolStatusTextChanged(string newText)
+        {
+            this.ToolStatusTextChanged?.Invoke(this, newText);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿namespace PawCraft
 {
     using PawCraft.Tools;
+    using PawCraft.ToolsApi;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
@@ -12,8 +13,23 @@
     /// <summary>
     /// Main editor window
     /// </summary>
-    public partial class PawCraftMainWindow : Form
+    public partial class PawCraftMainWindow : Form, IMessageFilter
     {
+        /// <summary>
+        /// WinApi Key down
+        /// </summary>
+        private const int WM_KEYDOWN = 0x100;
+
+        /// <summary>
+        /// WinApi Key up
+        /// </summary>
+        private const int WM_KEYUP = 0x101;
+
+        /// <summary>
+        /// Window loaded
+        /// </summary>
+        private readonly bool loaded;
+
         /// <summary>
         /// Current active tool
         /// </summary>
@@ -28,11 +44,6 @@
         /// Application view model
         /// </summary>
         private ViewModel viewModel;
-
-        /// <summary>
-        /// Window loaded
-        /// </summary>
-        private readonly bool loaded;
 
         /// <summary>
         /// Initializes a new instancve of the <see cref="PawCraftMainWindow"/> class
@@ -72,6 +83,13 @@
                     .Where(prop => prop.CanWrite && prop.CanRead)
                     .ToDictionary(prop => prop.Name, prop => prop.GetValue(this.activeEditorTool, null));
 
+                if (this.activeEditorTool != null)
+                {
+                    this.activeEditorTool.Stopping();
+                    this.activeEditorTool.ToolStatusTextChanged -= this.ToolStatusTextChanged;
+                    this.ToolStatusTextChanged(this.activeEditorTool, string.Empty);
+                }
+
                 this.activeEditorTool = value;
 
                 if (this.PropertyWindow != null)
@@ -83,6 +101,8 @@
 
                 if (value != null)
                 {
+                    value.ToolStatusTextChanged += this.ToolStatusTextChanged;
+
                     if (values != null)
                     {
                         this.activeEditorTool.GetType()
@@ -100,6 +120,7 @@
                     }
 
                     this.PropertyWindow.Show();
+                    value.Starting();
                 }
             }
         }
@@ -137,6 +158,63 @@
         public ContainedForm WorldView { get; }
 
         /// <summary>
+        /// Last keyboard message
+        /// </summary>
+        private int lastkeyboardMessage = -1;
+
+        /// <summary>
+        /// Filter messages
+        /// </summary>
+        /// <param name="m">System message</param>
+        /// <returns>True if handled</returns>
+        public bool PreFilterMessage(ref Message m)
+        {
+            Keys keyCode = (Keys)(int)m.WParam & Keys.KeyCode;
+
+            if ((m.Msg == WM_KEYDOWN || m.Msg == WM_KEYUP) && m.Msg != this.lastkeyboardMessage)
+            {
+                this.lastkeyboardMessage = m.Msg;
+
+                if (this.activeEditorTool?.OnKeyChanged(keyCode) ?? false)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Location changed
+        /// </summary>
+        /// <param name="e">Empty event</param>
+        protected override void OnLocationChanged(EventArgs e)
+        {
+            base.OnLocationChanged(e);
+            this.SaveSize();
+        }
+
+        /// <summary>
+        /// Window resized
+        /// </summary>
+        /// <param name="e">Empty event</param>
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            this.SaveSize();
+        }
+
+        /// <summary>
+        /// Size changed
+        /// </summary>
+        /// <param name="e">Empty event</param>
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            this.SaveSize();
+        }
+
+        /// <summary>
         /// Show about window
         /// </summary>
         /// <param name="sender">Tool strip button control</param>
@@ -154,6 +232,15 @@
         private void CreateNewLevel(object sender, EventArgs e)
         {
             this.ViewModel = new ViewModel();
+        }
+
+        /// <summary>
+        /// Gets setting name prefix
+        /// </summary>
+        /// <returns>Setting name prefix</returns>
+        private string GetSettingPrefix()
+        {
+            return string.Format("{0}.{1}_", this.GetType().Namespace, "MainWindow");
         }
 
         /// <summary>
@@ -183,6 +270,45 @@
                 {
                     this.ShowErrorMessage("Could not open the file!", ex);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Main window loaded
+        /// </summary>
+        /// <param name="sender">Main window</param>
+        /// <param name="e">Empty event</param>
+        private void PawCraftLoad(object sender, EventArgs e)
+        {
+            Application.AddMessageFilter(this);
+        }
+
+        /// <summary>
+        /// Restore window size
+        /// </summary>
+        private void RestoreSize()
+        {
+            string prefix = this.GetSettingPrefix();
+
+            if (Settings.GetValue(prefix + "State", out int state) && state != (int)FormWindowState.Normal)
+            {
+                if (Settings.GetValue(prefix + "X", out int x) &&
+                    Settings.GetValue(prefix + "Y", out int y))
+                {
+                    this.StartPosition = FormStartPosition.Manual;
+                    this.Location = new System.Drawing.Point(x, y);
+                }
+
+                this.WindowState = (FormWindowState)state;
+            }
+            else if (Settings.GetValue(prefix + "X", out int x) &&
+                Settings.GetValue(prefix + "Y", out int y) &&
+                Settings.GetValue(prefix + "W", out int w) &&
+                Settings.GetValue(prefix + "H", out int h))
+            {
+                this.StartPosition = FormStartPosition.Manual;
+                this.Location = new System.Drawing.Point(x, y);
+                this.Size = new System.Drawing.Size(w, h);
             }
         }
 
@@ -240,19 +366,18 @@
         }
 
         /// <summary>
-        /// Error message box
+        /// Save window size
         /// </summary>
-        /// <param name="message">Main messge</param>
-        /// <param name="exception">Exception</param>
-        private void ShowErrorMessage(string message, Exception exception)
+        private void SaveSize()
         {
-            if (exception == null)
+            if (this.loaded)
             {
-                MessageBox.Show(this, message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            else
-            {
-                MessageBox.Show(this, message + "\n" +  exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string prefix = this.GetSettingPrefix();
+                Settings.SetValue(prefix + "State", (int)this.WindowState);
+                Settings.SetValue(prefix + "X", this.Location.X);
+                Settings.SetValue(prefix + "Y", this.Location.Y);
+                Settings.SetValue(prefix + "W", this.Size.Width);
+                Settings.SetValue(prefix + "H", this.Size.Height);
             }
         }
 
@@ -283,92 +408,36 @@
                         this.ActiveEditorTool = null;
                         break;
                 }
+
+                this.PropertyWindow.Text = control.Text;
             }
         }
 
-
         /// <summary>
-        /// Location changed
+        /// Error message box
         /// </summary>
-        /// <param name="e">Empty event</param>
-        protected override void OnLocationChanged(EventArgs e)
+        /// <param name="message">Main messge</param>
+        /// <param name="exception">Exception</param>
+        private void ShowErrorMessage(string message, Exception exception)
         {
-            base.OnLocationChanged(e);
-            this.SaveSize();
-        }
-
-        /// <summary>
-        /// Window resized
-        /// </summary>
-        /// <param name="e">Empty event</param>
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            this.SaveSize();
-        }
-
-        /// <summary>
-        /// Size changed
-        /// </summary>
-        /// <param name="e">Empty event</param>
-        protected override void OnSizeChanged(EventArgs e)
-        {
-            base.OnSizeChanged(e);
-            this.SaveSize();
-        }
-
-        /// <summary>
-        /// Gets setting name prefix
-        /// </summary>
-        /// <returns>Setting name prefix</returns>
-        private string GetSettingPrefix()
-        {
-            return string.Format("{0}.{1}_", this.GetType().Namespace, "MainWindow");
-        }
-
-        /// <summary>
-        /// Restore window size
-        /// </summary>
-        private void RestoreSize()
-        {
-            string prefix = this.GetSettingPrefix();
-
-            if (Settings.GetValue(prefix + "State", out int state) && state != (int)FormWindowState.Normal)
+            if (exception == null)
             {
-                if (Settings.GetValue(prefix + "X", out int x) &&
-                    Settings.GetValue(prefix + "Y", out int y))
-                {
-                    this.StartPosition = FormStartPosition.Manual;
-                    this.Location = new System.Drawing.Point(x, y);
-                }
-
-                this.WindowState = (FormWindowState)state;
+                MessageBox.Show(this, message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else if (Settings.GetValue(prefix + "X", out int x) &&
-                Settings.GetValue(prefix + "Y", out int y) &&
-                Settings.GetValue(prefix + "W", out int w) &&
-                Settings.GetValue(prefix + "H", out int h))
+            else
             {
-                this.StartPosition = FormStartPosition.Manual;
-                this.Location = new System.Drawing.Point(x, y);
-                this.Size = new System.Drawing.Size(w, h);
+                MessageBox.Show(this, message + "\n" +  exception.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         /// <summary>
-        /// Save window size
+        /// Tool status text changed
         /// </summary>
-        private void SaveSize()
+        /// <param name="sender">Source tool</param>
+        /// <param name="e">New text</param>
+        private void ToolStatusTextChanged(object sender, string e)
         {
-            if (this.loaded)
-            {
-                string prefix = this.GetSettingPrefix();
-                Settings.SetValue(prefix + "State", (int)this.WindowState);
-                Settings.SetValue(prefix + "X", this.Location.X);
-                Settings.SetValue(prefix + "Y", this.Location.Y);
-                Settings.SetValue(prefix + "W", this.Size.Width);
-                Settings.SetValue(prefix + "H", this.Size.Height);
-            }
+            this.toolStatusLabel.Text = string.IsNullOrWhiteSpace(e) ? string.Empty : e;
         }
     }
 }

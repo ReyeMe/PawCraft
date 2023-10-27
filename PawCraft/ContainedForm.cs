@@ -6,7 +6,7 @@
     /// <summary>
     /// Contained window
     /// </summary>
-    public class ContainedForm : Form
+    public class ContainedForm : Form, IMessageFilter
     {
         /// <summary>
         /// Hide close button flag
@@ -27,6 +27,7 @@
 
             this.Shown += (sender, e) =>
             {
+                Application.AddMessageFilter(this);
                 this.RestoreSize();
                 this.loaded = true;
             };
@@ -43,6 +44,16 @@
                 parameters.ClassStyle |= ContainedForm.CP_NOCLOSE_BUTTON;
                 return parameters;
             }
+        }
+
+        /// <summary>
+        /// Filter messages
+        /// </summary>
+        /// <param name="m">System message</param>
+        /// <returns>True if handled</returns>
+        public bool PreFilterMessage(ref Message m)
+        {
+            return ((IMessageFilter)this.MdiParent)?.PreFilterMessage(ref m) ?? false;
         }
 
         /// <summary>

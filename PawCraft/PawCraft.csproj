@@ -106,11 +106,22 @@
     <Compile Include="ToolPropertyDialog.Designer.cs">
       <DependentUpon>ToolPropertyDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Tools\AreaToolBase.cs" />
+    <Compile Include="ToolsApi\AreaToolBase.cs" />
+    <Compile Include="ToolsApi\IToolDialog.cs" />
     <Compile Include="Tools\PaintTool.cs" />
+    <Compile Include="Tools\PaintToolDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\PaintToolDialog.Designer.cs">
+      <DependentUpon>PaintToolDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\RaiseTool.cs" />
     <Compile Include="Tools\DigTool.cs" />
-    <Compile Include="Tools\ToolBase.cs" />
+    <Compile Include="ToolsApi\ToolBase.cs" />
+    <Compile Include="ToolsApi\ToolDialogAttribute.cs" />
+    <Compile Include="ToolsApi\ToolDialogBase.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Utils.cs" />
     <Compile Include="ViewModel.cs" />
     <Compile Include="WorldViewWindow.cs">
@@ -140,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ToolPropertyDialog.resx">
       <DependentUpon>ToolPropertyDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Tools\PaintToolDialog.resx">
+      <DependentUpon>PaintToolDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WorldViewWindow.resx">
       <DependentUpon>WorldViewWindow.cs</DependentUpon>

@@ -1,16 +1,12 @@
 ﻿namespace PawCraft
 {
+    using PawCraft.ToolsApi;
     using System;
-    using System.Collections.Generic;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
-    using System.Data;
     using System.Drawing;
     using System.Globalization;
-    using System.Linq;
     using System.Reflection;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
 
     /// <summary>
@@ -26,29 +22,57 @@
         /// <summary>
         /// Current tool instance
         /// </summary>
-        private readonly Tools.ToolBase toolInstance;
+        private readonly ToolBase toolInstance;
+
+        /// <summary>
+        /// Currently active tool dialog
+        /// </summary>
+        private IToolDialog activeToolDialog;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ToolPropertyDialog"/> class
         /// </summary>
-        public ToolPropertyDialog(Tools.ToolBase tool)
+        public ToolPropertyDialog(ToolBase tool)
         {
             this.toolInstance = tool;
-            this.Load += this.WindowLoaded;
             this.InitializeComponent();
+        }
+
+        /// <summary>
+        /// Dialog has been closed
+        /// </summary>
+        /// <param name="sender">Dialog form</param>
+        /// <param name="e">Empty event</param>
+        private void DialogClosed(object sender, FormClosingEventArgs e)
+        {
+            if (this.activeToolDialog != null)
+            {
+                this.activeToolDialog.OnClose();
+            }
         }
 
         /// <summary>
         /// Window is loaded
         /// </summary>
+        /// <param name="sender">Dialog form</param>
         /// <param name="e">Empty event</param>
-        private void WindowLoaded(object sender, EventArgs e)
+        private void DialogLoad(object sender, EventArgs e)
         {
-            if (this.toolInstance != null)
+            ToolDialogAttribute propertiesPanel = this.toolInstance?.GetType().GetCustomAttribute<ToolDialogAttribute>();
+
+            if (propertiesPanel != null)
+            {
+                UserControl dialog = Activator.CreateInstance(propertiesPanel.Type, new[] { this.toolInstance }) as UserControl;
+                this.Controls.Add(dialog);
+                this.ClientSize = dialog.Size;
+                dialog.Dock = DockStyle.Fill;
+                this.activeToolDialog = dialog as IToolDialog;
+            }
+            else if (this.toolInstance != null)
             {
                 int line = 0;
 
-                foreach(PropertyInfo property in this.toolInstance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                foreach (PropertyInfo property in this.toolInstance.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance))
                 {
                     DisplayNameAttribute nameAttribute = property.GetCustomAttribute<DisplayNameAttribute>();
                     string name = nameAttribute?.DisplayName ?? property.Name;
@@ -90,6 +114,19 @@
 
                     line++;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Dialog has been shown
+        /// </summary>
+        /// <param name="sender">Dialog form</param>
+        /// <param name="e">Empty event</param>
+        private void DialogShown(object sender, EventArgs e)
+        {
+            if (this.activeToolDialog != null)
+            {
+                this.activeToolDialog.OnShown();
             }
         }
     }

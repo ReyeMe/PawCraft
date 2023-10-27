@@ -33,8 +33,10 @@
         /// </summary>
         /// <param name="level">Level data</param>
         /// <param name="location">Tile location</param>
-        internal Tile(LevelData level, Point location)
+        /// <param name="textureAtlas">Texture atlas</param>
+        internal Tile(LevelData level, Point location, WorldViewWindow worldView)
         {
+            this.ParentWindow = worldView;
             this.Level = level;
             this.Location = location;
             this.BoundingVolume = new TileBoundingVolume(this);
@@ -65,6 +67,22 @@
         /// Gets tile location
         /// </summary>
         public Point Location { get; }
+
+        /// <summary>
+        /// Gets parent window
+        /// </summary>
+        public WorldViewWindow ParentWindow { get; }
+
+        /// <summary>
+        /// Gets texture atlas
+        /// </summary>
+        public TextureHandler TextureAtlas
+        {
+            get
+            {
+                return this.ParentWindow.TextureAtlas;
+            }
+        }
 
         /// <summary>
         /// Gets vertices in global
@@ -165,7 +183,7 @@
                 gl.Disable(OpenGL.GL_LIGHTING);
                 gl.Disable(OpenGL.GL_LIGHT0);
 
-                texture = TextureHandler.GetTexture(tile.TextureIndex);
+                texture = this.TextureAtlas.GetTexture(tile.TextureIndex);
 
                 if (texture != null)
                 {
