@@ -36,6 +36,11 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewShading = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewHeightmap = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewTextured = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewTexturedShading = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyboardBindingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -55,6 +60,7 @@
             // 
             this.editorMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
+            this.dToolStripMenuItem,
             this.helpToolStripMenuItem});
             this.editorMenu.Location = new System.Drawing.Point(0, 0);
             this.editorMenu.Name = "editorMenu";
@@ -106,6 +112,53 @@
             this.saveAsToolStripMenuItem.Text = "Save &As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsLevel);
             // 
+            // dToolStripMenuItem
+            // 
+            this.dToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewShading});
+            this.dToolStripMenuItem.Name = "dToolStripMenuItem";
+            this.dToolStripMenuItem.Size = new System.Drawing.Size(33, 20);
+            this.dToolStripMenuItem.Text = "&3D";
+            // 
+            // viewShading
+            // 
+            this.viewShading.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.viewHeightmap,
+            this.viewTextured,
+            this.viewTexturedShading});
+            this.viewShading.Name = "viewShading";
+            this.viewShading.Size = new System.Drawing.Size(180, 22);
+            this.viewShading.Text = "View";
+            // 
+            // viewHeightmap
+            // 
+            this.viewHeightmap.CheckOnClick = true;
+            this.viewHeightmap.Name = "viewHeightmap";
+            this.viewHeightmap.Size = new System.Drawing.Size(183, 22);
+            this.viewHeightmap.Tag = "0";
+            this.viewHeightmap.Text = "Heightmap";
+            this.viewHeightmap.Click += new System.EventHandler(this.ViewShadingModeChanged);
+            // 
+            // viewTextured
+            // 
+            this.viewTextured.CheckOnClick = true;
+            this.viewTextured.Name = "viewTextured";
+            this.viewTextured.Size = new System.Drawing.Size(183, 22);
+            this.viewTextured.Tag = "1";
+            this.viewTextured.Text = "Textured";
+            this.viewTextured.Click += new System.EventHandler(this.ViewShadingModeChanged);
+            // 
+            // viewTexturedShading
+            // 
+            this.viewTexturedShading.Checked = true;
+            this.viewTexturedShading.CheckOnClick = true;
+            this.viewTexturedShading.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.viewTexturedShading.Name = "viewTexturedShading";
+            this.viewTexturedShading.Size = new System.Drawing.Size(183, 22);
+            this.viewTexturedShading.Tag = "2";
+            this.viewTexturedShading.Text = "Textured and shaded";
+            this.viewTexturedShading.Click += new System.EventHandler(this.ViewShadingModeChanged);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -118,14 +171,14 @@
             // keyboardBindingToolStripMenuItem
             // 
             this.keyboardBindingToolStripMenuItem.Name = "keyboardBindingToolStripMenuItem";
-            this.keyboardBindingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.keyboardBindingToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.keyboardBindingToolStripMenuItem.Text = "&View help";
             this.keyboardBindingToolStripMenuItem.Click += new System.EventHandler(this.ViewHelp);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutBtnClick);
             // 
@@ -241,6 +294,11 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem keyboardBindingToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewHeightmap;
+        private System.Windows.Forms.ToolStripMenuItem viewTextured;
+        private System.Windows.Forms.ToolStripMenuItem viewTexturedShading;
+        private System.Windows.Forms.ToolStripMenuItem viewShading;
     }
 }
 

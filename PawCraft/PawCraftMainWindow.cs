@@ -5,6 +5,7 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Globalization;
     using System.IO;
     using System.Linq;
     using System.Reflection;
@@ -26,11 +27,6 @@
         private const int WM_KEYUP = 0x101;
 
         /// <summary>
-        /// Window loaded
-        /// </summary>
-        private bool loaded;
-
-        /// <summary>
         /// Current active tool
         /// </summary>
         private ToolBase activeEditorTool;
@@ -44,6 +40,11 @@
         /// Help window instance
         /// </summary>
         private HelpWindow helpWindow = null;
+
+        /// <summary>
+        /// Window loaded
+        /// </summary>
+        private bool loaded;
 
         /// <summary>
         /// Current tool window position
@@ -492,6 +493,37 @@
             }
 
             this.helpWindow.Focus();
+        }
+
+        /// <summary>
+        /// 3D view shading changed
+        /// </summary>
+        /// <param name="sender">Toolstrip menu item</param>
+        /// <param name="e">Empty event</param>
+        private void ViewShadingModeChanged(object sender, EventArgs e)
+        {
+            WorldViewWindow.ShadingMode active = WorldViewWindow.ShadingMode.TexturedShaded;
+
+            // Get shaind mode
+            foreach (ToolStripMenuItem button in this.viewShading.DropDownItems)
+            {
+                if (button.Checked && button != sender)
+                {
+                    button.Checked = false;
+                }
+                else if (!button.Checked && button == sender)
+                {
+                    button.Checked = true;
+                }
+
+                if (button.Checked)
+                {
+                    active = (WorldViewWindow.ShadingMode)int.Parse(button.Tag.ToString(), System.Globalization.NumberStyles.Integer, CultureInfo.InvariantCulture);
+                }
+            }
+
+            // Set shading mode
+            ((WorldViewWindow)this.WorldView).CurrentShadingMode = active;
         }
     }
 }

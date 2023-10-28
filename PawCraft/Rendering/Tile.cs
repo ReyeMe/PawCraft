@@ -176,27 +176,24 @@
         public void Render(OpenGL gl, RenderMode renderMode)
         {
             TileData tile = this.Data;
-            Texture texture = null;
+            Texture texture = this.TextureAtlas.GetTexture(tile.TextureIndex);
+            WorldViewWindow.ShadingMode shading = this.ParentWindow.CurrentShadingMode;
 
-            if (renderMode != RenderMode.HitTest)
+            gl.Disable(OpenGL.GL_LIGHTING);
+            gl.Disable(OpenGL.GL_LIGHT0);
+            gl.Disable(OpenGL.GL_TEXTURE_2D);
+
+            if (shading == WorldViewWindow.ShadingMode.Textured || shading == WorldViewWindow.ShadingMode.TexturedShaded)
             {
-                gl.Disable(OpenGL.GL_LIGHTING);
-                gl.Disable(OpenGL.GL_LIGHT0);
-
-                texture = this.TextureAtlas.GetTexture(tile.TextureIndex);
-
                 if (texture != null)
                 {
                     gl.Enable(OpenGL.GL_TEXTURE_2D);
                     texture.Push(gl);
                 }
-                else
-                {
-                    gl.Disable(OpenGL.GL_TEXTURE_2D);
-                }
             }
 
             gl.DepthFunc(OpenGL.GL_LESS);
+
             gl.Begin(OpenGL.GL_QUADS);
 
             int uvIndex = 0;
@@ -213,12 +210,18 @@
 
             for (int point = 0; point < vertices.Count; point++)
             {
-                if (renderMode == RenderMode.HitTest)
+                if (shading == WorldViewWindow.ShadingMode.Textured)
                 {
                     gl.Color(1.0f, 1.0f, 1.0f);
                 }
+                else if (shading == WorldViewWindow.ShadingMode.Heightmap)
+                {
+                    float light = 0.5f + (0.5f * vertices[point].Z);
+                    gl.Color(light, light, light);
+                }
                 else
                 {
+                    // TODO: Directional light shading
                     float light = 0.5f + (0.5f * vertices[point].Z);
                     gl.Color(light, light, light);
                 }

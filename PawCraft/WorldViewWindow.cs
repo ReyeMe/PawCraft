@@ -80,6 +80,32 @@
         }
 
         /// <summary>
+        /// Shading mode of the level scene
+        /// </summary>
+        public enum ShadingMode
+        {
+            /// <summary>
+            /// Heightmap only
+            /// </summary>
+            Heightmap,
+
+            /// <summary>
+            /// Full bright textured
+            /// </summary>
+            Textured,
+
+            /// <summary>
+            /// Textured with shading
+            /// </summary>
+            TexturedShaded
+        }
+
+        /// <summary>
+        /// Gets or sets active shading mode
+        /// </summary>
+        public ShadingMode CurrentShadingMode { get; set; } = ShadingMode.TexturedShaded;
+
+        /// <summary>
         /// Gets loaded textures
         /// </summary>
         public TextureHandler TextureAtlas { get; private set; }

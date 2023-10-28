@@ -11,24 +11,6 @@
     /// </summary>
     public class LevelScene : SharpGL.SceneGraph.Scene
     {
-        //
-        // Summary:
-        //     This function draws all of the objects in the scene (i.e. every quadric in the
-        //     quadrics arraylist etc).
-        public override void Draw(Camera camera = null)
-        {
-            if (camera == null)
-            {
-                camera = CurrentCamera;
-            }
-
-            this.CurrentOpenGLContext.ClearColor(0.0f, 0.2f, 0.2f, 1.0f);
-            camera?.Project(this.CurrentOpenGLContext);
-            this.CurrentOpenGLContext.Clear(17664u);
-            this.RenderElement(this.SceneContainer, RenderMode.Design);
-            this.CurrentOpenGLContext.Flush();
-        }
-
         /// <summary>
         /// Do hit test
         /// </summary>
@@ -112,6 +94,24 @@
 
             //  Return the result set.
             return resultSet.OrderBy(result => result.MinumumZ).Select(result => result.Element);
+        }
+
+        //
+        // Summary:
+        //     This function draws all of the objects in the scene (i.e. every quadric in the
+        //     quadrics arraylist etc).
+        public override void Draw(Camera camera = null)
+        {
+            if (camera == null)
+            {
+                camera = CurrentCamera;
+            }
+
+            this.CurrentOpenGLContext.ClearColor(0.0f, 0.2f, 0.2f, 1.0f);
+            camera?.Project(this.CurrentOpenGLContext);
+            this.CurrentOpenGLContext.Clear(17664u);
+            this.RenderElement(this.SceneContainer, RenderMode.Design);
+            this.CurrentOpenGLContext.Flush();
         }
 
         /// <summary>
