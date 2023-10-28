@@ -438,6 +438,10 @@
                         this.ActiveEditorTool = new RaiseTool();
                         break;
 
+                    case "entitytool":
+                        this.ActiveEditorTool = new EntityTool();
+                        break;
+
                     default:
                         this.ActiveEditorTool = null;
                         break;

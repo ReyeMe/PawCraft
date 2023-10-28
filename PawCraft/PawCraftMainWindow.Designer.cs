@@ -49,6 +49,7 @@
             this.raiseTool = new System.Windows.Forms.ToolStripButton();
             this.digTool = new System.Windows.Forms.ToolStripButton();
             this.paintTool = new System.Windows.Forms.ToolStripButton();
+            this.entityTool = new System.Windows.Forms.ToolStripButton();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.editorMenu.SuspendLayout();
@@ -82,33 +83,33 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.CreateNewLevel);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(111, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenLevel);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveLevel);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(114, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsLevel);
             // 
@@ -128,24 +129,24 @@
             this.viewTexturedShading});
             this.viewShading.Name = "viewShading";
             this.viewShading.Size = new System.Drawing.Size(180, 22);
-            this.viewShading.Text = "View";
+            this.viewShading.Text = "&View";
             // 
             // viewHeightmap
             // 
             this.viewHeightmap.CheckOnClick = true;
             this.viewHeightmap.Name = "viewHeightmap";
-            this.viewHeightmap.Size = new System.Drawing.Size(183, 22);
+            this.viewHeightmap.Size = new System.Drawing.Size(184, 22);
             this.viewHeightmap.Tag = "0";
-            this.viewHeightmap.Text = "Heightmap";
+            this.viewHeightmap.Text = "&Heightmap";
             this.viewHeightmap.Click += new System.EventHandler(this.ViewShadingModeChanged);
             // 
             // viewTextured
             // 
             this.viewTextured.CheckOnClick = true;
             this.viewTextured.Name = "viewTextured";
-            this.viewTextured.Size = new System.Drawing.Size(183, 22);
+            this.viewTextured.Size = new System.Drawing.Size(184, 22);
             this.viewTextured.Tag = "1";
-            this.viewTextured.Text = "Textured";
+            this.viewTextured.Text = "&Textured";
             this.viewTextured.Click += new System.EventHandler(this.ViewShadingModeChanged);
             // 
             // viewTexturedShading
@@ -154,9 +155,9 @@
             this.viewTexturedShading.CheckOnClick = true;
             this.viewTexturedShading.CheckState = System.Windows.Forms.CheckState.Checked;
             this.viewTexturedShading.Name = "viewTexturedShading";
-            this.viewTexturedShading.Size = new System.Drawing.Size(183, 22);
+            this.viewTexturedShading.Size = new System.Drawing.Size(184, 22);
             this.viewTexturedShading.Tag = "2";
-            this.viewTexturedShading.Text = "Textured and shaded";
+            this.viewTexturedShading.Text = "Textured and &Shaded";
             this.viewTexturedShading.Click += new System.EventHandler(this.ViewShadingModeChanged);
             // 
             // helpToolStripMenuItem
@@ -171,14 +172,14 @@
             // keyboardBindingToolStripMenuItem
             // 
             this.keyboardBindingToolStripMenuItem.Name = "keyboardBindingToolStripMenuItem";
-            this.keyboardBindingToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.keyboardBindingToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.keyboardBindingToolStripMenuItem.Text = "&View help";
             this.keyboardBindingToolStripMenuItem.Click += new System.EventHandler(this.ViewHelp);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(125, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "&About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.AboutBtnClick);
             // 
@@ -190,7 +191,8 @@
             this.pointerTool,
             this.raiseTool,
             this.digTool,
-            this.paintTool});
+            this.paintTool,
+            this.entityTool});
             this.editorTools.Location = new System.Drawing.Point(0, 24);
             this.editorTools.Name = "editorTools";
             this.editorTools.Size = new System.Drawing.Size(800, 25);
@@ -235,6 +237,16 @@
             this.paintTool.Size = new System.Drawing.Size(23, 22);
             this.paintTool.Text = "Paint";
             this.paintTool.Click += new System.EventHandler(this.SetTool);
+            // 
+            // entityTool
+            // 
+            this.entityTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.entityTool.Image = global::PawCraft.Properties.Resources.EntityIco;
+            this.entityTool.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.entityTool.Name = "entityTool";
+            this.entityTool.Size = new System.Drawing.Size(23, 22);
+            this.entityTool.Text = "Entities";
+            this.entityTool.Click += new System.EventHandler(this.SetTool);
             // 
             // statusStrip1
             // 
@@ -299,6 +311,7 @@
         private System.Windows.Forms.ToolStripMenuItem viewTextured;
         private System.Windows.Forms.ToolStripMenuItem viewTexturedShading;
         private System.Windows.Forms.ToolStripMenuItem viewShading;
+        private System.Windows.Forms.ToolStripButton entityTool;
     }
 }
 

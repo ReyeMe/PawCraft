@@ -114,6 +114,13 @@
     </Compile>
     <Compile Include="ToolsApi\AreaToolBase.cs" />
     <Compile Include="ToolsApi\IToolDialog.cs" />
+    <Compile Include="Tools\EntityTool.cs" />
+    <Compile Include="Tools\EntityToolDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\EntityToolDialog.Designer.cs">
+      <DependentUpon>EntityToolDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\PaintTool.cs" />
     <Compile Include="Tools\PaintToolDialog.cs">
       <SubType>UserControl</SubType>
@@ -161,6 +168,9 @@
     <EmbeddedResource Include="ToolPropertyDialog.resx">
       <DependentUpon>ToolPropertyDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\EntityToolDialog.resx">
+      <DependentUpon>EntityToolDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\PaintToolDialog.resx">
       <DependentUpon>PaintToolDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -187,6 +197,7 @@
     </EmbeddedResource>
     <Content Include="PawCraft.ico" />
     <None Include="Resources\pointer.png" />
+    <None Include="Resources\Entity.png" />
     <Content Include="SharpGL.ico" />
     <Content Include="SharpGL.png" />
     <None Include="Resources\girl.png" />
