@@ -28,7 +28,7 @@
         /// <summary>
         /// Window loaded
         /// </summary>
-        private readonly bool loaded;
+        private bool loaded;
 
         /// <summary>
         /// Current active tool
@@ -61,8 +61,12 @@
         public PawCraftMainWindow()
         {
             this.InitializeComponent();
-            this.RestoreSize();
-            this.loaded = true;
+
+            this.Shown += (sender, e) =>
+            {
+                this.RestoreSize();
+                this.loaded = true;
+            };
 
             // Create MDI windows
             this.WorldView = new WorldViewWindow { MdiParent = this };
@@ -187,7 +191,14 @@
                 }
                 else
                 {
-                    this.heldKeys[keyCode] = m.Msg;
+                    if (this.heldKeys.ContainsKey(keyCode))
+                    {
+                        this.heldKeys[keyCode] = m.Msg;
+                    }
+                    else
+                    {
+                        this.heldKeys.Add(keyCode, m.Msg);
+                    }
                 }
 
                 // Tool keyboard input
@@ -197,7 +208,7 @@
                 }
 
                 // 3D editor keyboard input
-                if (((WorldViewWindow)this.WorldView).HandleInput(keyCode, state))
+                if ((this.WorldView as WorldViewWindow)?.HandleInput(keyCode, state) ?? false)
                 {
                     return true;
                 }

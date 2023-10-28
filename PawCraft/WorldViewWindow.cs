@@ -1,6 +1,7 @@
 ﻿namespace PawCraft
 {
     using PawCraft.Level;
+    using PawCraft.Rendering;
     using SharpGL;
     using SharpGL.SceneGraph;
     using SharpGL.SceneGraph.Cameras;
@@ -10,7 +11,6 @@
     using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
-    using System.Windows.Media.Media3D;
     using SWI = System.Windows.Input;
 
     /// <summary>
@@ -45,6 +45,11 @@
         private Point? lastTileLocation;
 
         /// <summary>
+        /// View is ready
+        /// </summary>
+        private bool ready = false;
+
+        /// <summary>
         /// Current tile
         /// </summary>
         private Point? tileLocation;
@@ -62,6 +67,8 @@
                 this.TextureAtlas = new TextureHandler(this.glControl.OpenGL);
                 this.glControl.Scene.SceneContainer.AddChild(new Rendering.GridLines(this.glControl.OpenGL));
                 this.glControl.Scene.SceneContainer.AddChild(this.tileContainer);
+                this.ready = true;
+                this.ReloadTileData();
             };
 
             this.FormClosing += (sender, e) =>
@@ -90,6 +97,19 @@
                 this.movementKeys[key] = state == SWI.KeyStates.Down;
                 return true;
             }
+            else if (key == Keys.L && this.ContainsFocus)
+            {
+                GridLines grid = this.glControl.Scene.SceneContainer.Children.OfType<GridLines>().FirstOrDefault();
+
+                if (grid != null)
+                {
+                    grid.Visible = !grid.Visible;
+                }
+            }
+            else if (key == Keys.F && this.ContainsFocus)
+            {
+                this.glControl.DrawFPS = !this.glControl.DrawFPS;
+            }
 
             return false;
         }
@@ -99,17 +119,20 @@
         /// </summary>
         public void ReloadTileData()
         {
-            this.tileContainer.Children.Clear();
-
-            for (int x = 0; x < LevelData.MapDimensionSize; x++)
+            if (this.ready)
             {
-                for (int y = 0; y < LevelData.MapDimensionSize; y++)
+                this.tileContainer.Children.Clear();
+
+                for (int x = 0; x < LevelData.MapDimensionSize; x++)
                 {
-                    this.tileContainer.Children.Add(
-                        new Rendering.Tile(
-                            ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData,
-                            new Point(x, y),
-                            this));
+                    for (int y = 0; y < LevelData.MapDimensionSize; y++)
+                    {
+                        this.tileContainer.Children.Add(
+                            new Rendering.Tile(
+                                ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData,
+                                new Point(x, y),
+                                this));
+                    }
                 }
             }
         }
@@ -141,6 +164,64 @@
             this.glControl.OpenGL.Enable(OpenGL.GL_BLEND);
             this.glControl.OpenGL.Enable(OpenGL.GL_ALPHA_TEST);
             this.glControl.OpenGL.AlphaFunc(OpenGL.GL_GREATER, 0.5f);
+        }
+
+        /// <summary>
+        /// Handle keyboard movement
+        /// </summary>
+        private void HandleKeyboardMovement()
+        {
+            LookAtCamera camera = this.glControl.Scene.CurrentCamera as LookAtCamera;
+            Vertex up = new Vertex(0.0f, 0.0f, 1.0f);
+            Vertex current = camera.Target - camera.Position;
+            Vertex side = current.VectorProduct(up);
+            Vertex sideUp = current.VectorProduct(side);
+            current.Normalize();
+            side.Normalize();
+            sideUp.Normalize();
+            float speedMultiplier = this.movementKeys[Keys.ShiftKey] ? 2.0f : 1.0f;
+
+            if (this.movementKeys[Keys.W])
+            {
+                current *= 0.3f * speedMultiplier;
+            }
+            else if (this.movementKeys[Keys.S])
+            {
+                current *= -0.3f * speedMultiplier;
+            }
+            else
+            {
+                current *= 0.0f;
+            }
+
+            if (this.movementKeys[Keys.A])
+            {
+                side *= -0.3f * speedMultiplier;
+            }
+            else if (this.movementKeys[Keys.D])
+            {
+                side *= 0.3f * speedMultiplier;
+            }
+            else
+            {
+                side *= 0.0f;
+            }
+
+            if (this.movementKeys[Keys.Q])
+            {
+                sideUp *= -0.3f * speedMultiplier;
+            }
+            else if (this.movementKeys[Keys.E])
+            {
+                sideUp *= 0.3f * speedMultiplier;
+            }
+            else
+            {
+                sideUp *= 0.0f;
+            }
+
+            camera.Target += current + side + sideUp;
+            camera.Position += current + side + sideUp;
         }
 
         /// <summary>
@@ -205,64 +286,6 @@
             }
 
             this.lastMousePosition = currentPosition;
-        }
-
-        /// <summary>
-        /// Handle keyboard movement
-        /// </summary>
-        private void HandleKeyboardMovement()
-        {
-            LookAtCamera camera = this.glControl.Scene.CurrentCamera as LookAtCamera;
-            Vertex up = new Vertex(0.0f, 0.0f, 1.0f);
-            Vertex current = camera.Target - camera.Position;
-            Vertex side = current.VectorProduct(up);
-            Vertex sideUp = current.VectorProduct(side);
-            current.Normalize();
-            side.Normalize();
-            sideUp.Normalize();
-            float speedMultiplier = this.movementKeys[Keys.ShiftKey] ? 2.0f : 1.0f;
-
-            if (this.movementKeys[Keys.W])
-            {
-                current *= 0.3f * speedMultiplier;
-            }
-            else if (this.movementKeys[Keys.S])
-            {
-                current *= -0.3f * speedMultiplier;
-            }
-            else
-            {
-                current *= 0.0f;
-            }
-
-            if (this.movementKeys[Keys.A])
-            {
-                side *= -0.3f * speedMultiplier;
-            }
-            else if (this.movementKeys[Keys.D])
-            {
-                side *= 0.3f * speedMultiplier;
-            }
-            else
-            {
-                side *= 0.0f;
-            }
-
-            if (this.movementKeys[Keys.Q])
-            {
-                sideUp *= -0.3f * speedMultiplier;
-            }
-            else if (this.movementKeys[Keys.E])
-            {
-                sideUp *= 0.3f * speedMultiplier;
-            }
-            else
-            {
-                sideUp *= 0.0f;
-            }
-
-            camera.Target += current + side + sideUp;
-            camera.Position += current + side + sideUp;
         }
 
         /// <summary>

@@ -36,12 +36,12 @@
             // glControl
             // 
             this.glControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.glControl.DrawFPS = true;
+            this.glControl.DrawFPS = false;
             this.glControl.FrameRate = 30;
             this.glControl.Location = new System.Drawing.Point(0, 0);
             this.glControl.Name = "glControl";
             this.glControl.OpenGLVersion = SharpGL.Version.OpenGLVersion.OpenGL2_1;
-            this.glControl.RenderContextType = SharpGL.RenderContextType.FBO;
+            this.glControl.RenderContextType = SharpGL.RenderContextType.NativeWindow;
             this.glControl.RenderTrigger = SharpGL.RenderTrigger.TimerBased;
             this.glControl.Size = new System.Drawing.Size(394, 261);
             this.glControl.TabIndex = 0;
