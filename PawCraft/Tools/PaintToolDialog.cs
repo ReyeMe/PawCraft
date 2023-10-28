@@ -12,8 +12,10 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Globalization;
     using System.Linq;
     using System.Windows.Forms;
+    using System.Windows.Forms.VisualStyles;
 
     /// <summary>
     /// Paint tool dialog
@@ -55,6 +57,7 @@
         {
             this.textureView.Scene = new TextureViewScene(this.textureView.OpenGL, this.textureView.Size, this.textureView.Padding);
             int select = this.toolInstance?.TextureIndex ?? 0;
+            this.radiusValue.Value = this.ActiveTool.Radius;
 
             for (int texture = 0; texture < ((TextureViewScene)this.textureView.Scene).TextureAtlas.GetTextureCount(); texture++)
             {
@@ -115,6 +118,17 @@
                 this.lastPickedTile.IsSelected = true;
                 this.toolInstance.TextureIndex = this.lastPickedTile.Index;
             }
+        }
+
+        /// <summary>
+        /// Value changed
+        /// </summary>
+        /// <param name="sender">Track bar</param>
+        /// <param name="e"></param>
+        private void ValueChanged(object sender, EventArgs e)
+        {
+            this.ActiveTool.Radius = this.radiusValue.Value;
+            this.valueLabel.Text = this.radiusValue.Value.ToString(CultureInfo.InvariantCulture);
         }
 
         /// <summary>

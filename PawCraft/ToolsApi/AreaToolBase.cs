@@ -18,7 +18,7 @@
         /// Gets or sets tool radius
         /// </summary>
         [DisplayName("Radius")]
-        [Range(1, 70)]
+        [Range(1, 20)]
         public int Radius { get; set; } = 1;
 
         /// <summary>
