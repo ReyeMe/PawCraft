@@ -1,5 +1,7 @@
 ﻿namespace PawCraft
 {
+    using PawCraft.Level;
+    using PawCraft.Utils.Types;
     using System;
     using System.Linq;
 
@@ -8,15 +10,18 @@
     /// </summary>
     public class ViewModel
     {
+        private Level.LevelData data;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ViewModel"/> class
         /// </summary>
         public ViewModel()
         {
-            this.LevelData = new Level.LevelData
+            this.data = new Level.LevelData
             {
-                TileData = new Level.TileData[Level.LevelData.MapDimensionSize * Level.LevelData.MapDimensionSize],
-                EntityData = Enumerable.Range(0, byte.MaxValue + 1).Select(value => new Level.EntityData { Reserved3 = new byte[12] }).ToArray(),
+                TileData = Enumerable.Range(0, 400).Select(value => new TileData()).ToArray(),
+                Gourad = Enumerable.Range(0, 400).Select(value => Gourad.FromColor(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue))).ToArray(),
+                Light = new Level.LevelLight { Color = Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue), Z = 65536 },
                 Identifier = new[] { (byte)'U', (byte)'T', (byte)'E', Level.LevelData.VersionNumber }
             };
 
@@ -30,7 +35,7 @@
         public ViewModel(string filename)
         {
             this.CurrentLevelFile = filename;
-            this.LevelData = Level.LevelData.Open(filename);
+            this.data = Level.LevelData.Open(filename);
         }
 
         /// <summary>
@@ -41,7 +46,13 @@
         /// <summary>
         /// Gets level data
         /// </summary>
-        public Level.LevelData LevelData { get; }
+        public Level.LevelData LevelData
+        {
+            get
+            {
+                return this.data;
+            }
+        }
 
         /// <summary>
         /// Save level data
@@ -64,6 +75,22 @@
 
             this.CurrentLevelFile = targetFile;
             this.LevelData.WriteToFile(targetFile);
+        }
+
+        /// <summary>
+        /// Set level light data
+        /// </summary>
+        /// <param name="levelLight">Level light</param>
+        /// <param name="lightTable">Light table</param>
+        public void SetLevelLight(Level.LevelLight levelLight, Gourad[] lightTable)
+        {
+            if (lightTable.Length != 400)
+            {
+                throw new NotSupportedException("There must be 400 entries in the shading table!");
+            }
+
+            this.data.Light = levelLight;
+            this.data.Gourad = lightTable;
         }
     }
 }

@@ -46,6 +46,16 @@
         public abstract void Draw3D(SharpGL.OpenGL gl, Point targetTile, LevelData level);
 
         /// <summary>
+        /// Draw tool in 3D view while tool is active
+        /// </summary>
+        /// <param name="gl">OpenGL instance</param>
+        /// <param name="level">Level data</param>
+        public virtual void Draw3DContinuous(SharpGL.OpenGL gl, LevelData level)
+        {
+            // Do nothing
+        }
+
+        /// <summary>
         /// Keyboard key state changed
         /// </summary>
         /// <param name="keyCode">Pressed keys</param>

@@ -1,6 +1,7 @@
 ﻿namespace PawCraft.Rendering
 {
     using PawCraft.Level;
+    using PawCraft.Utils.Types;
     using SharpGL;
     using SharpGL.Enumerations;
     using SharpGL.SceneGraph;
@@ -33,11 +34,10 @@
         /// </summary>
         /// <param name="level">Level data</param>
         /// <param name="location">Tile location</param>
-        /// <param name="textureAtlas">Texture atlas</param>
-        internal Tile(LevelData level, Point location, WorldViewWindow worldView)
+        /// <param name="worldView">View window</param>
+        internal Tile(Point location, WorldViewWindow worldView)
         {
             this.ParentWindow = worldView;
-            this.Level = level;
             this.Location = location;
             this.BoundingVolume = new TileBoundingVolume(this);
         }
@@ -54,14 +54,9 @@
         {
             get
             {
-                return this.Level[this.Location.X, this.Location.Y];
+                return ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData[this.Location.X, this.Location.Y];
             }
         }
-
-        /// <summary>
-        /// Gets level data
-        /// </summary>
-        public LevelData Level { get; }
 
         /// <summary>
         /// Gets tile location
@@ -72,6 +67,18 @@
         /// Gets parent window
         /// </summary>
         public WorldViewWindow ParentWindow { get; }
+
+        /// <summary>
+        /// Gets or sets tile shading
+        /// </summary>
+        public Gourad Shading
+        {
+            get
+            {
+                int location = LevelData.GeTileArrayIndex(this.Location.X, this.Location.Y);
+                return ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData.Gourad[location];
+            }
+        }
 
         /// <summary>
         /// Gets texture atlas
@@ -90,7 +97,7 @@
         /// <returns>Vertices</returns>
         public IEnumerable<Vertex> GetVertices()
         {
-            float[] depths = this.Level.GetTileVerticeHeights(this.Location.X, this.Location.Y);
+            float[] depths = ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData.GetTileVerticeHeights(this.Location.X, this.Location.Y);
 
             return new[]
             {
@@ -199,6 +206,9 @@
             int uvIndex = 0;
             List<Vertex> vertices = this.GetVertices().ToList();
 
+            // Shading color
+            Gourad gourad = this.Shading;
+
             // Get mirrored or not mirrored UV points
             List<int[]> uvs = (tile.MirrorTexture ? Tile.uv.Reverse<int[]>() : Tile.uv).ToList();
 
@@ -221,9 +231,7 @@
                 }
                 else
                 {
-                    // TODO: Directional light shading
-                    float light = 0.5f + (0.5f * vertices[point].Z);
-                    gl.Color(light, light, light);
+                    gl.Color(gourad.Colors[point].Red, gourad.Colors[point].Green, gourad.Colors[point].Blue);
                 }
 
                 gl.Normal(0.0f, 0.0f, 1.0f);

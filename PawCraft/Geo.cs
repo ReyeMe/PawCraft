@@ -2,15 +2,12 @@
 {
     using SharpGL.SceneGraph;
     using System;
-    using System.Drawing;
-    using System.IO;
-    using System.Windows;
     using System.Windows.Media.Media3D;
 
     /// <summary>
     /// Utility stuff
     /// </summary>
-    internal static class Utils
+    internal static class Geo
     {
         /// <summary>
         /// Angle to degrees
@@ -30,6 +27,38 @@
         public static float ConvertToRadians(this float angle)
         {
             return ((float)Math.PI / 180.0f) * angle;
+        }
+
+        /// <summary>
+        /// Get angle between vectors
+        /// </summary>
+        /// <param name="vector">First vector</param>
+        /// <returns>The angle</returns>
+        public static float GetAngleTo(this Vertex vector, Vertex other)
+        {
+            Vertex cross = vector.VectorProduct(other);
+            float dot = other.ScalarProduct(vector);
+            return (float)Math.Atan2(cross.Magnitude(), dot);
+        }
+
+        /// <summary>
+        /// Is number greater than other number
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if greater than other number</returns>
+        public static bool IsGreater(this float number, float other)
+        {
+            return number - other > double.Epsilon;
+        }
+
+        /// <summary>
+        /// Is number greater than or seame as other number
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if greater than or same as other number</returns>
+        public static bool IsGreaterOrSame(this float number, float other)
+        {
+            return number.IsGreater(other) || number.IsSame(other);
         }
 
         /// <summary>
@@ -78,15 +107,63 @@
         }
 
         /// <summary>
-        /// Get angle between vectors
+        /// Is number less than other number
         /// </summary>
-        /// <param name="vector">First vector</param>
-        /// <returns>The angle</returns>
-        public static float GetAngleTo(this Vertex vector, Vertex other)
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if less than other number</returns>
+        public static bool IsLess(this float number, float other)
         {
-            Vertex cross = vector.VectorProduct(other);
-            float dot = vector.ScalarProduct(other);
-            return (float)Math.PI - (float)Math.Atan2(cross.Magnitude(), dot);
+            return number - other < -double.Epsilon;
+        }
+
+        /// <summary>
+        /// Is number less than or seame as other number
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if less than or same as other number</returns>
+        public static bool IsLessOrSame(this float number, float other)
+        {
+            return number.IsLess(other) || number.IsSame(other);
+        }
+
+        /// <summary>
+        /// Is number not same as other number
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if not same</returns>
+        public static bool IsNotSame(this float number, float other)
+        {
+            return !number.IsSame(other);
+        }
+
+        /// <summary>
+        /// Is number not a zero
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if not zero</returns>
+        public static bool IsNotZero(this float number)
+        {
+            return !number.IsZero();
+        }
+
+        /// <summary>
+        /// Is number same as other number
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if same</returns>
+        public static bool IsSame(this float number, float other)
+        {
+            return Math.Abs(number - other).IsZero();
+        }
+
+        /// <summary>
+        /// Is number a zero
+        /// </summary>
+        /// <param name="number">Number to compare</param>
+        /// <returns><see langword="true"/> if zero</returns>
+        public static bool IsZero(this float number)
+        {
+            return Math.Abs(number) <= double.Epsilon;
         }
 
         /// <summary>
@@ -94,23 +171,25 @@
         /// </summary>
         /// <param name="vector">Vector to rotate</param>
         /// <param name="angle">Rotate by this angle</param>
-        /// <param name="direction">Rotation axis</param>
+        /// <param name="axis">Rotation axis</param>
         /// <returns>Rotated vector</returns>
-        public static Vertex RotateAroundAxis(this Vertex vector, float angle, Vertex direction)
+        public static Vertex RotateAroundAxis(this Vertex vector, float angle, Vertex axis)
         {
-            // Get radius of the rotation circle
-            float radius = (float)vector.Magnitude();
+            // Center of ration circle
+            Vertex center = axis * axis.ScalarProduct(vector);
+            Vertex toRotationPoint = vector - center;
 
-            if (radius != 0)
+            // Get radius of the rotation circle
+            float radius = (float)toRotationPoint.Magnitude();
+
+            if (radius.IsNotZero())
             {
                 // Normal vector must be unit vector
-                Vertex axisNormal = new Vertex();
-                axisNormal.X = vector.X / radius;
-                axisNormal.Y = vector.Y / radius;
-                axisNormal.Z = vector.Z / radius;
+                Vertex rotationNormal = new Vertex(toRotationPoint);
+                rotationNormal.Normalize();
 
                 // Get cross vector between normal and direction of axis
-                Vertex cross = axisNormal.VectorProduct(direction);
+                Vertex cross = rotationNormal.VectorProduct(axis);
                 cross.Normalize();
 
                 // Get cos and sin
@@ -119,9 +198,9 @@
 
                 // Get rotated normal
                 Vertex rotatedNormal = new Vertex();
-                rotatedNormal.X = (axisNormal.X * cos) + (cross.X * sin);
-                rotatedNormal.Y = (axisNormal.Y * cos) + (cross.Y * sin);
-                rotatedNormal.Z = (axisNormal.Z * cos) + (cross.Z * sin);
+                rotatedNormal.X = (rotationNormal.X * cos) + (cross.X * sin);
+                rotatedNormal.Y = (rotationNormal.Y * cos) + (cross.Y * sin);
+                rotatedNormal.Z = (rotationNormal.Z * cos) + (cross.Z * sin);
 
                 // Rotated normal must be normalized before it can be used, to prevent drifting
                 rotatedNormal.Normalize();
@@ -131,7 +210,7 @@
                 result.X = rotatedNormal.X * radius;
                 result.Y = rotatedNormal.Y * radius;
                 result.Z = rotatedNormal.Z * radius;
-                return result;
+                return center + result;
             }
             else
             {

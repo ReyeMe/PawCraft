@@ -154,10 +154,7 @@
                     for (int y = 0; y < LevelData.MapDimensionSize; y++)
                     {
                         this.tileContainer.Children.Add(
-                            new Rendering.Tile(
-                                ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData,
-                                new Point(x, y),
-                                this));
+                            new Rendering.Tile(new Point(x, y), this));
                     }
                 }
             }
@@ -325,6 +322,10 @@
             {
                 this.HandleKeyboardMovement();
             }
+
+            ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool?.Draw3DContinuous(
+                this.glControl.OpenGL,
+                ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData);
 
             if (this.tileLocation != null)
             {

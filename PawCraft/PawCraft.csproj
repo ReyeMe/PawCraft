@@ -74,6 +74,7 @@
     <Compile Include="ContainedForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Entities\EntityBase.cs" />
     <Compile Include="HelpWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -82,6 +83,7 @@
     </Compile>
     <Compile Include="Level\EntityData.cs" />
     <Compile Include="Level\LevelData.cs" />
+    <Compile Include="Level\LevelLight.cs" />
     <Compile Include="Level\TileData.cs" />
     <Compile Include="PawCraftMainWindow.cs">
       <SubType>Form</SubType>
@@ -115,6 +117,12 @@
     <Compile Include="ToolsApi\AreaToolBase.cs" />
     <Compile Include="ToolsApi\IToolDialog.cs" />
     <Compile Include="Tools\EntityTool.cs" />
+    <Compile Include="Tools\LightToolDialog.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Tools\LightToolDialog.Designer.cs">
+      <DependentUpon>LightToolDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Tools\EntityToolDialog.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -135,7 +143,8 @@
     <Compile Include="ToolsApi\ToolDialogBase.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Utils.cs" />
+    <Compile Include="Tools\LightTool.cs" />
+    <Compile Include="Geo.cs" />
     <Compile Include="ViewModel.cs" />
     <Compile Include="WorldViewWindow.cs">
       <SubType>Form</SubType>
@@ -168,8 +177,12 @@
     <EmbeddedResource Include="ToolPropertyDialog.resx">
       <DependentUpon>ToolPropertyDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Tools\LightToolDialog.resx">
+      <DependentUpon>LightToolDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Tools\EntityToolDialog.resx">
       <DependentUpon>EntityToolDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Tools\PaintToolDialog.resx">
       <DependentUpon>PaintToolDialog.cs</DependentUpon>
@@ -198,6 +211,7 @@
     <Content Include="PawCraft.ico" />
     <None Include="Resources\pointer.png" />
     <None Include="Resources\Entity.png" />
+    <None Include="Resources\light.png" />
     <Content Include="SharpGL.ico" />
     <Content Include="SharpGL.png" />
     <None Include="Resources\girl.png" />
@@ -205,6 +219,11 @@
     <None Include="Resources\raise.png" />
     <None Include="Resources\paint.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\PawCraft.Utils\PawCraft.Utils.csproj">
+      <Project>{019cc03e-0c98-44f5-b993-c004fdfe1b91}</Project>
+      <Name>PawCraft.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

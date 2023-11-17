@@ -1,5 +1,6 @@
 ﻿namespace PawCraft.Level
 {
+    using PawCraft.Utils.Types;
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -37,11 +38,17 @@
         public TileData[] TileData;
 
         /// <summary>
+        /// Level light
+        /// </summary>
+        [FieldOffset(1604)]
+        public LevelLight Light;
+
+        /// <summary>
         /// Entity data table
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        [FieldOffset(1604)]
-        public EntityData[] EntityData;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 400)]
+        [FieldOffset(1620)]
+        public Gourad[] Gourad;
 
         /// <summary>
         /// Gets or sets tile data of specific tile
@@ -83,11 +90,11 @@
                     int ay1 = Math.Max(Math.Min(y + py - 1, LevelData.MapDimensionSize - 1), 0);
                     int ay2 = Math.Max(Math.Min(ay1 + 1, LevelData.MapDimensionSize - 1), 0);
 
-                    points.Add(new[] { this[ax1, ay1].Depth, this[ax1, ay2].Depth, this[ax2, ay2].Depth, this[ax2, ay1].Depth }.Select(depth => depth / 31.0f).Sum() / 4.0f);
+                    points.Add(new[] { this[ax1, ay1].Depth, this[ax1, ay2].Depth, this[ax2, ay2].Depth, this[ax2, ay1].Depth }.Select(depth => depth / 16.0f).Sum() / 4.0f);
                 }
             }
 
-            return points.ToArray(); ;
+            return points.ToArray();
         }
 
         /// <summary>

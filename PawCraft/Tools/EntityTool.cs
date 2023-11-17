@@ -11,6 +11,11 @@
     [ToolDialog(Type = typeof(EntityToolDialog))]
     public class EntityTool : ToolBase
     {
+        /// <summary>
+        /// Gets or sets currently selected entity
+        /// </summary>
+        public Entities.EntityBase SelectedEntity { get; set; }
+
         public override void Apply(Point targetTile, LevelData level)
         {
         }

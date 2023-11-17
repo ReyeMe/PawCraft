@@ -93,6 +93,16 @@ namespace PawCraft.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap LightIco {
+            get {
+                object obj = ResourceManager.GetObject("LightIco", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap PaintIco {
             get {
                 object obj = ResourceManager.GetObject("PaintIco", resourceCulture);

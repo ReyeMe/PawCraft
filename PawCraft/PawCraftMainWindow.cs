@@ -162,6 +162,7 @@
 
             private set
             {
+                this.SetTool(null, EventArgs.Empty);
                 this.viewModel = value;
                 ((WorldViewWindow)this.WorldView).ReloadTileData();
             }
@@ -442,12 +443,20 @@
                         this.ActiveEditorTool = new EntityTool();
                         break;
 
+                    case "lighttool":
+                        this.ActiveEditorTool = new LightTool();
+                        break;
+
                     default:
                         this.ActiveEditorTool = null;
                         break;
                 }
 
                 this.PropertyWindow.Text = control.Text;
+            }
+            else
+            {
+                this.ActiveEditorTool = null;
             }
         }
 

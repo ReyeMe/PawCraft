@@ -23,18 +23,11 @@
         public byte TextureIndex;
 
         /// <summary>
-        /// Index of the entity
+        /// Offset to the entity data list
         /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
+        [MarshalAs(UnmanagedType.U2)]
         [FieldOffset(2)]
-        public byte EntityDataIndex;
-
-        /// <summary>
-        /// Reserved for future use
-        /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        [FieldOffset(3)]
-        public byte Reserved;
+        public ushort EntityDataOffset;
 
         /// <summary>
         /// Gets or sets depth of the tile (depth has 5 bits)
