@@ -48,6 +48,11 @@
         }
 
         /// <summary>
+        /// Gets or sets a value indicating whether entity is selected
+        /// </summary>
+        public bool Selected { get; set; }
+
+        /// <summary>
         /// Gets level data
         /// </summary>
         public LevelData Level
@@ -75,6 +80,16 @@
         }
 
         /// <summary>
+        /// Color iterator
+        /// </summary>
+        private static float colorIterator = 0.0f;
+
+        /// <summary>
+        /// Color iterator step
+        /// </summary>
+        private static float colorIteratorStep = 0.1f;
+
+        /// <summary>
         /// Render object
         /// </summary>
         /// <param name="gl">OpenGL instance</param>
@@ -88,16 +103,14 @@
             }
 
             EntityData data = this.Data;
-            float bitmapWidth = 1.0f;
-            float bitmapHeight = 1.0f;
+            CustomTexture tex = (CustomTexture)this.TextureAtlas.GetEntityTexture(data.Type.ToString());
+            float bitmapWidth = tex.Width / 16;
+            float bitmapHeight = tex.Height / 16;
 
             // Set icon texture
             if (renderMode != RenderMode.HitTest)
             {
                 gl.Enable(OpenGL.GL_TEXTURE_2D);
-                CustomTexture tex = (CustomTexture)this.TextureAtlas.GetEntityTexture(data.Type.ToString());
-                bitmapWidth = tex.Width / 16;
-                bitmapHeight = tex.Height / 16;
                 tex.Bind(gl);
             }
 
@@ -126,16 +139,48 @@
             // Draw billboard sprite if on screen
             gl.Begin(OpenGL.GL_QUADS);
             gl.TexCoord(0, 1);
+            gl.Color(1.0f, 1.0f, 1.0f);
             gl.Vertex(position - cameraRight);
             gl.TexCoord(1, 1);
+            gl.Color(1.0f, 1.0f, 1.0f);
             gl.Vertex(position + cameraRight);
             gl.TexCoord(1, 0);
+            gl.Color(1.0f, 1.0f, 1.0f);
             gl.Vertex(position + cameraRight + (cameraUp * 2.0f));
             gl.TexCoord(0, 0);
+            gl.Color(1.0f, 1.0f, 1.0f);
             gl.Vertex(position - cameraRight + (cameraUp * 2.0f));
             gl.End();
 
             gl.Disable(OpenGL.GL_TEXTURE_2D);
+
+            if (this.Selected)
+            {
+                Entity.colorIterator += Entity.colorIteratorStep;
+
+                if (Entity.colorIterator > 1.0f || Entity.colorIterator < 0.0f)
+                {
+                    Entity.colorIterator = Math.Max(Math.Min(Entity.colorIterator, 1.0f), 0.0f);
+                    Entity.colorIteratorStep *= -1.0f;
+                }
+
+                cameraRight *= 1.1f;
+                cameraUp *= 1.1f;
+
+                gl.LineWidth(2.0f);
+                gl.Begin(OpenGL.GL_LINE_LOOP);
+                gl.Color(1.0f - Entity.colorIterator, 1.0f, Entity.colorIterator);
+                gl.Vertex(position - cameraRight);
+                gl.Color(1.0f - Entity.colorIterator, 1.0f, Entity.colorIterator);
+                gl.Vertex(position + cameraRight);
+                gl.Color(1.0f - Entity.colorIterator, 1.0f, Entity.colorIterator);
+                gl.Vertex(position + cameraRight + (cameraUp * 2.0f));
+                gl.Color(1.0f - Entity.colorIterator, 1.0f, Entity.colorIterator);
+                gl.Vertex(position - cameraRight + (cameraUp * 2.0f));
+                gl.End();
+
+                gl.LineWidth(1.0f);
+            }
         }
     }
 }

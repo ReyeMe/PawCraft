@@ -37,10 +37,9 @@
         /// <param name="level">Level data</param>
         public override void Apply(Point targetTile, LevelData level)
         {
-            if (this.SelectedEntity != EntityData.EntityType.Empty)
+            if (this.SelectedEntity != EntityData.EntityType.Empty &&
+                !level.Entities.Any(entity => entity.X == targetTile.X && entity.Y == targetTile.Y))
             {
-                float tileMiddleDepth = (float)level.GetTileVerticeHeights(targetTile.X, targetTile.Y).Sum() / 4.0f;
-
                 level.Entities = new List<EntityData>(level.Entities).Concat(
                     new[] {
                         new EntityData

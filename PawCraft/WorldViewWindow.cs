@@ -18,6 +18,9 @@
     /// </summary>
     public partial class WorldViewWindow : ContainedForm
     {
+        /// <summary>
+        /// Movement keys
+        /// </summary>
         private readonly Dictionary<Keys, bool> movementKeys = new Dictionary<Keys, bool>
         {
             { Keys.W, false },
@@ -153,6 +156,16 @@
             {
                 this.ShowTileNormals = !this.ShowTileNormals;
             }
+            else if (key == Keys.Delete && this.ContainsFocus)
+            {
+                Entity selected = this.EntityContainer.Children.OfType<Entity>().FirstOrDefault(entity => entity.Selected);
+
+                if (selected != null)
+                {
+                    selected.Level.Entities = selected.Level.Entities.Where(entity => entity != selected.Data).ToArray();
+                    this.EntityContainer.Refresh();
+                }
+            }
 
             return false;
         }
@@ -179,6 +192,26 @@
         }
 
         /// <summary>
+        /// Mouse clicked
+        /// </summary>
+        /// <param name="sender">GL control</param>
+        /// <param name="e">Mouse event</param>
+        private void MouseClicked(object sender, MouseEventArgs e)
+        {
+            if (Control.MouseButtons == MouseButtons.Left)
+            {
+                if (((PawCraftMainWindow)this.MdiParent).ActiveEditorTool != null)
+                {
+                    this.ApplyTool(sender, e);
+                }
+                else
+                {
+                    this.SelectEntity();
+                }
+            }
+        }
+
+        /// <summary>
         /// Apply tool
         /// </summary>
         /// <param name="sender">GL control</param>
@@ -188,9 +221,13 @@
             if (Control.MouseButtons == MouseButtons.Left && this.tileLocation.HasValue)
             {
                 this.lastTileLocation = this.tileLocation;
-                ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool?.Apply(
-                    this.tileLocation.Value,
-                    ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData);
+
+                if (((PawCraftMainWindow)this.MdiParent).ActiveEditorTool != null)
+                {
+                    ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool.Apply(
+                        this.tileLocation.Value,
+                        ((PawCraftMainWindow)this.MdiParent).ViewModel.LevelData);
+                }
             }
         }
 
@@ -266,6 +303,25 @@
         }
 
         /// <summary>
+        /// Select world entity
+        /// </summary>
+        private void SelectEntity()
+        {
+            Point currentPosition = this.glControl.PointToClient(Control.MousePosition);
+
+            if (this.glControl.ClientRectangle.Contains(currentPosition) && ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool == null)
+            {
+                List<SceneElement> element = this.glControl.Scene.DoHitTest(currentPosition.X, currentPosition.Y).ToList();
+                Entity found = element.OfType<Entity>().FirstOrDefault();
+
+                foreach (Entity entity in this.EntityContainer.Children)
+                {
+                    entity.Selected = found == entity;
+                }
+            }
+        }
+
+        /// <summary>
         /// Mouse moved
         /// </summary>
         /// <param name="sender">GL control</param>
@@ -280,8 +336,8 @@
             // Get current tile
             if (this.glControl.ClientRectangle.Contains(currentPosition) && ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool != null)
             {
-                List<Point> picked = this.glControl.Scene.DoHitTest(currentPosition.X, currentPosition.Y).OfType<Rendering.Tile>().Select(tile => tile.Location).Take(1).ToList();
-
+                List<SceneElement> element = this.glControl.Scene.DoHitTest(currentPosition.X, currentPosition.Y).ToList();
+                List<Point> picked = element.OfType<Rendering.Tile>().Select(tile => tile.Location).Take(1).ToList();
                 this.tileLocation = picked.Any() ? picked[0] : (Point?)null;
             }
             else

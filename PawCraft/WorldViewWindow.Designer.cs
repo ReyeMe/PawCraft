@@ -47,7 +47,7 @@
             this.glControl.TabIndex = 0;
             this.glControl.OpenGLInitialized += new System.EventHandler(this.GlInitialized);
             this.glControl.OpenGLDraw += new SharpGL.RenderEventHandler(this.Redraw);
-            this.glControl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.ApplyTool);
+            this.glControl.MouseDown += new System.Windows.Forms.MouseEventHandler(this.MouseClicked);
             this.glControl.MouseMove += new System.Windows.Forms.MouseEventHandler(this.MouseMoved);
             // 
             // WorldViewWindow
