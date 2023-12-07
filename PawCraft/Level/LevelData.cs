@@ -1,7 +1,9 @@
 ﻿namespace PawCraft.Level
 {
+    using PawCraft.Utils.Serializer;
     using PawCraft.Utils.Types;
     using System;
+    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
@@ -10,8 +12,7 @@
     /// <summary>
     /// Level map data
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
-    public struct LevelData
+    public class LevelData
     {
         /// <summary>
         /// Current version number
@@ -26,29 +27,49 @@
         /// <summary>
         /// File identifier
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        [FieldOffset(0)]
+        [ArraySizeStatic(4)]
+        [FieldOrder(0)]
         public byte[] Identifier;
 
         /// <summary>
         /// Tile data
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 400)]
-        [FieldOffset(4)]
+        [ArraySizeStatic(400)]
+        [FieldOrder(1)]
         public TileData[] TileData;
 
         /// <summary>
         /// Level light
         /// </summary>
-        [FieldOffset(1604)]
+        [FieldOrder(2)]
         public LevelLight Light;
 
         /// <summary>
         /// Entity data table
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 400)]
-        [FieldOffset(1620)]
+        [ArraySizeStatic(400)]
+        [FieldOrder(3)]
         public Gourad[] Gourad;
+
+        /// <summary>
+        /// Normal vectors
+        /// </summary>
+        [ArraySizeStatic(400)]
+        [FieldOrder(4)]
+        public FxVector[] Normals;
+
+        /// <summary>
+        /// Number of entities in the level
+        /// </summary>
+        [FieldOrder(5)]
+        public int EntityCount;
+
+        /// <summary>
+        /// Level entities
+        /// </summary>
+        [ArraySizeDynamic("EntityCount")]
+        [FieldOrder(6)]
+        public EntityData[] Entities;
 
         /// <summary>
         /// Gets or sets tile data of specific tile
@@ -121,17 +142,12 @@
         {
             this.Identifier = new byte[] { (byte)'U', (byte)'T', (byte)'E', LevelData.VersionNumber };
 
-            int length = Marshal.SizeOf(this);
-            IntPtr ptr = Marshal.AllocHGlobal(length);
-            byte[] myBuffer = new byte[length];
-
-            Marshal.StructureToPtr(this, ptr, true);
-            Marshal.Copy(ptr, myBuffer, 0, length);
-            Marshal.FreeHGlobal(ptr);
+            this.EntityCount = this.Entities.Length;
+            List<byte> data = new List<byte>(CustomMarshal.MarshalAsBytes(this));
 
             using (FileStream stream = File.Open(filename, FileMode.Create))
             {
-                stream.Write(myBuffer, 0, length);
+                stream.Write(data.ToArray(), 0, data.Count);
             }
         }
 
@@ -158,19 +174,7 @@
                 // Seek back to start
                 stream.Seek(0, SeekOrigin.Begin);
 
-                // Attemt to read file
-                byte[] bytes = new byte[Marshal.SizeOf(typeof(LevelData))];
-
-                if (stream.Read(bytes, 0, bytes.Length) != bytes.Length)
-                {
-                    throw new EndOfStreamException("File is damaged!");
-                }
-
-                GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
-                LevelData theStructure = (LevelData)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(LevelData));
-                handle.Free();
-
-                return theStructure;
+                return (LevelData)CustomMarshal.MarshalAsObject(stream, typeof(LevelData));
             }
         }
     }

@@ -1,42 +1,42 @@
 ﻿namespace PawCraft.Level
 {
+    using PawCraft.Utils.Serializer;
     using PawCraft.Utils.Types;
     using System.Runtime.InteropServices;
 
     /// <summary>
     /// Level light data
     /// </summary>
-    [StructLayout(LayoutKind.Explicit, Pack = 2)]
     public struct LevelLight
     {
         /// <summary>
         /// Light X direction
         /// </summary>
-        [FieldOffset(0)]
+        [FieldOrder(0)]
         public int X;
 
         /// <summary>
         /// Light Y direction
         /// </summary>
-        [FieldOffset(4)]
+        [FieldOrder(1)]
         public int Y;
 
         /// <summary>
         /// Light Z direction
         /// </summary>
-        [FieldOffset(8)]
+        [FieldOrder(2)]
         public int Z;
 
         /// <summary>
         /// Light color
         /// </summary>
-        [FieldOffset(12)]
+        [FieldOrder(3)]
         public Color Color;
 
         /// <summary>
         /// Reserved padding
         /// </summary>
-        [FieldOffset(14)]
+        [FieldOrder(7)]
         public short Reserved;
     }
 }

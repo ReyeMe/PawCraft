@@ -64,11 +64,14 @@
                 ((LookAtCamera)this.glControl.Scene.CurrentCamera).Position = new Vertex(20.0f, 20.0f, 4.0f);
                 ((LookAtCamera)this.glControl.Scene.CurrentCamera).Target = new Vertex(0.0f, 0.0f, 0.0f);
 
+                this.EntityContainer = new EntitiesContainer(this);
                 this.TextureAtlas = new TextureHandler(this.glControl.OpenGL);
                 this.glControl.Scene.SceneContainer.AddChild(new Rendering.GridLines(this.glControl.OpenGL));
                 this.glControl.Scene.SceneContainer.AddChild(this.tileContainer);
+                this.glControl.Scene.SceneContainer.AddChild(this.EntityContainer);
                 this.ready = true;
                 this.ReloadTileData();
+
             };
 
             this.FormClosing += (sender, e) =>
@@ -106,6 +109,16 @@
         public ShadingMode CurrentShadingMode { get; set; } = ShadingMode.TexturedShaded;
 
         /// <summary>
+        /// Gets entity container
+        /// </summary>
+        public EntitiesContainer EntityContainer { get; private set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to show tile normals
+        /// </summary>
+        public bool ShowTileNormals { get; set; }
+
+        /// <summary>
         /// Gets loaded textures
         /// </summary>
         public TextureHandler TextureAtlas { get; private set; }
@@ -136,6 +149,10 @@
             {
                 this.glControl.DrawFPS = !this.glControl.DrawFPS;
             }
+            else if (key == Keys.N && this.ContainsFocus)
+            {
+                this.ShowTileNormals = !this.ShowTileNormals;
+            }
 
             return false;
         }
@@ -147,6 +164,7 @@
         {
             if (this.ready)
             {
+                this.EntityContainer.Refresh();
                 this.tileContainer.Children.Clear();
 
                 for (int x = 0; x < LevelData.MapDimensionSize; x++)

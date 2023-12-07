@@ -45,14 +45,14 @@
             this.keyboardBindingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editorTools = new System.Windows.Forms.ToolStrip();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.toolStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.pointerTool = new System.Windows.Forms.ToolStripButton();
             this.raiseTool = new System.Windows.Forms.ToolStripButton();
             this.digTool = new System.Windows.Forms.ToolStripButton();
             this.paintTool = new System.Windows.Forms.ToolStripButton();
             this.entityTool = new System.Windows.Forms.ToolStripButton();
             this.lightTool = new System.Windows.Forms.ToolStripButton();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.toolStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.editorMenu.SuspendLayout();
             this.editorTools.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -200,21 +200,6 @@
             this.editorTools.Size = new System.Drawing.Size(800, 25);
             this.editorTools.TabIndex = 1;
             // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStatusLabel});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
-            this.statusStrip1.TabIndex = 3;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // toolStatusLabel
-            // 
-            this.toolStatusLabel.Name = "toolStatusLabel";
-            this.toolStatusLabel.Size = new System.Drawing.Size(0, 17);
-            // 
             // pointerTool
             // 
             this.pointerTool.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -262,7 +247,7 @@
             this.entityTool.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.entityTool.Name = "entityTool";
             this.entityTool.Size = new System.Drawing.Size(23, 22);
-            this.entityTool.Text = "Entities";
+            this.entityTool.Text = "Entity placer";
             this.entityTool.Click += new System.EventHandler(this.SetTool);
             // 
             // lightTool
@@ -274,6 +259,21 @@
             this.lightTool.Size = new System.Drawing.Size(23, 22);
             this.lightTool.Text = "Env light color and direction";
             this.lightTool.Click += new System.EventHandler(this.SetTool);
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStatusLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 428);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(800, 22);
+            this.statusStrip1.TabIndex = 3;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // toolStatusLabel
+            // 
+            this.toolStatusLabel.Name = "toolStatusLabel";
+            this.toolStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // PawCraftMainWindow
             // 

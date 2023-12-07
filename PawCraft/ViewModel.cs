@@ -22,7 +22,9 @@
                 TileData = Enumerable.Range(0, 400).Select(value => new TileData()).ToArray(),
                 Gourad = Enumerable.Range(0, 400).Select(value => Gourad.FromColor(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue))).ToArray(),
                 Light = new Level.LevelLight { Color = Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue), Z = 65536 },
-                Identifier = new[] { (byte)'U', (byte)'T', (byte)'E', Level.LevelData.VersionNumber }
+                Identifier = new[] { (byte)'U', (byte)'T', (byte)'E', Level.LevelData.VersionNumber },
+                Normals = Enumerable.Range(0, 400).Select(value => new FxVector() { Z = 65536 }).ToArray(),
+                Entities = new EntityData[0]
             };
 
             this.CurrentLevelFile = string.Empty;
@@ -82,13 +84,15 @@
         /// </summary>
         /// <param name="levelLight">Level light</param>
         /// <param name="lightTable">Light table</param>
-        public void SetLevelLight(Level.LevelLight levelLight, Gourad[] lightTable)
+        /// <param name="normals">Quad normals</param>
+        public void SetLevelLight(Level.LevelLight levelLight, Gourad[] lightTable, FxVector[] normals)
         {
-            if (lightTable.Length != 400)
+            if (lightTable.Length != 400 || normals.Length != 400)
             {
                 throw new NotSupportedException("There must be 400 entries in the shading table!");
             }
 
+            this.data.Normals = normals;
             this.data.Light = levelLight;
             this.data.Gourad = lightTable;
         }

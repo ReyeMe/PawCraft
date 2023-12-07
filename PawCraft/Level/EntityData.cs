@@ -1,107 +1,91 @@
 ﻿namespace PawCraft.Level
 {
-    using System.Runtime.InteropServices;
+    using PawCraft.Utils.Serializer;
+    using PawCraft.Utils.Types;
+    using System.ComponentModel.DataAnnotations;
 
     /// <summary>
     /// Entity data
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
-    public struct EntityData
+    public class EntityData
     {
         /// <summary>
         /// Entity type
         /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        [FieldOffset(0)]
+        [FieldOrder(0)]
         public EntityType Type;
 
         /// <summary>
         /// Entity placement (depth offset, mirror flag and rotation)
         /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        [FieldOffset(1)]
-        public byte Placement;
+        [FieldOrder(1)]
+        public int Placement;
 
         /// <summary>
-        /// Reserved for future use
+        /// Entity direction in radians
         /// </summary>
-        [FieldOffset(2)]
-        public byte Reserved1;
+        [FieldOrder(2)]
+        public int Direction;
 
         /// <summary>
-        /// Reserved for future use
+        /// Reserved entity data
         /// </summary>
-        [FieldOffset(3)]
-        public byte Reserved2;
+        [ArraySizeStatic(16)]
+        [FieldOrder(3)]
+        public byte[] Reserved = new byte[16];
 
         /// <summary>
-        /// 10 bytes reserved for future use
+        /// Gets or sets depth of the tile (depth has 5 bits)
         /// </summary>
-        [FieldOffset(4)]
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 12)]
-        public byte[] Reserved3;
-
-        /// <summary>
-        /// Gets or sets depth offset from the tile (offset has 5 bits)
-        /// </summary>
-        public byte DepthOffset
+        public short X
         {
             get
             {
-                return (byte)(this.Placement & 0x3F);
+                return (short)(this.Placement & 0x00FF);
             }
 
             set
             {
-                this.Placement = (byte)((this.Placement & 0xE0) | (value & 0x1F));
-            }
-        }
-
-
-        /// <summary>
-        /// Gets or sets a flag indicating whether entitiy is mirrored
-        /// </summary>
-        public bool Mirror
-        {
-            get
-            {
-                return (this.Placement & 0x10) != 0;
-            }
-
-            set
-            {
-                if (value)
-                {
-                    this.Placement |= 0x10;
-                }
-                else
-                {
-                    this.Placement &= 0xEF;
-                }
+                this.Placement = (int)((this.Placement & 0xFF00) | (value & 0x00FF));
             }
         }
 
         /// <summary>
-        /// Gets or sets rotation of the entity on the tile
+        /// Gets or sets depth of the tile (depth has 5 bits)
         /// </summary>
-        public TileData.RotationState Rotate
+        public short Y
         {
             get
             {
-                return (TileData.RotationState)((byte)this.Placement & 0xC0 >> 6);
+                return (short)((this.Placement & 0xFF00) >> 8);
             }
 
             set
             {
-                this.Placement = (byte)((this.Placement & 0x3F) | ((byte)value << 6));
+                this.Placement = (int)((this.Placement & 0x00FF) | ((value & 0x00FF) << 8));
             }
         }
+
         /// <summary>
         /// Type of the entity in this block
         /// </summary>
-        public enum EntityType : byte
+        public enum EntityType : int
         {
+            /// <summary>
+            /// Empty entity
+            /// </summary>
             Empty = 0,
+
+            /// <summary>
+            /// Player spawn entity
+            /// </summary>
+            [Display(Name = "Player spawn")]
+            PlayerSpawn,
+
+            /// <summary>
+            /// Testing tree entity
+            /// </summary>
+            Tree,
         }
     }
 }

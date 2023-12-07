@@ -1,12 +1,12 @@
 ﻿namespace PawCraft.Utils.Types
 {
+    using PawCraft.Utils.Serializer;
     using System;
     using System.Runtime.InteropServices;
 
     /// <summary>
     /// Color definition
     /// </summary>
-    [StructLayout(LayoutKind.Explicit, Pack = 2)]
     public struct Color
     {
         /// <summary>
@@ -54,7 +54,7 @@
         /// <summary>
         /// Color data
         /// </summary>
-        [FieldOffset(0)]
+        [FieldOrder(0)]
         public short ARGB;
 
         /// <summary>

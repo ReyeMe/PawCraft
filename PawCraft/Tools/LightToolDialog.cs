@@ -112,8 +112,9 @@
         /// <param name="lightColor">Light color</param>
         /// <param name="x">Current X location</param>
         /// <param name="y">Current Y location</param>
+        /// <param name="normal">Vertex normal</param>
         /// <returns>Vertex color</returns>
-        private static SaturnColor GetColor(Vertex[,] vertices, Vertex lightDir, SaturnColor lightColor, int x, int y)
+        private static SaturnColor GetColor(Vertex[,] vertices, Vertex lightDir, SaturnColor lightColor, int x, int y, out Vertex normal)
         {
             Vertex current = vertices[x, y];
             List<Vertex> cross = new List<Vertex>();
@@ -200,12 +201,15 @@
                 // Calculate light normal
                 float strength = Math.Max(Math.Min(-total.ScalarProduct(lightDir), 1.0f), (Math.Abs(new Vertex(0.0f, 0.0f, 1.0f).ScalarProduct(lightDir)) / 3.0f));
 
+                total.Normalize();
+                normal = total;
                 return SaturnColor.FromRgb(
                     (lightColor.Red * strength) / (float)byte.MaxValue,
                     (lightColor.Green * strength) / (float)byte.MaxValue,
                     (lightColor.Blue * strength) / (float)byte.MaxValue);
             }
 
+            normal = new Vertex { Z = 1.0f };
             return SaturnColor.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue);
         }
 
@@ -244,25 +248,36 @@
 
             // Calculate shading
             List<Gourad> shading = new List<Gourad>();
+            List<FxVector> normals = new List<FxVector>();
 
             for (int y = 0; y < LevelData.MapDimensionSize; y++)
             {
                 for (int x = 0; x < LevelData.MapDimensionSize; x++)
                 {
+                    Vertex v0;
+                    Vertex v1;
+                    Vertex v2;
+                    Vertex v3;
+
                     List<SaturnColor> saturnColors = new List<SaturnColor>
                     {
-                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x, y),
-                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x, y + 1),
-                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x + 1, y + 1),
-                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x + 1, y)
+                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x, y, out v0),
+                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x, y + 1, out v1),
+                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x + 1, y + 1, out v2),
+                        LightToolDialog.GetColor(vertices, this.tool.SunDirection, this.tool.SunColor, x + 1, y, out v3)
                     };
 
                     shading.Add(Gourad.FromColors(saturnColors.ToArray()));
+
+                    // Calculate plane normal
+                    Vertex planeNormal = (v0 + v1 + v2 + v3) / 4.0f;
+                    planeNormal.Normalize();
+                    normals.Add(FxVector.FromFloatArray(new[] { planeNormal.X, planeNormal.Y, planeNormal.Z } ));
                 }
             }
 
             // save result
-            ((PawCraftMainWindow)((Form)this.Parent).MdiParent).ViewModel.SetLevelLight(light, shading.ToArray());
+            ((PawCraftMainWindow)((Form)this.Parent).MdiParent).ViewModel.SetLevelLight(light, shading.ToArray(), normals.ToArray());
         }
 
         /// <summary>

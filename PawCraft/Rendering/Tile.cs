@@ -32,7 +32,6 @@
         /// <summary>
         /// Initializes a new isntance of the <see cref="Tile"/> class
         /// </summary>
-        /// <param name="level">Level data</param>
         /// <param name="location">Tile location</param>
         /// <param name="worldView">View window</param>
         internal Tile(Point location, WorldViewWindow worldView)
@@ -186,9 +185,36 @@
             Texture texture = this.TextureAtlas.GetTexture(tile.TextureIndex);
             WorldViewWindow.ShadingMode shading = this.ParentWindow.CurrentShadingMode;
 
+            List<Vertex> vertices = this.GetVertices().ToList();
+            FxVector vector = ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData.Normals[LevelData.GeTileArrayIndex(this.Location.X, this.Location.Y)];
+            float[] normal = FxVector.ToFloatArray(vector);
+            Vertex normalVector = new Vertex(normal[0], normal[1], normal[2]);
+
             gl.Disable(OpenGL.GL_LIGHTING);
             gl.Disable(OpenGL.GL_LIGHT0);
             gl.Disable(OpenGL.GL_TEXTURE_2D);
+
+            if (this.ParentWindow.ShowTileNormals)
+            {
+                Vertex center = new Vertex();
+
+                for (int point = 0; point < vertices.Count; point++)
+                {
+                    center += vertices[point];
+                }
+
+                center /= 4.0f;
+
+                gl.Begin(OpenGL.GL_LINES);
+
+                gl.Color(0.0f, 1.0f, 0.3f);
+                gl.Vertex(center);
+
+                gl.Color(0.0f, 1.0f, 0.3f);
+                gl.Vertex(center + normalVector);
+
+                gl.End();
+            }
 
             if (shading == WorldViewWindow.ShadingMode.Textured || shading == WorldViewWindow.ShadingMode.TexturedShaded)
             {
@@ -204,7 +230,6 @@
             gl.Begin(OpenGL.GL_QUADS);
 
             int uvIndex = 0;
-            List<Vertex> vertices = this.GetVertices().ToList();
 
             // Shading color
             Gourad gourad = this.Shading;
@@ -234,7 +259,7 @@
                     gl.Color(gourad.Colors[point].Red, gourad.Colors[point].Green, gourad.Colors[point].Blue);
                 }
 
-                gl.Normal(0.0f, 0.0f, 1.0f);
+                gl.Normal(normalVector);
                 gl.TexCoord(uvs[uvIndex][0], uvs[uvIndex][1]);
                 gl.Vertex(vertices[point].X, vertices[point].Y, vertices[point].Z);
 

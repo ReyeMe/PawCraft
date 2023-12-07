@@ -449,7 +449,7 @@
 
                     default:
                         this.ActiveEditorTool = null;
-                        break;
+                        return;
                 }
 
                 this.PropertyWindow.Text = control.Text;

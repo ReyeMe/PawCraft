@@ -42,7 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Serializer\ArraySizeAttribute.cs" />
+    <Compile Include="Serializer\ArraySizeDynamicAttribute.cs" />
+    <Compile Include="Serializer\ArraySizeStaticAttribute.cs" />
+    <Compile Include="Serializer\CustomMarshal.cs" />
+    <Compile Include="Serializer\FieldOrderAttribute.cs" />
     <Compile Include="Types\Color.cs" />
+    <Compile Include="Types\FxVector.cs" />
     <Compile Include="Types\Gourad.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

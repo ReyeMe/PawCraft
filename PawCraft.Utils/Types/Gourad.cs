@@ -1,5 +1,6 @@
 ﻿namespace PawCraft.Utils.Types
 {
+    using PawCraft.Utils.Serializer;
     using System;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -7,7 +8,6 @@
     /// <summary>
     /// Gourad color
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
     public struct Gourad
     {
         /// <summary>
@@ -45,8 +45,8 @@
         /// <summary>
         /// Gourad color
         /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
-        [FieldOffset(0)]
+        [ArraySizeStatic(4)]
+        [FieldOrder(0)]
         public Color[] Colors;
     }
 }

@@ -41,6 +41,7 @@
             this.Name = "ToolPropertyDialog";
             this.ShowIcon = false;
             this.Text = "Tool properties";
+            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DialogClosed);
             this.Load += new System.EventHandler(this.DialogLoad);
             this.Shown += new System.EventHandler(this.DialogShown);

@@ -28,32 +28,32 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
+            this.currentEntity = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
-            // label1
+            // currentEntity
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(94, 89);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(77, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Coming soon...";
+            this.currentEntity.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.currentEntity.FormattingEnabled = true;
+            this.currentEntity.Location = new System.Drawing.Point(3, 3);
+            this.currentEntity.Name = "currentEntity";
+            this.currentEntity.Size = new System.Drawing.Size(176, 21);
+            this.currentEntity.TabIndex = 1;
             // 
             // EntityToolDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.currentEntity);
             this.Name = "EntityToolDialog";
-            this.Size = new System.Drawing.Size(310, 207);
+            this.Size = new System.Drawing.Size(182, 63);
+            this.Load += new System.EventHandler(this.EntityToolDialog_Load);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.ComboBox currentEntity;
     }
 }

@@ -1,32 +1,29 @@
 ﻿namespace PawCraft.Level
 {
+    using PawCraft.Utils.Serializer;
     using System.Runtime.InteropServices;
 
     /// <summary>
     /// Tile data
     /// </summary>
-    [StructLayout(LayoutKind.Explicit)]
     public struct TileData
     {
         /// <summary>
         /// Depth and rotation are present in a single byte
         /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        [FieldOffset(0)]
+        [FieldOrder(0)]
         public byte DepthAndRotationAndMirror;
 
         /// <summary>
         /// Index of a texture to use
         /// </summary>
-        [MarshalAs(UnmanagedType.U1)]
-        [FieldOffset(1)]
+        [FieldOrder(1)]
         public byte TextureIndex;
 
         /// <summary>
         /// Offset to the entity data list
         /// </summary>
-        [MarshalAs(UnmanagedType.U2)]
-        [FieldOffset(2)]
+        [FieldOrder(2)]
         public ushort EntityDataOffset;
 
         /// <summary>
