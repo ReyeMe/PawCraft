@@ -89,8 +89,7 @@
                 List<MemberInfo> fields =
                     sourceType.GetFields(BindingFlags.Public | BindingFlags.Instance).ToList().Concat<MemberInfo>(sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                     .Select(field => new Tuple<FieldOrderAttribute, MemberInfo>(field.GetCustomAttribute<FieldOrderAttribute>(), field))
-                    .Where(field => field.Item1 != null)
-                    .OrderBy(field => field.Item1.Order)
+                    .OrderBy(field => field.Item1 != null ? field.Item1.Order : int.MaxValue)
                     .Select(field => field.Item2)
                     .ToList();
 
@@ -104,7 +103,7 @@
                 members.Add(new Tuple<object, IEnumerable<MemberInfo>>(@object, fields));
                 List<byte> result = new List<byte>();
 
-                foreach (MemberInfo member in fields)
+                foreach (MemberInfo member in fields.Where(field => field.GetCustomAttribute<FieldOrderAttribute>() != null))
                 {
                     object value;
 
@@ -213,8 +212,7 @@
                 List<MemberInfo> fields =
                     targetType.GetFields(BindingFlags.Public | BindingFlags.Instance).ToList().Concat<MemberInfo>(targetType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
                     .Select(field => new Tuple<FieldOrderAttribute, MemberInfo>(field.GetCustomAttribute<FieldOrderAttribute>(), field))
-                    .Where(field => field.Item1 != null)
-                    .OrderBy(field => field.Item1.Order)
+                    .OrderBy(field => field.Item1 != null ? field.Item1.Order : int.MaxValue)
                     .Select(field => field.Item2)
                     .ToList();
 
@@ -228,7 +226,7 @@
                 object result = Activator.CreateInstance(targetType);
                 members.Add(new Tuple<object, IEnumerable<MemberInfo>>(result, fields));
 
-                foreach (MemberInfo member in fields)
+                foreach (MemberInfo member in fields.Where(field => field.GetCustomAttribute<FieldOrderAttribute>() != null))
                 {
                     if (member is FieldInfo field)
                     {

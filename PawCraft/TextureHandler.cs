@@ -1,11 +1,11 @@
 ﻿namespace PawCraft
 {
     using PawCraft.Properties;
+    using PawCraft.Utils;
     using SharpGL;
     using SharpGL.SceneGraph.Assets;
     using System;
     using System.Collections.Generic;
-    using System.Drawing;
     using System.IO;
     using System.Linq;
 
@@ -27,12 +27,12 @@
         /// <summary>
         /// Loaded textures
         /// </summary>
-        private readonly List<Texture> textures = new List<Texture>();
+        private readonly List<GlTexture> textures = new List<GlTexture>();
 
         /// <summary>
         /// Loaded entity textures
         /// </summary>
-        private readonly List<Texture> entityTextures = new List<Texture>();
+        private readonly List<GlTexture> entityTextures = new List<GlTexture>();
 
         /// <summary>
         /// Initializes a new isntance of the <see cref="TextureHandler"/> class
@@ -44,7 +44,7 @@
 
             try
             {
-                foreach (Texture texture in this.textures)
+                foreach (GlTexture texture in this.textures)
                 {
                     texture.Destroy(gl);
                 }
@@ -60,11 +60,7 @@
 
                 foreach (string textureFile in Directory.EnumerateFiles(TextureHandler.textureFolder, "*.bmp").OrderBy(file => file))
                 {
-                    using (Bitmap bmp = new Bitmap(textureFile))
-                    {
-                        Texture texture = TextureHandler.LoadFromBitmap(bmp, gl, Path.GetFileNameWithoutExtension(textureFile));
-                        this.textures.Add(texture);
-                    }
+                    this.textures.Add(new GlTexture(textureFile, Path.GetFileNameWithoutExtension(textureFile), gl));
 
                     counter++;
 
@@ -74,42 +70,19 @@
                     }
                 }
 
-                Texture dummyTexture = TextureHandler.LoadFromBitmap(Resources.EntityIco, gl, "dummy");
-                this.entityTextures.Add(dummyTexture);
+                // Dummy entity icon
+                this.entityTextures.Add(new GlTexture(Resources.EntityIco, "dummy", gl));
 
+                // Entity icons
                 foreach (string textureFile in Directory.EnumerateFiles(TextureHandler.entityTextureFolder, "*.png").OrderBy(file => file))
                 {
-                    using (Bitmap bmp = new Bitmap(textureFile))
-                    {
-                        Texture texture = TextureHandler.LoadFromBitmap(bmp, gl, Path.GetFileNameWithoutExtension(textureFile));
-                        this.entityTextures.Add(texture);
-                    }
+                    this.entityTextures.Add(new GlTexture(textureFile, Path.GetFileNameWithoutExtension(textureFile), gl));
                 }
             }
             catch (Exception ex)
             {
                 ex.ToString();
             }
-        }
-
-        /// <summary>
-        /// Load texture
-        /// </summary>
-        /// <param name="bitmap">Texture bitmap</param>
-        /// <param name="gl">OpenGL instance</param>
-        /// <param name="name">Texture name</param>
-        /// <returns>Loaded texture</returns>
-        private static Texture LoadFromBitmap(Bitmap bitmap, OpenGL gl, string name)
-        {
-            CustomTexture texture = new CustomTexture { Name = name, Width = bitmap.Width, Height = bitmap.Height };
-            texture.Create(gl, bitmap);
-            texture.Bind(gl);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_S, OpenGL.GL_REPEAT);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_WRAP_T, OpenGL.GL_REPEAT);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MIN_FILTER, OpenGL.GL_NEAREST_MIPMAP_NEAREST);
-            gl.TexParameter(OpenGL.GL_TEXTURE_2D, OpenGL.GL_TEXTURE_MAG_FILTER, OpenGL.GL_NEAREST);
-            gl.GenerateMipmapEXT(OpenGL.GL_TEXTURE_2D);
-            return texture;
         }
 
         /// <summary>
@@ -143,7 +116,7 @@
         /// </summary>
         /// <param name="index">Texture index</param>
         /// <returns>Loaded texture</returns>
-        public Texture GetTexture(int index)
+        public GlTexture GetTexture(int index)
         {
             if (index >= 0 && index < this.textures.Count)
             {
@@ -158,9 +131,9 @@
         /// </summary>
         /// <param name="name">Texture name</param>
         /// <returns>Loaded texture</returns>
-        public Texture GetEntityTexture(string name)
+        public GlTexture GetEntityTexture(string name)
         {
-            Texture found = this.entityTextures.FirstOrDefault(texture => texture.Name == name);
+            GlTexture found = this.entityTextures.FirstOrDefault(texture => texture.Name == name);
 
             if (found == null)
             {
@@ -177,22 +150,6 @@
         public int GetTextureCount()
         {
             return this.textures.Count;
-        }
-
-        /// <summary>
-        /// Custom texture class
-        /// </summary>
-        public class CustomTexture : Texture
-        {
-            /// <summary>
-            /// Gets or sets texture width
-            /// </summary>
-            public int Width { get; set; }
-
-            /// <summary>
-            /// Gets or sets texture height
-            /// </summary>
-            public int Height { get; set; }
         }
     }
 }

@@ -74,6 +74,7 @@
     <Compile Include="ContainedForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="EntityModelHandler.cs" />
     <Compile Include="HelpWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,6 +222,10 @@
     <None Include="Resources\paint.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Obj2Nya\Obj2Nya.csproj">
+      <Project>{f37fd492-3049-493d-b1b4-57de533fc0ff}</Project>
+      <Name>Obj2Nya</Name>
+    </ProjectReference>
     <ProjectReference Include="..\PawCraft.Utils\PawCraft.Utils.csproj">
       <Project>{019cc03e-0c98-44f5-b993-c004fdfe1b91}</Project>
       <Name>PawCraft.Utils</Name>

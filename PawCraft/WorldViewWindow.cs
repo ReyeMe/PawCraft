@@ -69,12 +69,12 @@
 
                 this.EntityContainer = new EntitiesContainer(this);
                 this.TextureAtlas = new TextureHandler(this.glControl.OpenGL);
+                this.EntityAtlas = new EntityModelHandler(this.glControl.OpenGL);
                 this.glControl.Scene.SceneContainer.AddChild(new Rendering.GridLines(this.glControl.OpenGL));
                 this.glControl.Scene.SceneContainer.AddChild(this.tileContainer);
                 this.glControl.Scene.SceneContainer.AddChild(this.EntityContainer);
                 this.ready = true;
                 this.ReloadTileData();
-
             };
 
             this.FormClosing += (sender, e) =>
@@ -110,6 +110,11 @@
         /// Gets or sets active shading mode
         /// </summary>
         public ShadingMode CurrentShadingMode { get; set; } = ShadingMode.TexturedShaded;
+
+        /// <summary>
+        /// Gets loaded entities
+        /// </summary>
+        public EntityModelHandler EntityAtlas { get; private set; }
 
         /// <summary>
         /// Gets entity container
@@ -187,26 +192,6 @@
                         this.tileContainer.Children.Add(
                             new Rendering.Tile(new Point(x, y), this));
                     }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Mouse clicked
-        /// </summary>
-        /// <param name="sender">GL control</param>
-        /// <param name="e">Mouse event</param>
-        private void MouseClicked(object sender, MouseEventArgs e)
-        {
-            if (Control.MouseButtons == MouseButtons.Left)
-            {
-                if (((PawCraftMainWindow)this.MdiParent).ActiveEditorTool != null)
-                {
-                    this.ApplyTool(sender, e);
-                }
-                else
-                {
-                    this.SelectEntity();
                 }
             }
         }
@@ -303,20 +288,21 @@
         }
 
         /// <summary>
-        /// Select world entity
+        /// Mouse clicked
         /// </summary>
-        private void SelectEntity()
+        /// <param name="sender">GL control</param>
+        /// <param name="e">Mouse event</param>
+        private void MouseClicked(object sender, MouseEventArgs e)
         {
-            Point currentPosition = this.glControl.PointToClient(Control.MousePosition);
-
-            if (this.glControl.ClientRectangle.Contains(currentPosition) && ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool == null)
+            if (Control.MouseButtons == MouseButtons.Left)
             {
-                List<SceneElement> element = this.glControl.Scene.DoHitTest(currentPosition.X, currentPosition.Y).ToList();
-                Entity found = element.OfType<Entity>().FirstOrDefault();
-
-                foreach (Entity entity in this.EntityContainer.Children)
+                if (((PawCraftMainWindow)this.MdiParent).ActiveEditorTool != null)
                 {
-                    entity.Selected = found == entity;
+                    this.ApplyTool(sender, e);
+                }
+                else
+                {
+                    this.SelectEntity();
                 }
             }
         }
@@ -416,6 +402,25 @@
             else
             {
                 this.Text = "3D";
+            }
+        }
+
+        /// <summary>
+        /// Select world entity
+        /// </summary>
+        private void SelectEntity()
+        {
+            Point currentPosition = this.glControl.PointToClient(Control.MousePosition);
+
+            if (this.glControl.ClientRectangle.Contains(currentPosition) && ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool == null)
+            {
+                List<SceneElement> element = this.glControl.Scene.DoHitTest(currentPosition.X, currentPosition.Y).ToList();
+                Entity found = element.OfType<Entity>().FirstOrDefault();
+
+                foreach (Entity entity in this.EntityContainer.Children)
+                {
+                    entity.Selected = found == entity;
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿namespace PawCraft.Rendering
 {
     using PawCraft.Level;
+    using PawCraft.Utils;
     using PawCraft.Utils.Types;
     using SharpGL;
     using SharpGL.SceneGraph;
@@ -44,6 +45,17 @@
             get
             {
                 return this.ParentWindow.TextureAtlas;
+            }
+        }
+
+        /// <summary>
+        /// Gets entity atlas
+        /// </summary>
+        public EntityModelHandler EntityAtlas
+        {
+            get
+            {
+                return this.ParentWindow.EntityAtlas;
             }
         }
 
@@ -103,7 +115,23 @@
             }
 
             EntityData data = this.Data;
-            CustomTexture tex = (CustomTexture)this.TextureAtlas.GetEntityTexture(data.Type.ToString());
+            IRenderable model = this.EntityAtlas.GetModel(data.Type.ToString());
+            float height = this.Level.GetTileVerticeHeights(data.X, data.Y).Sum() / 4.0f;
+            Vertex position = new Vertex(data.X + 0.5f, data.Y + 0.5f, height);
+
+            if (model != null)
+            {
+                gl.PushMatrix();
+                gl.Translate(position.X, position.Y, position.Z);
+                model.Render(gl, renderMode);
+                gl.PopMatrix();
+
+                gl.Disable(OpenGL.GL_TEXTURE_2D);
+
+                return;
+            }
+
+            GlTexture tex = (GlTexture)this.TextureAtlas.GetEntityTexture(data.Type.ToString());
             float bitmapWidth = tex.Width / 16;
             float bitmapHeight = tex.Height / 16;
 
@@ -113,9 +141,6 @@
                 gl.Enable(OpenGL.GL_TEXTURE_2D);
                 tex.Bind(gl);
             }
-
-            float height = this.Level.GetTileVerticeHeights(data.X, data.Y).Sum() / 4.0f;
-            Vertex position = new Vertex(data.X + 0.5f, data.Y + 0.5f, height);
 
             double[] projectionMatrix = new double[16];
             double[] modelViewMatrix = new double[16];
