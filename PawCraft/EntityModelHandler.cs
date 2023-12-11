@@ -1,18 +1,18 @@
 ﻿namespace PawCraft
 {
     using Obj2Nya;
+    using PawCraft.Rendering;
     using PawCraft.Utils;
     using PawCraft.Utils.Serializer;
     using PawCraft.Utils.Types;
     using SharpGL;
     using SharpGL.SceneGraph;
     using SharpGL.SceneGraph.Core;
+    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
     using System.Linq;
-    using System.Windows.Forms;
-    using System.Windows.Media;
 
     /// <summary>
     /// Model handler
@@ -55,20 +55,40 @@
         /// </summary>
         /// <param name="name">Entity name</param>
         /// <returns>Renderable model</returns>
-        public IRenderable GetModel(string name)
+        public IRenderableEntity GetModel(string name)
         {
             return this.entities.FirstOrDefault(entity => entity.Name == name);
         }
 
         /// <summary>
+        /// Renderable entity interface
+        /// </summary>
+        public interface IRenderableEntity
+        {
+            /// <summary>
+            /// Render entity
+            /// </summary>
+            /// <param name="gl">OpenGL instnance</param>
+            /// <param name="lightDir">Light direction</param>
+            /// <param name="selected">Entity selected</param>
+            /// <param name="renderMode">Render mode</param>
+            void Render(OpenGL gl, Vertex lightDir, bool selected, RenderMode renderMode);
+        }
+
+        /// <summary>
         /// Entity model
         /// </summary>
-        private class EntityModel : IRenderable
+        private class EntityModel : IRenderableEntity
         {
             /// <summary>
             /// Model textures
             /// </summary>
             private readonly List<GlTexture> textures = new List<GlTexture>();
+
+            /// <summary>
+            /// Bounding cube
+            /// </summary>
+            private readonly EntityBoundingVolume cube;
 
             /// <summary>
             /// Initializes a new instance of the <see cref="EntityModel"/> class
@@ -80,11 +100,17 @@
             {
                 this.Name = name;
 
+                // Load model
                 using (Stream stream = File.OpenRead(file))
                 {
                     this.Mesh = (NyaGroup)CustomMarshal.MarshalAsObject(stream, typeof(NyaGroup));
                 }
 
+                // Load bounding box
+                this.cube = new EntityBoundingVolume();
+                this.cube.FromVertices(this.Mesh.Meshes.SelectMany(mesh => mesh.Points.Select(point => FxVector.ToVertex(point))));
+
+                // Load textures
                 foreach (NyaTexture tex in this.Mesh.Textures)
                 {
                     using (Bitmap bitmap = new Bitmap(tex.Width, tex.Height))
@@ -130,31 +156,53 @@
             /// Render entity
             /// </summary>
             /// <param name="gl">OpenGL instnance</param>
+            /// <param name="lightDir">Light direction</param>
+            /// <param name="selected">Entity selected</param>
             /// <param name="renderMode">Render mode</param>
-            public void Render(OpenGL gl, RenderMode renderMode)
+            public void Render(OpenGL gl, Vertex lightDir, bool selected, RenderMode renderMode)
             {
                 foreach (NyaMesh mesh in this.Mesh.Meshes)
                 {
                     for (int face = 0; face < mesh.PolygonCount; face++)
                     {
-                        if (mesh.FaceFlags[face].HasTexture)
+                        float[] color = new[] { 1.0f, 1.0f, 1.0f };
+                        Vertex normal = FxVector.ToVertex(mesh.Polygons[face].Normal);
+
+                        if (renderMode != RenderMode.HitTest)
                         {
-                            gl.Enable(OpenGL.GL_TEXTURE_2D);
-                            this.textures[mesh.FaceFlags[face].TextureId].Bind(gl);
-                            gl.Color(1.0f, 1.0f, 1.0f);
-                        }
-                        else
-                        {
-                            gl.Color(mesh.FaceFlags[face].BaseColor.Red, mesh.FaceFlags[face].BaseColor.Green, mesh.FaceFlags[face].BaseColor.Blue);
+                            if (mesh.FaceFlags[face].HasTexture)
+                            {
+                                gl.Enable(OpenGL.GL_TEXTURE_2D);
+                                this.textures[mesh.FaceFlags[face].TextureId].Bind(gl);
+                            }
+                            else
+                            {
+                                color = new[]
+                                {
+                                    mesh.FaceFlags[face].BaseColor.Red / (float)byte.MaxValue,
+                                    mesh.FaceFlags[face].BaseColor.Green / (float)byte.MaxValue,
+                                    mesh.FaceFlags[face].BaseColor.Blue / (float)byte.MaxValue
+                                };
+                            }
+
+                            float strength = Math.Max(Math.Min(-normal.ScalarProduct(lightDir), 1.0f), (Math.Abs(new Vertex(0.0f, 0.0f, 1.0f).ScalarProduct(lightDir)) / 3.0f));
+
+                            color = new[]
+                            {
+                                color[0] * strength,
+                                color[1] * strength,
+                                color[2] * strength
+                            };
                         }
 
                         gl.Begin(OpenGL.GL_QUADS);
 
                         for (int point  = 0; point < 4; point++)
                         {
+                            gl.Color(color);
                             gl.TexCoord(EntityModel.textureCoords[point]);
-                            gl.Normal(FxVector.ToFloatArray(mesh.Polygons[face].Normal));
-                            gl.Vertex(FxVector.ToFloatArray(mesh.Points[mesh.Polygons[face].Vertices[point]]));
+                            gl.Normal(normal);
+                            gl.Vertex(FxVector.ToArray(mesh.Points[mesh.Polygons[face].Vertices[point]]));
                         }
 
                         gl.End();
@@ -164,6 +212,11 @@
                             gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
                         }
                     }
+                }
+
+                if (selected && renderMode != RenderMode.HitTest)
+                {
+                    this.cube.Render(gl, renderMode);
                 }
             }
         }

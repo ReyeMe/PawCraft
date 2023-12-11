@@ -10,33 +10,21 @@
     public struct LevelLight
     {
         /// <summary>
-        /// Light X direction
+        /// Light direction
         /// </summary>
         [FieldOrder(0)]
-        public int X;
-
-        /// <summary>
-        /// Light Y direction
-        /// </summary>
-        [FieldOrder(1)]
-        public int Y;
-
-        /// <summary>
-        /// Light Z direction
-        /// </summary>
-        [FieldOrder(2)]
-        public int Z;
+        public FxVector Direction;
 
         /// <summary>
         /// Light color
         /// </summary>
-        [FieldOrder(3)]
+        [FieldOrder(1)]
         public Color Color;
 
         /// <summary>
         /// Reserved padding
         /// </summary>
-        [FieldOrder(7)]
+        [FieldOrder(2)]
         public short Reserved;
     }
 }

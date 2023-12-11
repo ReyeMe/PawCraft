@@ -114,8 +114,7 @@
 
             List<Vertex> vertices = this.GetVertices().ToList();
             FxVector vector = ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData.Normals[LevelData.GeTileArrayIndex(this.Location.X, this.Location.Y)];
-            float[] normal = FxVector.ToFloatArray(vector);
-            Vertex normalVector = new Vertex(normal[0], normal[1], normal[2]);
+            Vertex normalVector = FxVector.ToVertex(vector);
 
             gl.Disable(OpenGL.GL_LIGHTING);
             gl.Disable(OpenGL.GL_LIGHT0);

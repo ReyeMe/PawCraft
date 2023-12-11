@@ -31,7 +31,7 @@
             {
                 // Load level defaults
                 Level.LevelData level = ((PawCraftMainWindow)((Form)this.Parent).MdiParent).ViewModel.LevelData;
-                this.tool.SunDirection = new Vertex(level.Light.X / 65536.0f, level.Light.Y / 65536.0f, level.Light.Z / 65536.0f);
+                this.tool.SunDirection = FxVector.ToVertex(level.Light.Direction);
                 this.tool.SunColor = level.Light.Color;
 
                 // Set control defaults
@@ -225,9 +225,7 @@
             // Create light settings
             LevelLight light = new LevelLight
             {
-                X = (int)(this.tool.SunDirection.X * 65536.0),
-                Y = (int)(this.tool.SunDirection.Y * 65536.0),
-                Z = (int)(this.tool.SunDirection.Z * 65536.0),
+                Direction = FxVector.FromVertex(this.tool.SunDirection),
                 Color = this.tool.SunColor
             };
 
@@ -272,7 +270,7 @@
                     // Calculate plane normal
                     Vertex planeNormal = (v0 + v1 + v2 + v3) / 4.0f;
                     planeNormal.Normalize();
-                    normals.Add(FxVector.FromFloatArray(new[] { planeNormal.X, planeNormal.Y, planeNormal.Z } ));
+                    normals.Add(FxVector.FromVertex(planeNormal));
                 }
             }
 

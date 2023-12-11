@@ -93,6 +93,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rendering\EntityBoundingVolume.cs" />
     <Compile Include="Rendering\EntitiesContainer.cs" />
     <Compile Include="Rendering\Entity.cs" />
     <Compile Include="Rendering\GridLines.cs" />

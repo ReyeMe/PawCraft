@@ -12,6 +12,7 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using static PawCraft.EntityModelHandler;
     using static PawCraft.TextureHandler;
 
     internal class Entity : SceneElement, IRenderable
@@ -115,7 +116,7 @@
             }
 
             EntityData data = this.Data;
-            IRenderable model = this.EntityAtlas.GetModel(data.Type.ToString());
+            IRenderableEntity model = this.EntityAtlas.GetModel(data.Type.ToString());
             float height = this.Level.GetTileVerticeHeights(data.X, data.Y).Sum() / 4.0f;
             Vertex position = new Vertex(data.X + 0.5f, data.Y + 0.5f, height);
 
@@ -123,7 +124,7 @@
             {
                 gl.PushMatrix();
                 gl.Translate(position.X, position.Y, position.Z);
-                model.Render(gl, renderMode);
+                model.Render(gl, FxVector.ToVertex(this.Level.Light.Direction), this.Selected, renderMode);
                 gl.PopMatrix();
 
                 gl.Disable(OpenGL.GL_TEXTURE_2D);

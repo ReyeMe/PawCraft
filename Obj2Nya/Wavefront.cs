@@ -137,15 +137,14 @@
 
             foreach (int normalPoint in norms)
             {
-                float[] floats = FxVector.ToFloatArray(normals[normalPoint]);
-                normal += new Vertex(floats[0], floats[1], floats[2]);
+                normal += FxVector.ToVertex(normals[normalPoint]);
             }
 
             normal /= (float)norms.Count;
             normal.Normalize();
 
             NyaPolygon polygon = new NyaPolygon();
-            polygon.Normal = FxVector.FromFloatArray(new[] { normal.X, normal.Y, normal.Z });
+            polygon.Normal = FxVector.FromVertex(normal);
 
             List<short> facePoints = new List<short>();
 
@@ -296,7 +295,7 @@
         /// <returns>Parsed vertex</returns>
         private static FxVector ParseVertex(string line)
         {
-            return FxVector.FromFloatArray(Wavefront.ParseVertexFloat(line));
+            return FxVector.FromArray(Wavefront.ParseVertexFloat(line));
         }
 
         /// <summary>
