@@ -45,8 +45,8 @@
                         new EntityData
                         {
                             Type = this.SelectedEntity,
-                            X = (short)targetTile.X,
-                            Y = (short)targetTile.Y
+                            X = (ushort)targetTile.X,
+                            Y = (ushort)targetTile.Y
                         }
                     }).ToArray();
 

@@ -16,15 +16,21 @@
         public EntityType Type;
 
         /// <summary>
-        /// Entity placement (depth offset, mirror flag and rotation)
+        /// Gets or sets X location
         /// </summary>
         [FieldOrder(1)]
-        public int Placement;
+        public ushort X;
+
+        /// <summary>
+        /// Gets or sets Y location
+        /// </summary>
+        [FieldOrder(2)]
+        public ushort Y;
 
         /// <summary>
         /// Entity direction in radians
         /// </summary>
-        [FieldOrder(2)]
+        [FieldOrder(3)]
         public int Direction;
 
         /// <summary>
@@ -33,38 +39,6 @@
         [ArraySizeStatic(16)]
         [FieldOrder(3)]
         public byte[] Reserved = new byte[16];
-
-        /// <summary>
-        /// Gets or sets depth of the tile (depth has 5 bits)
-        /// </summary>
-        public short X
-        {
-            get
-            {
-                return (short)(this.Placement & 0x00FF);
-            }
-
-            set
-            {
-                this.Placement = (int)((this.Placement & 0xFF00) | (value & 0x00FF));
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets depth of the tile (depth has 5 bits)
-        /// </summary>
-        public short Y
-        {
-            get
-            {
-                return (short)((this.Placement & 0xFF00) >> 8);
-            }
-
-            set
-            {
-                this.Placement = (int)((this.Placement & 0x00FF) | ((value & 0x00FF) << 8));
-            }
-        }
 
         /// <summary>
         /// Type of the entity in this block

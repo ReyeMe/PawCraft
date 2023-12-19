@@ -7,7 +7,10 @@
     using System;
     using System.Collections.Generic;
     using System.Drawing;
+    using System.Globalization;
+    using System.IO;
     using System.Linq;
+    using System.Text;
     using System.Windows.Forms;
     using Color = System.Drawing.Color;
     using SaturnColor = PawCraft.Utils.Types.Color;
@@ -243,6 +246,36 @@
                     vertices[x + 1, y] = new Vertex(x + 1.0f, y, heights[3]);
                 }
             }
+
+            StringBuilder str = new StringBuilder();
+            for (int y = 0; y < LevelData.MapDimensionSize; y++)
+            {
+                for (int x = 0; x < LevelData.MapDimensionSize; x++)
+                {
+                    string x1 = vertices[x, y].X.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x, y].Y.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x, y].Z.ToString(CultureInfo.InvariantCulture);
+
+
+                    string x2 = vertices[x, y + 1].X.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x, y + 1].Y.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x, y + 1].Z.ToString(CultureInfo.InvariantCulture);
+
+                    string x3 = vertices[x + 1, y + 1].X.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x + 1, y + 1].Y.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x + 1, y + 1].Z.ToString(CultureInfo.InvariantCulture);
+
+                    string x4 = vertices[x + 1, y].X.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x + 1, y].Y.ToString(CultureInfo.InvariantCulture) + " " +
+                        vertices[x + 1, y].Z.ToString(CultureInfo.InvariantCulture);
+
+                    str.AppendLine(string.Format("{0} {1} {2}", x1, x2, x3));
+                    str.AppendLine(string.Format("{0} {1} {2}", x1, x4, x3));
+
+                }
+            }
+
+            File.WriteAllText("test.raw", str.ToString());
 
             // Calculate shading
             List<Gourad> shading = new List<Gourad>();

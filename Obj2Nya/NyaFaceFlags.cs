@@ -9,21 +9,27 @@
     public class NyaFaceFlags
     {
         /// <summary>
-        /// Gets or sets base color
-        /// </summary>
-        [FieldOrder(1)]
-        public Color BaseColor { get; set; } = new Color();
-
-        /// <summary>
         /// Gets or sets flags
         /// </summary>
         [FieldOrder(0)]
-        public short Flags { get; set; } = 0x7f;
+        public byte Flags { get; set; } = 0x7f;
+
+        /// <summary>
+        /// Reserverd for future use
+        /// </summary>
+        [FieldOrder(1)]
+        public byte Reserved { get; set; }
+
+        /// <summary>
+        /// Gets or sets base color
+        /// </summary>
+        [FieldOrder(2)]
+        public Color BaseColor { get; set; } = new Color();
 
         /// <summary>
         /// Gets or sets texture assigned to this face
         /// </summary>
-        [FieldOrder(2)]
+        [FieldOrder(3)]
         public int TextureId { get; set; }
 
         /// <summary>
@@ -38,7 +44,7 @@
 
             set
             {
-                this.Flags = (short)((this.Flags & 0xbf) | (value ? 0x40 : 0));
+                this.Flags = (byte)((this.Flags & 0xbf) | (value ? 0x40 : 0));
             }
         }
 
@@ -54,7 +60,7 @@
 
             set
             {
-                this.Flags =  (short)((this.Flags & 0x7f) | (value ? 0x80 : 0));
+                this.Flags =  (byte)((this.Flags & 0x7f) | (value ? 0x80 : 0));
             }
         }
     }

@@ -38,6 +38,19 @@
         {
             this.CurrentLevelFile = filename;
             this.data = Level.LevelData.Open(filename);
+
+            for (int i = 0; i < this.data.Entities.Length; i++)
+            {
+                if (this.data.Entities[i].X >= LevelData.MapDimensionSize)
+                {
+                    this.data.Entities[i].X = (ushort)Math.Min((int)this.data.Entities[i].X, LevelData.MapDimensionSize);
+                }
+
+                if (this.data.Entities[i].Y >= LevelData.MapDimensionSize)
+                {
+                    this.data.Entities[i].Y = (ushort)Math.Min((int)this.data.Entities[i].X, LevelData.MapDimensionSize);
+                }
+            }
         }
 
         /// <summary>

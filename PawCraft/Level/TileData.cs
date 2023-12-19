@@ -24,7 +24,7 @@
         /// Offset to the entity data list
         /// </summary>
         [FieldOrder(2)]
-        public ushort EntityDataOffset;
+        public ushort Dummy;
 
         /// <summary>
         /// Gets or sets depth of the tile (depth has 5 bits)

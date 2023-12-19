@@ -42,20 +42,21 @@
             {
                 Red = red,
                 Green = green,
-                Blue = blue
+                Blue = blue,
+                Transparent = false
             };
         }
 
         /// <summary>
         /// Transparent color
         /// </summary>
-        public static readonly Color TransparentColor = new Color { ARGB = 0 };
+        public static readonly Color TransparentColor = new Color { ARGB = 0x8000 };
 
         /// <summary>
         /// Color data
         /// </summary>
         [FieldOrder(0)]
-        public short ARGB;
+        public ushort ARGB;
 
         /// <summary>
         /// Gets or sets a transparent bit
@@ -64,19 +65,19 @@
         {
             get
             {
-                return (this.ARGB & 0x8000) != 0;
+                return (this.ARGB & 0x8000) == 0;
             }
 
             set
             {
-                this.ARGB = value ? (short)(this.ARGB | 0x8000) : (short)(this.ARGB & 0x7fff);
+                this.ARGB = value ? (ushort)(this.ARGB & 0x7fff) : (ushort)(this.ARGB | 0x8000);
             }
         }
 
         /// <summary>
         /// Gets or sets red channel
         /// </summary>
-        public byte Red
+        public byte Blue
         {
             get
             {
@@ -86,7 +87,7 @@
             set
             {
                 byte channelValue = (byte)((byte)(Color.ColorDepth * (value / (float)byte.MaxValue)) & Color.ColorDepth);
-                this.ARGB = (short)((this.ARGB & 0x83ff) | (channelValue << 10));
+                this.ARGB = (ushort)((this.ARGB & 0x83ff) | (channelValue << 10));
             }
         }
 
@@ -103,14 +104,14 @@
             set
             {
                 byte channelValue = (byte)((byte)(Color.ColorDepth * (value / (float)byte.MaxValue)) & Color.ColorDepth);
-                this.ARGB = (short)((this.ARGB & 0xfc1f) | (channelValue << 5));
+                this.ARGB = (ushort)((this.ARGB & 0xfc1f) | (channelValue << 5));
             }
         }
 
         /// <summary>
         /// Gets or sets blue channel
         /// </summary>
-        public byte Blue
+        public byte Red
         {
             get
             {
@@ -120,7 +121,7 @@
             set
             {
                 byte channelValue = (byte)((byte)(Color.ColorDepth * (value / (float)byte.MaxValue)) & Color.ColorDepth);
-                this.ARGB = (short)((this.ARGB & 0xffe0) | channelValue);
+                this.ARGB = (ushort)((this.ARGB & 0xffe0) | channelValue);
             }
         }
     }
