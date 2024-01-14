@@ -1,6 +1,7 @@
 ﻿namespace PawCraft
 {
     using PawCraft.Level;
+    using PawCraft.Utils;
     using PawCraft.Utils.Types;
     using System;
     using System.Linq;
@@ -21,9 +22,9 @@
             {
                 TileData = Enumerable.Range(0, 400).Select(value => new TileData()).ToArray(),
                 Gourad = Enumerable.Range(0, 400).Select(value => Gourad.FromColor(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue))).ToArray(),
-                Light = new Level.LevelLight { Color = Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue), Direction = new FxVector { Z = 65536 } },
+                Light = new Level.LevelLight { Color = Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue), Direction = new FxVector { Z = 1.0.ToFixed() } },
                 Identifier = new[] { (byte)'U', (byte)'T', (byte)'E', Level.LevelData.VersionNumber },
-                Normals = Enumerable.Range(0, 400).Select(value => new FxVector() { Z = 65536 }).ToArray(),
+                Normals = Enumerable.Range(0, 400).Select(value => new FxVector() { Z = 1.0.ToFixed() }).ToArray(),
                 Entities = new EntityData[0]
             };
 

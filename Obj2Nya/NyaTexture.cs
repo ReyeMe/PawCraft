@@ -20,8 +20,8 @@
         /// <param name="bitmap">Bitmap data</param>
         public NyaTexture(System.Drawing.Bitmap bitmap) : this()
         {
-            this.Width = (short)bitmap.Width;
-            this.Height = (short)bitmap.Height;
+            this.Width = (ushort)bitmap.Width;
+            this.Height = (ushort)bitmap.Height;
             List<Color> colors = new List<Color>();
 
             for (int y = 0; y < this.Height; y++)
@@ -45,16 +45,16 @@
         }
 
         /// <summary>
-        /// GEts image width
+        /// Gets image width
         /// </summary>
         [FieldOrder(0)]
-        public short Width { get; set; }
+        public ushort Width { get; set; }
 
         /// <summary>
         /// Gets image height
         /// </summary>
         [FieldOrder(1)]
-        public short Height { get; set; }
+        public ushort Height { get; set; }
 
         /// <summary>
         /// Gets data length

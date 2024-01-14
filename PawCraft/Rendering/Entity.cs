@@ -15,7 +15,7 @@
     using static PawCraft.EntityModelHandler;
     using static PawCraft.TextureHandler;
 
-    internal class Entity : SceneElement, IRenderable
+    public class Entity : SceneElement, IRenderable
     {
         /// <summary>
         /// Index to entity data array
@@ -116,7 +116,20 @@
             }
 
             EntityData data = this.Data;
-            IRenderableEntity model = this.EntityAtlas.GetModel(data.Type.ToString());
+
+            // Select model
+            IRenderableEntity model;
+
+            if (data.Type == EntityData.EntityType.Model && EntityModelHandler.GetModelName(data.Reserved[1]) != null)
+            {
+                model = this.EntityAtlas.GetModel(EntityModelHandler.GetModelName(data.Reserved[1]));
+            }
+            else
+            {
+                model = this.EntityAtlas.GetModel(data.Type.ToString());
+            }
+
+
             float height = this.Level.GetTileVerticeHeights(data.X, data.Y).Sum() / 4.0f;
             Vertex position = new Vertex(data.X + 0.5f, data.Y + 0.5f, height);
 
@@ -124,6 +137,7 @@
             {
                 gl.PushMatrix();
                 gl.Translate(position.X, position.Y, position.Z);
+                gl.Rotate(data.Direction.FromFixed().FromRadians(), 0.0, 0.0, 1.0);
                 model.Render(gl, FxVector.ToVertex(this.Level.Light.Direction), this.Selected, renderMode);
                 gl.PopMatrix();
 

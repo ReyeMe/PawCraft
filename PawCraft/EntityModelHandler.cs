@@ -20,9 +20,14 @@
     public class EntityModelHandler
     {
         /// <summary>
-        /// OpenGL isntance
+        /// Entities textures folder
         /// </summary>
-        private readonly OpenGL gl;
+        private static readonly string entityModelFolder = Path.Combine(Path.GetDirectoryName(typeof(TextureHandler).Assembly.Location), @"Assets\Models");
+
+        /// <summary>
+        /// All available models
+        /// </summary>
+        private static readonly IEnumerable<string> models;
 
         /// <summary>
         /// All available entities
@@ -30,9 +35,17 @@
         private readonly List<EntityModel> entities;
 
         /// <summary>
-        /// Entities textures folder
+        /// OpenGL isntance
         /// </summary>
-        private static readonly string entityModelFolder = Path.Combine(Path.GetDirectoryName(typeof(TextureHandler).Assembly.Location), @"Assets\Models");
+        private readonly OpenGL gl;
+
+        /// <summary>
+        /// Initializes static members of the <see cref="EntityModelHandler"/> class
+        /// </summary>
+        static EntityModelHandler()
+        {
+            EntityModelHandler.models = Directory.EnumerateFiles(EntityModelHandler.entityModelFolder, "*.nya").OrderBy(file => file);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityModelHandler"/> class
@@ -44,20 +57,10 @@
             this.entities = new List<EntityModel>();
 
             // Entity icons
-            foreach (string modelFile in Directory.EnumerateFiles(EntityModelHandler.entityModelFolder, "*.nya").OrderBy(file => file))
+            foreach (string modelFile in EntityModelHandler.models)
             {
                 this.entities.Add(new EntityModel(modelFile, Path.GetFileNameWithoutExtension(modelFile), gl));
             }
-        }
-
-        /// <summary>
-        /// Get entity model
-        /// </summary>
-        /// <param name="name">Entity name</param>
-        /// <returns>Renderable model</returns>
-        public IRenderableEntity GetModel(string name)
-        {
-            return this.entities.FirstOrDefault(entity => entity.Name == name);
         }
 
         /// <summary>
@@ -76,19 +79,68 @@
         }
 
         /// <summary>
+        /// Get model name
+        /// </summary>
+        /// <param name="index">Model index</param>
+        /// <returns>Get model name by index</returns>
+        public static string GetModelName(int index)
+        {
+            string name = EntityModelHandler.models.ElementAtOrDefault(index);
+
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return null;
+            }
+            else
+            {
+                return Path.GetFileNameWithoutExtension(name);
+            }
+        }
+
+        /// <summary>
+        /// Get names of all loaded entities
+        /// </summary>
+        /// <returns>Model names</returns>
+        public static IEnumerable<string> GetNames()
+        {
+            return EntityModelHandler.models.Select(file => Path.GetFileNameWithoutExtension(file));
+        }
+
+        /// <summary>
+        /// Get entity model
+        /// </summary>
+        /// <param name="name">Entity name</param>
+        /// <returns>Renderable model</returns>
+        public IRenderableEntity GetModel(string name)
+        {
+            return this.entities.FirstOrDefault(entity => entity.Name == name);
+        }
+
+        /// <summary>
         /// Entity model
         /// </summary>
         private class EntityModel : IRenderableEntity
         {
             /// <summary>
-            /// Model textures
+            /// Texture coordinates
             /// </summary>
-            private readonly List<GlTexture> textures = new List<GlTexture>();
+            private static readonly List<float[]> textureCoords = new List<float[]>
+            {
+                new float[] { 0.0f, 1.0f },
+                new float[] { 1.0f, 1.0f },
+                new float[] { 1.0f, 0.0f },
+                new float[] { 0.0f, 0.0f },
+            };
 
             /// <summary>
             /// Bounding cube
             /// </summary>
             private readonly EntityBoundingVolume cube;
+
+            /// <summary>
+            /// Model textures
+            /// </summary>
+            private readonly List<GlTexture> textures = new List<GlTexture>();
 
             /// <summary>
             /// Initializes a new instance of the <see cref="EntityModel"/> class
@@ -132,25 +184,14 @@
             }
 
             /// <summary>
-            /// Gets entity namea
-            /// </summary>
-            public string Name { get; }
-
-            /// <summary>
             /// Gets raw entity mesh
             /// </summary>
             public NyaGroup Mesh { get; }
 
             /// <summary>
-            /// Texture coordinates
+            /// Gets entity namea
             /// </summary>
-            private static readonly List<float[]> textureCoords = new List<float[]>
-            {
-                new float[] { 0.0f, 1.0f },
-                new float[] { 1.0f, 1.0f },
-                new float[] { 1.0f, 0.0f },
-                new float[] { 0.0f, 0.0f },
-            };
+            public string Name { get; }
 
             /// <summary>
             /// Render entity
@@ -197,7 +238,7 @@
 
                         gl.Begin(OpenGL.GL_QUADS);
 
-                        for (int point  = 0; point < 4; point++)
+                        for (int point = 0; point < 4; point++)
                         {
                             gl.Color(color);
                             gl.TexCoord(EntityModel.textureCoords[point]);

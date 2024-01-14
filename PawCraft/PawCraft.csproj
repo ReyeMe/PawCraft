@@ -74,6 +74,15 @@
     <Compile Include="ContainedForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Entities\BaseEntityProperties.cs" />
+    <Compile Include="Entities\EntityPropertyAttribute.cs" />
+    <Compile Include="Entities\ModelProperties.cs" />
+    <Compile Include="EntityEditorWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EntityEditorWindow.Designer.cs">
+      <DependentUpon>EntityEditorWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="EntityModelHandler.cs" />
     <Compile Include="HelpWindow.cs">
       <SubType>Form</SubType>
@@ -157,6 +166,9 @@
     </Compile>
     <EmbeddedResource Include="About.resx">
       <DependentUpon>About.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EntityEditorWindow.resx">
+      <DependentUpon>EntityEditorWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="HelpWindow.resx">
       <DependentUpon>HelpWindow.cs</DependentUpon>

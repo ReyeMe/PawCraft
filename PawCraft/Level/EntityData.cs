@@ -1,7 +1,7 @@
 ﻿namespace PawCraft.Level
 {
     using PawCraft.Utils.Serializer;
-    using PawCraft.Utils.Types;
+    using PawCraft.Entities;
     using System.ComponentModel.DataAnnotations;
 
     /// <summary>
@@ -41,6 +41,14 @@
         public byte[] Reserved = new byte[16];
 
         /// <summary>
+        /// Reset reserved values
+        /// </summary>
+        internal void ResetReservedValues()
+        {
+            this.Reserved = new byte[16];
+        }
+
+        /// <summary>
         /// Type of the entity in this block
         /// </summary>
         public enum EntityType : int
@@ -57,9 +65,10 @@
             PlayerSpawn,
 
             /// <summary>
-            /// Testing tree entity
+            /// Model entity
             /// </summary>
-            Tree,
+            [EntityProperty(typeof(ModelProperties))]
+            Model,
         }
     }
 }

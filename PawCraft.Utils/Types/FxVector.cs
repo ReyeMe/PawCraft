@@ -1,6 +1,7 @@
 ﻿namespace PawCraft.Utils.Types
 {
     using PawCraft.Utils.Serializer;
+    using PawCraft.Utils;
     using SharpGL.SceneGraph;
 
     /// <summary>
@@ -27,11 +28,6 @@
         public int Z;
 
         /// <summary>
-        /// To fixed point conversion
-        /// </summary>
-        private const float Conversion = 65536.0f;
-
-        /// <summary>
         /// Convert from float vector to fixed point vector
         /// </summary>
         /// <param name="data">Floating point vector</param>
@@ -40,9 +36,9 @@
         {
             return new FxVector
             {
-                X = (int)(FxVector.Conversion * data[0]),
-                Y = (int)(FxVector.Conversion * data[1]),
-                Z = (int)(FxVector.Conversion * data[2]),
+                X = data[0].ToFixed(),
+                Y = data[1].ToFixed(),
+                Z = data[2].ToFixed(),
             };
         }
 
@@ -65,9 +61,9 @@
         {
             return new float[]
             {
-                vector.X / FxVector.Conversion,
-                vector.Y / FxVector.Conversion,
-                vector.Z / FxVector.Conversion,
+                (float)vector.X.FromFixed(),
+                (float)vector.Y.FromFixed(),
+                (float)vector.Z.FromFixed(),
             };
         }
 

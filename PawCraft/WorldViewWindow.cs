@@ -86,6 +86,18 @@
         }
 
         /// <summary>
+        /// Entity selection changed handler
+        /// </summary>
+        /// <param name="sender">World view window</param>
+        /// <param name="selectedEntity">Selected entity</param>
+        internal delegate void SelectedEntityChangedHandler(object sender, Entity selectedEntity);
+
+        /// <summary>
+        /// Entity selection changed
+        /// </summary>
+        internal event SelectedEntityChangedHandler SelectedEntityChanged;
+
+        /// <summary>
         /// Shading mode of the level scene
         /// </summary>
         public enum ShadingMode
@@ -132,6 +144,17 @@
         public TextureHandler TextureAtlas { get; private set; }
 
         /// <summary>
+        /// Gets currently selected entity
+        /// </summary>
+        internal Entity SelectedEntity
+        {
+            get
+            {
+                return this.EntityContainer?.Children.OfType<Entity>().FirstOrDefault(entity => entity.Selected);
+            }
+        }
+
+        /// <summary>
         /// Handle keyboard input
         /// </summary>
         /// <param name="key">Changed key</param>
@@ -163,11 +186,9 @@
             }
             else if (key == Keys.Delete && this.ContainsFocus)
             {
-                Entity selected = this.EntityContainer.Children.OfType<Entity>().FirstOrDefault(entity => entity.Selected);
-
-                if (selected != null)
+                if (this.SelectedEntity != null)
                 {
-                    selected.Level.Entities = selected.Level.Entities.Where(entity => entity != selected.Data).ToArray();
+                    this.SelectedEntity.Level.Entities = this.SelectedEntity.Level.Entities.Where(entity => entity != this.SelectedEntity.Data).ToArray();
                     this.EntityContainer.Refresh();
                 }
             }
@@ -414,12 +435,20 @@
 
             if (this.glControl.ClientRectangle.Contains(currentPosition) && ((PawCraftMainWindow)this.MdiParent).ActiveEditorTool == null)
             {
+                Entity lastSelected = this.SelectedEntity;
                 List<SceneElement> element = this.glControl.Scene.DoHitTest(currentPosition.X, currentPosition.Y).ToList();
                 Entity found = element.OfType<Entity>().FirstOrDefault();
 
                 foreach (Entity entity in this.EntityContainer.Children)
                 {
                     entity.Selected = found == entity;
+                }
+
+                Entity selected = this.SelectedEntity;
+
+                if (lastSelected != selected)
+                {
+                    this.SelectedEntityChanged?.Invoke(this, selected);
                 }
             }
         }
