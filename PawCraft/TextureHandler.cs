@@ -58,7 +58,7 @@
 
                 int counter = 0;
 
-                foreach (string textureFile in Directory.EnumerateFiles(TextureHandler.textureFolder, "*.bmp").OrderBy(file => file))
+                foreach (string textureFile in Directory.EnumerateFiles(TextureHandler.textureFolder, "*.tga").OrderBy(file => file))
                 {
                     this.textures.Add(new GlTexture(textureFile, Path.GetFileNameWithoutExtension(textureFile), gl));
 

@@ -28,7 +28,7 @@
                 X = (float)half,
                 Y = -(float)LevelData.MapDimensionSize * 100.0f,
                 Z = 0.0f,
-                Color = Color.Red
+                Color = Color.LightGreen
             });
             
             buffer.Add(new BufferedVertex
@@ -36,7 +36,7 @@
                 X = (float)half,
                 Y = (float)LevelData.MapDimensionSize * 100.0f,
                 Z = 0.0f,
-                Color = Color.Red
+                Color = Color.LightGreen
             });
             
             buffer.Add(new BufferedVertex
@@ -44,7 +44,7 @@
                 X = -(float)LevelData.MapDimensionSize * 100.0f,
                 Y = (float)half,
                 Z = 0.0f,
-                Color = Color.LightGreen
+                Color = Color.Red
             });
             
             buffer.Add(new BufferedVertex
@@ -52,7 +52,7 @@
                 X = (float)LevelData.MapDimensionSize * 100.0f,
                 Y = (float)half,
                 Z = 0.0f,
-                Color = Color.LightGreen
+                Color = Color.Red
             });
             
             for (int x = 0; x <= LevelData.MapDimensionSize; x++)

@@ -19,16 +19,28 @@
         /// <returns>Hit elements</returns>
         public override IEnumerable<SceneElement> DoHitTest(int x, int y)
         {
+            return this.DoHitTest<SceneElement>(x, y);
+        }
+
+        /// <summary>
+        /// Do hit test
+        /// </summary>
+        /// <param name="x">Screen X coordinate</param>
+        /// <param name="y">Screen Y coordinate</param>
+        /// <typeparam name="ElementType">Type of the element to check against</typeparam>
+        /// <returns>Hit elements</returns>
+        public IEnumerable<ElementType> DoHitTest<ElementType>(int x, int y) where ElementType : SceneElement
+        {
             //  Create a result set.
             List<PickResult> resultSet = new List<PickResult>();
 
             //  Create a hitmap.
-            Dictionary<uint, SceneElement> hitMap = new Dictionary<uint, SceneElement>();
+            Dictionary<uint, ElementType> hitMap = new Dictionary<uint, ElementType>();
 
             //	If we don't have a current camera, we cannot hit test.
             if (this.CurrentCamera == null)
             {
-                return new List<SceneElement>();
+                return new List<ElementType>();
             }
 
             //	Create an array that will be the viewport.
@@ -62,7 +74,7 @@
             uint currentName = 1;
 
             //  Render the root for hit testing.
-            this.RenderElementForHitTest(this.SceneContainer, hitMap, ref currentName);
+            this.RenderElementForHitTest<ElementType>(this.SceneContainer, hitMap, ref currentName);
 
             //	Pop matrix and flush commands.
             this.CurrentOpenGLContext.MatrixMode(OpenGL.GL_PROJECTION);
@@ -93,7 +105,7 @@
             }
 
             //  Return the result set.
-            return resultSet.OrderBy(result => result.MinumumZ).Select(result => result.Element);
+            return resultSet.OrderBy(result => result.MinumumZ).Select(result => (ElementType)result.Element);
         }
 
         //
@@ -120,7 +132,8 @@
         /// <param name="sceneElement">The scene element.</param>
         /// <param name="hitMap">The hit map.</param>
         /// <param name="currentName">Current hit name.</param>
-        private void RenderElementForHitTest(SceneElement sceneElement, Dictionary<uint, SceneElement> hitMap, ref uint currentName)
+        /// <typeparam name="ElementType">Type of the element to check against</typeparam>
+        private void RenderElementForHitTest<ElementType>(SceneElement sceneElement, Dictionary<uint, ElementType> hitMap, ref uint currentName) where ElementType : SceneElement
         {
             //  If the element is disabled, we're done.
             //  Also, never hit test the current camera.
@@ -145,13 +158,13 @@
             }
 
             //  If the element is volume bound, render the volume.
-            if (sceneElement is ICustomVolumeBound || sceneElement is IVolumeBound || sceneElement is IRenderable)
+            if ((sceneElement is ICustomVolumeBound || sceneElement is IVolumeBound || sceneElement is IRenderable) && sceneElement is ElementType)
             {
                 if (sceneElement is ICustomVolumeBound)
                 {
                     //  Load and map the name.
                     this.CurrentOpenGLContext.LoadName(currentName);
-                    hitMap[currentName] = sceneElement;
+                    hitMap[currentName] = (ElementType)sceneElement;
 
                     //  Render the bounding volume.
                     ((ICustomVolumeBound)sceneElement).BoundingVolume.Render(this.CurrentOpenGLContext, RenderMode.HitTest);
@@ -163,7 +176,7 @@
                 {
                     //  Load and map the name.
                     this.CurrentOpenGLContext.LoadName(currentName);
-                    hitMap[currentName] = sceneElement;
+                    hitMap[currentName] = (ElementType)sceneElement;
 
                     //  Render the bounding volume.
                     ((IVolumeBound)sceneElement).BoundingVolume.Render(this.CurrentOpenGLContext, RenderMode.HitTest);
@@ -175,7 +188,7 @@
                 {
                     //  Load and map the name.
                     this.CurrentOpenGLContext.LoadName(currentName);
-                    hitMap[currentName] = sceneElement;
+                    hitMap[currentName] = (ElementType)sceneElement;
 
                     //  Render the bounding volume.
                     ((IRenderable)sceneElement).Render(this.CurrentOpenGLContext, RenderMode.HitTest);

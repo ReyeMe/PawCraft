@@ -69,6 +69,12 @@
             /// </summary>
             [EntityProperty(typeof(ModelProperties))]
             Model,
+
+            /// <summary>
+            /// Crate spawner
+            /// </summary>
+            [EntityProperty(typeof(CrateProperties))]
+            Crate
         }
     }
 }

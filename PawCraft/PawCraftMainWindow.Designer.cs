@@ -43,6 +43,8 @@
             this.viewHeightmap = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTextured = new System.Windows.Forms.ToolStripMenuItem();
             this.viewTexturedShading = new System.Windows.Forms.ToolStripMenuItem();
+            this.rotateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.leftToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyboardBindingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -88,52 +90,53 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.newToolStripMenuItem.Text = "&New";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.CreateNewLevel);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(168, 6);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.openToolStripMenuItem.Text = "&Open";
             this.openToolStripMenuItem.Click += new System.EventHandler(this.OpenLevel);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.saveToolStripMenuItem.Text = "&Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveLevel);
             // 
             // saveAsToolStripMenuItem
             // 
             this.saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.saveAsToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.saveAsToolStripMenuItem.Text = "Save &As";
             this.saveAsToolStripMenuItem.Click += new System.EventHandler(this.SaveAsLevel);
             // 
             // toolStripSeparator2
             // 
             this.toolStripSeparator2.Name = "toolStripSeparator2";
-            this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+            this.toolStripSeparator2.Size = new System.Drawing.Size(168, 6);
             // 
             // ImportHeightmap
             // 
             this.ImportHeightmap.Name = "ImportHeightmap";
-            this.ImportHeightmap.Size = new System.Drawing.Size(180, 22);
+            this.ImportHeightmap.Size = new System.Drawing.Size(171, 22);
             this.ImportHeightmap.Text = "&Import heightmap";
             this.ImportHeightmap.Click += new System.EventHandler(this.ImportHeightmapClick);
             // 
             // dToolStripMenuItem
             // 
             this.dToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.viewShading});
+            this.viewShading,
+            this.rotateToolStripMenuItem});
             this.dToolStripMenuItem.Name = "dToolStripMenuItem";
             this.dToolStripMenuItem.Size = new System.Drawing.Size(33, 20);
             this.dToolStripMenuItem.Text = "&3D";
@@ -145,7 +148,7 @@
             this.viewTextured,
             this.viewTexturedShading});
             this.viewShading.Name = "viewShading";
-            this.viewShading.Size = new System.Drawing.Size(99, 22);
+            this.viewShading.Size = new System.Drawing.Size(180, 22);
             this.viewShading.Text = "&View";
             // 
             // viewHeightmap
@@ -176,6 +179,21 @@
             this.viewTexturedShading.Tag = "2";
             this.viewTexturedShading.Text = "Textured and &Shaded";
             this.viewTexturedShading.Click += new System.EventHandler(this.ViewShadingModeChanged);
+            // 
+            // rotateToolStripMenuItem
+            // 
+            this.rotateToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.leftToolStripMenuItem});
+            this.rotateToolStripMenuItem.Name = "rotateToolStripMenuItem";
+            this.rotateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.rotateToolStripMenuItem.Text = "Rotate";
+            // 
+            // leftToolStripMenuItem
+            // 
+            this.leftToolStripMenuItem.Name = "leftToolStripMenuItem";
+            this.leftToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.leftToolStripMenuItem.Text = "90° left";
+            this.leftToolStripMenuItem.Click += new System.EventHandler(this.RotateMapLeft);
             // 
             // helpToolStripMenuItem
             // 
@@ -343,6 +361,8 @@
         private System.Windows.Forms.ToolStripButton lightTool;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem ImportHeightmap;
+        private System.Windows.Forms.ToolStripMenuItem rotateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem leftToolStripMenuItem;
     }
 }
 

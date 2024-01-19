@@ -83,7 +83,7 @@
                         }
 
                         NyaTexture texture = Wavefront.AddFaceWithVertices(face, vertices, normals, texCoords, material, models.Last());
-                        faceFlags.HasMeshEffect = lastMaterial.EndsWith("#");
+                        faceFlags.HasMeshEffect = lastMaterial.EndsWith("_M");
 
                         if (!doNotSetFlag)
                         {

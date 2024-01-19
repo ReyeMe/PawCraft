@@ -3,6 +3,7 @@
     using PawCraft.Level;
     using PawCraft.Tools;
     using PawCraft.ToolsApi;
+    using PawCraft.Utils;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
@@ -644,6 +645,37 @@
             }
 
             return destImage;
+        }
+
+        private void RotateMapLeft(object sender, EventArgs e)
+        {
+            List<Level.TileData> tiles = new List<TileData>(Level.LevelData.MapDimensionSize * Level.LevelData.MapDimensionSize);
+            
+            for (int x = 0; x < Level.LevelData.MapDimensionSize; x++)
+            {
+                for (int y = 0; y < Level.LevelData.MapDimensionSize; y++)
+                {
+                    tiles.Add(this.viewModel.LevelData[x, Level.LevelData.MapDimensionSize - y - 1]);
+                }
+            }
+
+            foreach (Level.EntityData entity in this.viewModel.LevelData.Entities)
+            {
+                ushort x = entity.X;
+                entity.X =(ushort)(Level.LevelData.MapDimensionSize - entity.Y - 1);
+                entity.Y = x;
+
+                double angle = entity.Direction.FromFixed().FromRadians() + 90.0;
+
+                if (angle > 360.0)
+                {
+                    angle -= 360.0;
+                }
+
+                entity.Direction = angle.ToRadians().ToFixed();
+            }
+
+            this.viewModel.LevelData.TileData = tiles.ToArray();
         }
     }
 }

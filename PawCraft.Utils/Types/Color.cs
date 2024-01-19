@@ -50,7 +50,7 @@
         /// <summary>
         /// Transparent color
         /// </summary>
-        public static readonly Color TransparentColor = new Color { ARGB = 0x8000 };
+        public static readonly Color TransparentColor = new Color { ARGB = 0x0000 };
 
         /// <summary>
         /// Color data

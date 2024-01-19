@@ -235,7 +235,8 @@
                                 color[2] * strength
                             };
                         }
-
+                        gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
+                        gl.Enable(OpenGL.GL_BLEND);
                         gl.Begin(OpenGL.GL_QUADS);
 
                         for (int point = 0; point < 4; point++)

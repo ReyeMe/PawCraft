@@ -76,6 +76,7 @@
     </Compile>
     <Compile Include="Entities\BaseEntityProperties.cs" />
     <Compile Include="Entities\EntityPropertyAttribute.cs" />
+    <Compile Include="Entities\CrateProperties.cs" />
     <Compile Include="Entities\ModelProperties.cs" />
     <Compile Include="EntityEditorWindow.cs">
       <SubType>Form</SubType>

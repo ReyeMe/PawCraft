@@ -68,14 +68,14 @@
                     {
                         TgaLib.TgaImage image = new TgaLib.TgaImage(reader);
                         BitmapSource source = image.GetBitmap();
-
                         Bitmap bitmap;
 
                         using (MemoryStream outStream = new MemoryStream())
                         {
                             BitmapEncoder enc = new BmpBitmapEncoder();
 
-                            enc.Frames.Add(BitmapFrame.Create(source));
+                            BitmapFrame frame = BitmapFrame.Create(source);
+                            enc.Frames.Add(frame);
                             enc.Save(outStream);
                             bitmap = new Bitmap(outStream);
                         }

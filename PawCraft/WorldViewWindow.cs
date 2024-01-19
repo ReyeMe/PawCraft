@@ -162,12 +162,14 @@
         /// <returns><see langword="true"/> if handled</returns>
         public bool HandleInput(Keys key, SWI.KeyStates state)
         {
+            bool hasFocus = this.ContainsFocus || (((PawCraftMainWindow)this.MdiParent)?.EntityEditorWindow?.ContainsFocus ?? false);
+
             if (this.movementKeys.ContainsKey(key))
             {
                 this.movementKeys[key] = state == SWI.KeyStates.Down;
                 return true;
             }
-            else if (key == Keys.L && this.ContainsFocus)
+            else if (key == Keys.L && hasFocus)
             {
                 GridLines grid = this.glControl.Scene.SceneContainer.Children.OfType<GridLines>().FirstOrDefault();
 
@@ -176,20 +178,21 @@
                     grid.Visible = !grid.Visible;
                 }
             }
-            else if (key == Keys.F && this.ContainsFocus)
+            else if (key == Keys.F && hasFocus)
             {
                 this.glControl.DrawFPS = !this.glControl.DrawFPS;
             }
-            else if (key == Keys.N && this.ContainsFocus)
+            else if (key == Keys.N && hasFocus)
             {
                 this.ShowTileNormals = !this.ShowTileNormals;
             }
-            else if (key == Keys.Delete && this.ContainsFocus)
+            else if (key == Keys.Delete && hasFocus)
             {
                 if (this.SelectedEntity != null)
                 {
                     this.SelectedEntity.Level.Entities = this.SelectedEntity.Level.Entities.Where(entity => entity != this.SelectedEntity.Data).ToArray();
                     this.EntityContainer.Refresh();
+                    this.SelectedEntityChanged?.Invoke(this, null);
                 }
             }
 
@@ -293,11 +296,11 @@
 
             if (this.movementKeys[Keys.Q])
             {
-                sideUp *= -0.3f * speedMultiplier;
+                sideUp *= 0.3f * speedMultiplier;
             }
             else if (this.movementKeys[Keys.E])
             {
-                sideUp *= 0.3f * speedMultiplier;
+                sideUp *= -0.3f * speedMultiplier;
             }
             else
             {

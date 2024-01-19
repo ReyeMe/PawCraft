@@ -108,17 +108,31 @@
         /// <param name="renderMode">Rendering mode</param>
         public void Render(OpenGL gl, RenderMode renderMode)
         {
-            TileData tile = this.Data;
-            Texture texture = this.TextureAtlas.GetTexture(tile.TextureIndex);
-            WorldViewWindow.ShadingMode shading = this.ParentWindow.CurrentShadingMode;
-
-            List<Vertex> vertices = this.GetVertices().ToList();
-            FxVector vector = ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData.Normals[LevelData.GeTileArrayIndex(this.Location.X, this.Location.Y)];
-            Vertex normalVector = FxVector.ToVertex(vector);
-
             gl.Disable(OpenGL.GL_LIGHTING);
             gl.Disable(OpenGL.GL_LIGHT0);
             gl.Disable(OpenGL.GL_TEXTURE_2D);
+            List<Vertex> vertices = this.GetVertices().ToList();
+
+            if (renderMode == RenderMode.HitTest)
+            {
+                gl.Begin(OpenGL.GL_QUADS);
+
+                for (int point = 0; point < vertices.Count; point++)
+                {
+                    gl.Color(1.0f, 1.0f, 1.0f);
+                    gl.Vertex(vertices[point].X, vertices[point].Y, vertices[point].Z);
+                }
+
+                gl.End();
+
+                return;
+            }
+
+            TileData tile = this.Data;
+            Texture texture = this.TextureAtlas.GetTexture(tile.TextureIndex);
+            WorldViewWindow.ShadingMode shading = this.ParentWindow.CurrentShadingMode;
+            FxVector vector = ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData.Normals[LevelData.GeTileArrayIndex(this.Location.X, this.Location.Y)];
+            Vertex normalVector = FxVector.ToVertex(vector);
 
             if (this.ParentWindow.ShowTileNormals)
             {
