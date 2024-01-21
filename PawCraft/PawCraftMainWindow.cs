@@ -1,9 +1,5 @@
 ﻿namespace PawCraft
 {
-    using PawCraft.Level;
-    using PawCraft.Tools;
-    using PawCraft.ToolsApi;
-    using PawCraft.Utils;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
@@ -14,6 +10,10 @@
     using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
+    using PawCraft.Level;
+    using PawCraft.Tools;
+    using PawCraft.ToolsApi;
+    using PawCraft.Utils;
 
     /// <summary>
     /// Main editor window
@@ -148,6 +148,11 @@
         }
 
         /// <summary>
+        /// Gets entity editor window
+        /// </summary>
+        public ContainedForm EntityEditorWindow { get; private set; } = null;
+
+        /// <summary>
         /// Gets current property window
         /// </summary>
         public ContainedForm PropertyWindow { get; private set; } = null;
@@ -156,11 +161,6 @@
         /// Gets terrain view
         /// </summary>
         public ContainedForm TerrainView { get; }
-
-        /// <summary>
-        /// Gets entity editor window
-        /// </summary>
-        public ContainedForm EntityEditorWindow { get; private set; } = null;
 
         /// <summary>
         /// Application view model
@@ -262,6 +262,38 @@
         }
 
         /// <summary>
+        /// Resize the image to the specified width and height.
+        /// </summary>
+        /// <param name="image">The image to resize.</param>
+        /// <param name="width">The width to resize to.</param>
+        /// <param name="height">The height to resize to.</param>
+        /// <returns>The resized image.</returns>
+        private static Bitmap ResizeImage(Image image, int width, int height)
+        {
+            var destRect = new Rectangle(0, 0, width, height);
+            var destImage = new Bitmap(width, height);
+
+            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
+
+            using (var graphics = Graphics.FromImage(destImage))
+            {
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.CompositingQuality = CompositingQuality.HighQuality;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.SmoothingMode = SmoothingMode.HighQuality;
+                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
+
+                using (var wrapMode = new ImageAttributes())
+                {
+                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
+                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
+                }
+            }
+
+            return destImage;
+        }
+
+        /// <summary>
         /// Show about window
         /// </summary>
         /// <param name="sender">Tool strip button control</param>
@@ -288,6 +320,68 @@
         private string GetSettingPrefix()
         {
             return string.Format("{0}.{1}_", this.GetType().Namespace, "MainWindow");
+        }
+
+        /// <summary>
+        /// Handle changed entity and op/close properties dialog according to that
+        /// </summary>
+        private void HandleEntityEditorDialog()
+        {
+            if (this.EntityEditorWindow != null)
+            {
+                this.EntityEditorWindow.Close();
+                this.EntityEditorWindow = null;
+            }
+
+            // Entity editor tool can be visible on when selecting entitites
+            if (this.activeEditorTool == null)
+            {
+                Rendering.Entity selected = ((WorldViewWindow)this.WorldView).SelectedEntity;
+
+                if (selected != null)
+                {
+                    this.EntityEditorWindow = new EntityEditorWindow(selected) { MdiParent = this };
+                    this.EntityEditorWindow.Show();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Import heightmap
+        /// </summary>
+        /// <param name="sender">Menu button</param>
+        /// <param name="e">Empty event</param>
+        private void ImportHeightmapClick(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "PNG files|*.png|BMP files|*.bmp",
+                RestoreDirectory = true,
+            };
+
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                Image image = Bitmap.FromFile(dialog.FileName);
+
+                if (image.Width != Level.LevelData.MapDimensionSize || image.Height != Level.LevelData.MapDimensionSize)
+                {
+                    Bitmap resized = PawCraftMainWindow.ResizeImage(image, Level.LevelData.MapDimensionSize, Level.LevelData.MapDimensionSize);
+                    image.Dispose();
+                    image = resized;
+                }
+
+                Bitmap bitmap = image is Bitmap ? (Bitmap)image : new Bitmap(image);
+
+                for (int x = 0; x <  Level.LevelData.MapDimensionSize; x++)
+                {
+                    for (int y = 0; y  < Level.LevelData.MapDimensionSize; y++)
+                    {
+                        Color pixel = bitmap.GetPixel(x, y);
+                        double intensity = (pixel.R + pixel.G + pixel.B) / 3.0;
+                        this.viewModel.LevelData.TileData[LevelData.GeTileArrayIndex(x, y)].Depth = (byte)((255.0 / intensity) * 31.0);
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -357,6 +451,37 @@
                 this.Location = new System.Drawing.Point(x, y);
                 this.Size = new System.Drawing.Size(w, h);
             }
+        }
+
+        private void RotateMapLeft(object sender, EventArgs e)
+        {
+            List<Level.TileData> tiles = new List<TileData>(Level.LevelData.MapDimensionSize * Level.LevelData.MapDimensionSize);
+
+            for (int x = 0; x < Level.LevelData.MapDimensionSize; x++)
+            {
+                for (int y = 0; y < Level.LevelData.MapDimensionSize; y++)
+                {
+                    tiles.Add(this.viewModel.LevelData[x, Level.LevelData.MapDimensionSize - y - 1]);
+                }
+            }
+
+            foreach (Level.EntityData entity in this.viewModel.LevelData.Entities)
+            {
+                ushort x = entity.X;
+                entity.X =(ushort)(Level.LevelData.MapDimensionSize - entity.Y - 1);
+                entity.Y = x;
+
+                double angle = entity.Direction.FromFixed().FromRadians() + 90.0;
+
+                if (angle > 360.0)
+                {
+                    angle -= 360.0;
+                }
+
+                entity.Direction = angle.ToRadians().ToFixed();
+            }
+
+            this.viewModel.LevelData.TileData = tiles.ToArray();
         }
 
         /// <summary>
@@ -476,28 +601,6 @@
             this.HandleEntityEditorDialog();
         }
 
-        private void HandleEntityEditorDialog()
-        {
-            if (this.EntityEditorWindow != null)
-            {
-                this.EntityEditorWindow.Close();
-                this.EntityEditorWindow = null;
-            }
-
-            // Entity editor tool can be visible on when selecting entitites
-            if (this.activeEditorTool == null)
-            {
-                Rendering.Entity selected = ((WorldViewWindow)this.WorldView).SelectedEntity;
-
-                if (selected != null)
-                {
-                    this.EntityEditorWindow = new EntityEditorWindow(selected) { MdiParent = this };
-                    this.EntityEditorWindow.Show();
-                }
-            }
-            
-        }
-
         /// <summary>
         /// Error message box
         /// </summary>
@@ -575,107 +678,6 @@
 
             // Set shading mode
             ((WorldViewWindow)this.WorldView).CurrentShadingMode = active;
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void ImportHeightmapClick(object sender, EventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog
-            {
-                Filter = "PNG files|*.png|BMP files|*.bmp",
-                RestoreDirectory = true,
-            };
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-            {
-                Image image = Bitmap.FromFile(dialog.FileName);
-
-                if (image.Width != Level.LevelData.MapDimensionSize || image.Height != Level.LevelData.MapDimensionSize)
-                {
-                    Bitmap resized = PawCraftMainWindow.ResizeImage(image, Level.LevelData.MapDimensionSize, Level.LevelData.MapDimensionSize);
-                    image.Dispose();
-                    image = resized;
-                }
-
-                Bitmap bitmap = image is Bitmap ? (Bitmap)image : new Bitmap(image);
-
-                for (int x = 0; x <  Level.LevelData.MapDimensionSize; x++)
-                {
-                    for (int y = 0; y  < Level.LevelData.MapDimensionSize; y++)
-                    {
-                        Color pixel = bitmap.GetPixel(x, y);
-                        double intensity = (pixel.R + pixel.G + pixel.B) / 3.0;
-                        this.viewModel.LevelData.TileData[LevelData.GeTileArrayIndex(x,y)].Depth = (byte)((255.0 / intensity) * 31.0);
-                    }
-                }
-            }
-        }
-
-        /// <summary>
-        /// Resize the image to the specified width and height.
-        /// </summary>
-        /// <param name="image">The image to resize.</param>
-        /// <param name="width">The width to resize to.</param>
-        /// <param name="height">The height to resize to.</param>
-        /// <returns>The resized image.</returns>
-        private static Bitmap ResizeImage(Image image, int width, int height)
-        {
-            var destRect = new Rectangle(0, 0, width, height);
-            var destImage = new Bitmap(width, height);
-
-            destImage.SetResolution(image.HorizontalResolution, image.VerticalResolution);
-
-            using (var graphics = Graphics.FromImage(destImage))
-            {
-                graphics.CompositingMode = CompositingMode.SourceCopy;
-                graphics.CompositingQuality = CompositingQuality.HighQuality;
-                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                graphics.SmoothingMode = SmoothingMode.HighQuality;
-                graphics.PixelOffsetMode = PixelOffsetMode.HighQuality;
-
-                using (var wrapMode = new ImageAttributes())
-                {
-                    wrapMode.SetWrapMode(WrapMode.TileFlipXY);
-                    graphics.DrawImage(image, destRect, 0, 0, image.Width, image.Height, GraphicsUnit.Pixel, wrapMode);
-                }
-            }
-
-            return destImage;
-        }
-
-        private void RotateMapLeft(object sender, EventArgs e)
-        {
-            List<Level.TileData> tiles = new List<TileData>(Level.LevelData.MapDimensionSize * Level.LevelData.MapDimensionSize);
-            
-            for (int x = 0; x < Level.LevelData.MapDimensionSize; x++)
-            {
-                for (int y = 0; y < Level.LevelData.MapDimensionSize; y++)
-                {
-                    tiles.Add(this.viewModel.LevelData[x, Level.LevelData.MapDimensionSize - y - 1]);
-                }
-            }
-
-            foreach (Level.EntityData entity in this.viewModel.LevelData.Entities)
-            {
-                ushort x = entity.X;
-                entity.X =(ushort)(Level.LevelData.MapDimensionSize - entity.Y - 1);
-                entity.Y = x;
-
-                double angle = entity.Direction.FromFixed().FromRadians() + 90.0;
-
-                if (angle > 360.0)
-                {
-                    angle -= 360.0;
-                }
-
-                entity.Direction = angle.ToRadians().ToFixed();
-            }
-
-            this.viewModel.LevelData.TileData = tiles.ToArray();
         }
     }
 }

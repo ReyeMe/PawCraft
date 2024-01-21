@@ -1,8 +1,8 @@
 ﻿namespace Obj2Nya
 {
+    using System.Collections.Generic;
     using PawCraft.Utils.Serializer;
     using PawCraft.Utils.Types;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Catgirl texture
@@ -12,7 +12,8 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="NyaTexture" class
         /// </summary>
-        public NyaTexture() { }
+        public NyaTexture()
+        { }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NyaTexture" class
@@ -45,10 +46,16 @@
         }
 
         /// <summary>
-        /// Gets image width
+        /// Gets or sets image data
         /// </summary>
-        [FieldOrder(0)]
-        public ushort Width { get; set; }
+        [ArraySizeDynamic("DataLength")]
+        [FieldOrder(2)]
+        public Color[] Data { get; set; }
+
+        /// <summary>
+        /// Gets data length
+        /// </summary>
+        public int DataLength => this.Width * this.Height;
 
         /// <summary>
         /// Gets image height
@@ -57,15 +64,9 @@
         public ushort Height { get; set; }
 
         /// <summary>
-        /// Gets data length
+        /// Gets image width
         /// </summary>
-        public int DataLength => this.Width * this.Height;
-
-        /// <summary>
-        /// Gets or sets image data
-        /// </summary>
-        [ArraySizeDynamic("DataLength")]
-        [FieldOrder(2)]
-        public Color[] Data { get; set; }
+        [FieldOrder(0)]
+        public ushort Width { get; set; }
     }
 }

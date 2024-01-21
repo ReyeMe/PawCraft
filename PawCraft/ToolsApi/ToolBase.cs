@@ -1,10 +1,10 @@
 ﻿namespace PawCraft.ToolsApi
 {
-    using PawCraft.Level;
     using System;
     using System.Drawing;
     using System.Windows.Forms;
     using System.Windows.Input;
+    using PawCraft.Level;
 
     /// <summary>
     /// Tool base class

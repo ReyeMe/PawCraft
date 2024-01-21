@@ -1,10 +1,8 @@
 ﻿namespace PawCraft
 {
-    using PawCraft.Properties;
     using System.Drawing;
     using System.IO;
     using System.Reflection;
-    using System.Resources;
     using System.Windows.Forms;
 
     /// <summary>

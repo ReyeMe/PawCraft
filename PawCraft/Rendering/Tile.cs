@@ -1,17 +1,14 @@
 ﻿namespace PawCraft.Rendering
 {
-    using PawCraft.Level;
-    using PawCraft.Utils.Types;
-    using SharpGL;
-    using SharpGL.Enumerations;
-    using SharpGL.SceneGraph;
-    using SharpGL.SceneGraph.Assets;
-    using SharpGL.SceneGraph.Core;
-    using SharpGL.SceneGraph.Raytracing;
-    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Linq;
+    using PawCraft.Level;
+    using PawCraft.Utils.Types;
+    using SharpGL;
+    using SharpGL.SceneGraph;
+    using SharpGL.SceneGraph.Assets;
+    using SharpGL.SceneGraph.Core;
 
     /// <summary>
     /// Height map tile

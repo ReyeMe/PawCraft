@@ -1,16 +1,16 @@
 ﻿namespace PawCraft
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Linq;
+    using System.Windows.Forms;
     using PawCraft.Level;
     using PawCraft.Rendering;
     using SharpGL;
     using SharpGL.SceneGraph;
     using SharpGL.SceneGraph.Cameras;
     using SharpGL.SceneGraph.Core;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Windows.Forms;
     using SWI = System.Windows.Input;
 
     /// <summary>

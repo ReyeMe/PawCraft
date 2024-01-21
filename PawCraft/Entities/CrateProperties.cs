@@ -1,9 +1,7 @@
 ﻿namespace PawCraft.Entities
 {
-    using PawCraft.Rendering;
-    using System;
     using System.ComponentModel;
-    using System.Linq;
+    using PawCraft.Rendering;
 
     /// <summary>
     /// Model properties
@@ -19,19 +17,21 @@
             // Do nothing
         }
 
-        [Category("Properties")]
-        [DisplayName("Respawn time")]
-        [Description("Respawn time in seconds")]
-        public byte RespawnTime
+        /// <summary>
+        /// Gets or sets a value indicating whether crate can spawn bombs
+        /// </summary>
+        [Category("Can spawn")]
+        [Description("Bombs")]
+        public bool Bombs
         {
             get
             {
-                return this.Entity.Data.Reserved[1];
+                return (this.Entity.Data.Reserved[0] & 0x02) != 0;
             }
 
             set
             {
-                this.Entity.Data.Reserved[1] = value;
+                this.Entity.Data.Reserved[0] = (byte)((this.Entity.Data.Reserved[0] & 0xfd) | (value ? 0x02 : 0x00));
             }
         }
 
@@ -55,24 +55,6 @@
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether crate can spawn bombs
-        /// </summary>
-        [Category("Can spawn")]
-        [Description("Bombs")]
-        public bool Bombs
-        {
-            get
-            {
-                return (this.Entity.Data.Reserved[0] & 0x02) != 0;
-            }
-
-            set
-            {
-                this.Entity.Data.Reserved[0] = (byte)((this.Entity.Data.Reserved[0] & 0xfd) | (value ? 0x02 : 0x00));
-            }
-        }
-
-        /// <summary>
         /// Gets or sets a value indicating whether crate can spawn mines
         /// </summary>
         [Category("Can spawn")]
@@ -88,6 +70,25 @@
             set
             {
                 this.Entity.Data.Reserved[0] = (byte)((this.Entity.Data.Reserved[0] & 0xfb) | (value ? 0x04 : 0x00));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets respawn time in seconds
+        /// </summary>
+        [Category("Properties")]
+        [DisplayName("Respawn time")]
+        [Description("Respawn time in seconds")]
+        public byte RespawnTime
+        {
+            get
+            {
+                return this.Entity.Data.Reserved[1];
+            }
+
+            set
+            {
+                this.Entity.Data.Reserved[1] = value;
             }
         }
     }

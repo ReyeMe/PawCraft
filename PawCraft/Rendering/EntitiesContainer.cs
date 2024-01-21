@@ -8,11 +8,6 @@
     public class EntitiesContainer : SceneElement
     {
         /// <summary>
-        /// Gets parent window
-        /// </summary>
-        public WorldViewWindow ParentWindow { get; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="EntitiesContainer"/> class
         /// </summary>
         /// <param name="parentWindow">World view window</param>
@@ -20,6 +15,11 @@
         {
             this.ParentWindow = parentWindow;
         }
+
+        /// <summary>
+        /// Gets parent window
+        /// </summary>
+        public WorldViewWindow ParentWindow { get; }
 
         /// <summary>
         /// Refresh entities

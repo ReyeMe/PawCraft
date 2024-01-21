@@ -22,7 +22,7 @@
         {
             List<BufferedVertex> buffer = new List<BufferedVertex>();
             float half = (LevelData.MapDimensionSize + 1) / 2.0f;
-            
+
             buffer.Add(new BufferedVertex
             {
                 X = (float)half,
@@ -30,7 +30,7 @@
                 Z = 0.0f,
                 Color = Color.LightGreen
             });
-            
+
             buffer.Add(new BufferedVertex
             {
                 X = (float)half,
@@ -38,7 +38,7 @@
                 Z = 0.0f,
                 Color = Color.LightGreen
             });
-            
+
             buffer.Add(new BufferedVertex
             {
                 X = -(float)LevelData.MapDimensionSize * 100.0f,
@@ -46,7 +46,7 @@
                 Z = 0.0f,
                 Color = Color.Red
             });
-            
+
             buffer.Add(new BufferedVertex
             {
                 X = (float)LevelData.MapDimensionSize * 100.0f,
@@ -54,7 +54,7 @@
                 Z = 0.0f,
                 Color = Color.Red
             });
-            
+
             for (int x = 0; x <= LevelData.MapDimensionSize; x++)
             {
                 buffer.Add(new BufferedVertex
@@ -64,7 +64,7 @@
                     Z = 0.0f,
                     Color = Color.DimGray
                 });
-            
+
                 buffer.Add(new BufferedVertex
                 {
                     X = (float)x,
@@ -73,7 +73,7 @@
                     Color = Color.DimGray
                 });
             }
-            
+
             for (int y = 0; y <= LevelData.MapDimensionSize; y++)
             {
                 buffer.Add(new BufferedVertex
@@ -83,7 +83,7 @@
                     Z = 0.0f,
                     Color = Color.DimGray
                 });
-            
+
                 buffer.Add(new BufferedVertex
                 {
                     X = (float)LevelData.MapDimensionSize,
@@ -92,29 +92,34 @@
                     Color = Color.DimGray
                 });
             }
-            
+
             // Setup VBO
             uint[] result = new uint[1];
             gl.GenBuffers(1, result);
             this.Id = result[0];
-            
+
             this.Count = buffer.Count;
             float[] floatBuffer = buffer.SelectMany(vertex => vertex.ToArray()).ToArray();
             this.Length = floatBuffer.Length;
             this.Size = sizeof(float) * 6;
-            
+
             GCHandle vertsHandle = GCHandle.Alloc(floatBuffer, GCHandleType.Pinned);
             IntPtr vertsPtr = vertsHandle.AddrOfPinnedObject();
-            
+
             gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, this.Id);
             gl.BufferData(OpenGL.GL_ARRAY_BUFFER, this.Size * this.Length, vertsPtr, OpenGL.GL_STATIC_DRAW);
             gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, 0);
             gl.VertexPointer(3, OpenGL.GL_FLOAT, 0, IntPtr.Zero);
             gl.EnableClientState(OpenGL.GL_VERTEX_ARRAY);
-            
+
             vertsHandle.Free();
             this.Visible = true;
         }
+
+        /// <summary>
+        /// Gets or sets visibility
+        /// </summary>
+        public bool Visible { get; set; }
 
         /// <summary>
         /// Gets number of objects
@@ -137,11 +142,6 @@
         private int Size { get; }
 
         /// <summary>
-        /// Gets or sets visibility
-        /// </summary>
-        public bool Visible { get; set; }
-
-        /// <summary>
         /// Render grid lines
         /// </summary>
         /// <param name="gl">OpenGL instance</param>
@@ -153,14 +153,14 @@
                 gl.Disable(OpenGL.GL_LIGHTING);
                 gl.Disable(OpenGL.GL_TEXTURE_2D);
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, this.Id);
-            
+
                 gl.VertexPointer(3, OpenGL.GL_FLOAT, this.Size, IntPtr.Zero);
                 gl.ColorPointer(3, OpenGL.GL_FLOAT, this.Size, new IntPtr(this.Size / 2));
-            
+
                 gl.EnableClientState(OpenGL.GL_VERTEX_ARRAY);
                 gl.EnableClientState(OpenGL.GL_COLOR_ARRAY);
                 gl.DrawArrays(OpenGL.GL_LINES, 0, this.Count);
-            
+
                 gl.DisableClientState(OpenGL.GL_VERTEX_ARRAY);
                 gl.DisableClientState(OpenGL.GL_COLOR_ARRAY);
                 gl.BindBuffer(OpenGL.GL_ARRAY_BUFFER, 0);

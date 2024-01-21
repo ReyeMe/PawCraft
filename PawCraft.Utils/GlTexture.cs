@@ -1,14 +1,8 @@
 ﻿namespace PawCraft.Utils
 {
+    using System.Drawing;
     using SharpGL;
     using SharpGL.SceneGraph.Assets;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.IO;
-    using System.Windows;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Media.Media3D;
-    using System.Windows.Media.TextFormatting;
 
     /// <summary>
     /// Custom texture class

@@ -1,14 +1,27 @@
 ﻿namespace PawCraft.Level
 {
-    using PawCraft.Utils.Serializer;
-    using PawCraft.Entities;
     using System.ComponentModel.DataAnnotations;
+    using PawCraft.Entities;
+    using PawCraft.Utils.Serializer;
 
     /// <summary>
     /// Entity data
     /// </summary>
     public class EntityData
     {
+        /// <summary>
+        /// Entity direction in radians
+        /// </summary>
+        [FieldOrder(3)]
+        public int Direction;
+
+        /// <summary>
+        /// Reserved entity data
+        /// </summary>
+        [ArraySizeStatic(16)]
+        [FieldOrder(3)]
+        public byte[] Reserved = new byte[16];
+
         /// <summary>
         /// Entity type
         /// </summary>
@@ -26,27 +39,6 @@
         /// </summary>
         [FieldOrder(2)]
         public ushort Y;
-
-        /// <summary>
-        /// Entity direction in radians
-        /// </summary>
-        [FieldOrder(3)]
-        public int Direction;
-
-        /// <summary>
-        /// Reserved entity data
-        /// </summary>
-        [ArraySizeStatic(16)]
-        [FieldOrder(3)]
-        public byte[] Reserved = new byte[16];
-
-        /// <summary>
-        /// Reset reserved values
-        /// </summary>
-        internal void ResetReservedValues()
-        {
-            this.Reserved = new byte[16];
-        }
 
         /// <summary>
         /// Type of the entity in this block
@@ -75,6 +67,14 @@
             /// </summary>
             [EntityProperty(typeof(CrateProperties))]
             Crate
+        }
+
+        /// <summary>
+        /// Reset reserved values
+        /// </summary>
+        internal void ResetReservedValues()
+        {
+            this.Reserved = new byte[16];
         }
     }
 }

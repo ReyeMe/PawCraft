@@ -1,15 +1,21 @@
 ﻿namespace Obj2Nya
 {
     using System;
-    using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
+    /// <summary>
+    /// Main program class
+    /// </summary>
     internal class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Program entry
+        /// </summary>
+        /// <param name="args">
+        /// Program arguments
+        /// <para>First is path to the obj file, second is path to nya file</para>
+        /// </param>
+        private static void Main(string[] args)
         {
             if (args.Length == 2)
             {

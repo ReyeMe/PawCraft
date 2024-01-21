@@ -16,6 +16,11 @@
     public class EntityTool : ToolBase
     {
         /// <summary>
+        /// Gets or sets entity container
+        /// </summary>
+        public EntitiesContainer Container { get; set; }
+
+        /// <summary>
         /// Gets or sets currently selected entity
         /// </summary>
         public Level.EntityData.EntityType SelectedEntity { get; set; }
@@ -24,11 +29,6 @@
         /// Gets or sets texture atlas
         /// </summary>
         public TextureHandler TextureAtlas { get; set; }
-
-        /// <summary>
-        /// Gets or sets entity container
-        /// </summary>
-        public EntitiesContainer Container { get; set; }
 
         /// <summary>
         /// Apply tool to the target tile
@@ -65,7 +65,6 @@
         {
             if (this.SelectedEntity != EntityData.EntityType.Empty)
             {
-
             }
         }
 

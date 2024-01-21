@@ -1,11 +1,6 @@
 ﻿namespace PawCraft.Rendering
 {
     using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows.Forms;
     using SharpGL;
     using SharpGL.SceneGraph;
@@ -86,15 +81,15 @@
             this.frameTime = this.stopwatch.Elapsed.TotalMilliseconds;
         }
 
-        /// <summary> 
-		/// Required method for Designer support - do not modify 
+        /// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
         {
-            // 
+            //
             // OpenGLCtrl
-            // 
+            //
             this.Name = "OpenGLCtrl";
         }
     }

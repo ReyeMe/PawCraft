@@ -12,11 +12,6 @@
     public class BaseEntityProperties
     {
         /// <summary>
-        /// Gets entity data
-        /// </summary>
-        protected Entity Entity { get; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="BaseEntityProperties"/> class
         /// </summary>
         /// <param name="entity">Entity data</param>
@@ -61,5 +56,10 @@
                 this.Entity.Data.Direction = Math.Round(value, 2).ToRadians().ToFixed();
             }
         }
+
+        /// <summary>
+        /// Gets entity data
+        /// </summary>
+        protected Entity Entity { get; }
     }
 }

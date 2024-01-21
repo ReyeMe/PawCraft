@@ -1,10 +1,10 @@
 ﻿namespace PawCraft
 {
+    using System;
+    using System.Linq;
     using PawCraft.Level;
     using PawCraft.Utils;
     using PawCraft.Utils.Types;
-    using System;
-    using System.Linq;
 
     /// <summary>
     /// Main view model

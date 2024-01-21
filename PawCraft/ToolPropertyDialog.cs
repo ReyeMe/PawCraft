@@ -1,6 +1,5 @@
 ﻿namespace PawCraft
 {
-    using PawCraft.ToolsApi;
     using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
@@ -8,6 +7,7 @@
     using System.Globalization;
     using System.Reflection;
     using System.Windows.Forms;
+    using PawCraft.ToolsApi;
 
     /// <summary>
     /// Tool property dialog

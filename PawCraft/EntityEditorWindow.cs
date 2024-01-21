@@ -1,13 +1,10 @@
 ﻿namespace PawCraft
 {
+    using System;
+    using System.ComponentModel.DataAnnotations;
+    using System.Reflection;
     using PawCraft.Entities;
     using PawCraft.Rendering;
-    using PawCraft.Utils;
-    using System;
-    using System.ComponentModel;
-    using System.ComponentModel.DataAnnotations;
-    using System.Linq;
-    using System.Reflection;
 
     /// <summary>
     /// Entity editor window
@@ -86,6 +83,5 @@
                 this.properties.SelectedObject = new BaseEntityProperties(this.entity);
             }
         }
-
     }
 }

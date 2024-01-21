@@ -1,22 +1,18 @@
 ﻿namespace Obj2Nya
 {
-    using Obj2Nya;
-    using PawCraft.Utils.Types;
-    using SharpGL;
-    using SharpGL.Version;
     using System;
     using System.Collections.Generic;
-    using System.Drawing.Imaging;
     using System.Drawing;
     using System.Globalization;
     using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices;
-    using SharpGL.SceneGraph.Assets;
-    using SharpGL.SceneGraph.Lighting;
     using PawCraft.Utils;
+    using PawCraft.Utils.Types;
     using SharpGL.SceneGraph;
 
+    /// <summary>
+    /// OBJ import
+    /// </summary>
     public static class Wavefront
     {
         /// <summary>
@@ -111,7 +107,7 @@
             }
 
             // Return group
-            return new NyaGroup 
+            return new NyaGroup
             {
                 MeshCount = models.Count,
                 TextureCount = textures.Count,
@@ -152,7 +148,7 @@
             {
                 FxVector point = vertices[facePoint];
                 int index = mesh.Points.ToList().FindIndex(meshPoint => meshPoint.X == point.X && meshPoint.Y == point.Y && meshPoint.Z == point.Z);
-                
+
                 if (index < 0)
                 {
                     mesh.Points = mesh.Points.Concat(new[] { point }).ToArray();
@@ -271,21 +267,26 @@
         /// </summary>
         /// <param name="line">Vertex line</param>
         /// <returns>Parsed vertex</returns>
-        private static float[] ParseVertexFloat(string line)
+        private static float[] ParseTex(string line)
         {
-            List<float> coordinates = line
+            float[] vt = line
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .Skip(1)
-                .Take(3)
+                .Take(2)
                 .Select(coordinate =>
                 {
                     float value = 0.0f;
                     float.TryParse(coordinate, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out value);
                     return value;
                 })
-                .ToList();
+                .ToArray();
 
-            return coordinates.ToArray();
+            if (vt.Length == 1)
+            {
+                return new[] { vt[0], 0.0f };
+            }
+
+            return vt;
         }
 
         /// <summary>
@@ -303,26 +304,21 @@
         /// </summary>
         /// <param name="line">Vertex line</param>
         /// <returns>Parsed vertex</returns>
-        private static float[] ParseTex(string line)
+        private static float[] ParseVertexFloat(string line)
         {
-            float[] vt = line
+            List<float> coordinates = line
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
                 .Skip(1)
-                .Take(2)
+                .Take(3)
                 .Select(coordinate =>
                 {
                     float value = 0.0f;
                     float.TryParse(coordinate, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out value);
                     return value;
                 })
-                .ToArray();
+                .ToList();
 
-            if (vt.Length == 1)
-            {
-                return new[] { vt[0], 0.0f }; 
-            }
-
-            return vt;
+            return coordinates.ToArray();
         }
 
         /// <summary>

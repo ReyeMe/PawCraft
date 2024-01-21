@@ -1,14 +1,14 @@
 ﻿namespace PawCraft.Tools
 {
-    using PawCraft.Level;
-    using PawCraft.ToolsApi;
-    using SharpGL;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Drawing;
     using System.Linq;
     using System.Windows.Forms;
     using System.Windows.Input;
+    using PawCraft.Level;
+    using PawCraft.ToolsApi;
+    using SharpGL;
 
     /// <summary>
     /// Paint texture onto terrain

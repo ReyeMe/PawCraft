@@ -14,17 +14,17 @@
         public int MeshCount { get; set; }
 
         /// <summary>
-        /// Gets number of textures in the file
-        /// </summary>
-        [FieldOrder(1)]
-        public int TextureCount {  get; set; }
-
-        /// <summary>
         /// Gets or sets meshes in group
         /// </summary>
         [ArraySizeDynamic("MeshCount")]
         [FieldOrder(2)]
         public NyaMesh[] Meshes { get; set; } = new NyaMesh[0];
+
+        /// <summary>
+        /// Gets number of textures in the file
+        /// </summary>
+        [FieldOrder(1)]
+        public int TextureCount { get; set; }
 
         /// <summary>
         /// Gets or sets textures in the file

@@ -19,6 +19,6 @@
         /// </summary>
         [ArraySizeStatic(4)]
         [FieldOrder(1)]
-        public short[] Vertices {  get; set; } = new short[4];
+        public short[] Vertices { get; set; } = new short[4];
     }
 }

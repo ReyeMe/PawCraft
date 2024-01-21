@@ -60,7 +60,7 @@
             this.Controls.Add(this.currentEntity);
             this.Name = "EntityToolDialog";
             this.Size = new System.Drawing.Size(260, 260);
-            this.Load += new System.EventHandler(this.EntityToolDialog_Load);
+            this.Load += new System.EventHandler(this.EntityToolDialogLoad);
             this.ResumeLayout(false);
             this.PerformLayout();
 

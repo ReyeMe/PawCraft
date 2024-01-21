@@ -1,9 +1,9 @@
 ﻿namespace PawCraft.Tools
 {
-    using PawCraft.Level;
-    using PawCraft.ToolsApi;
     using System;
     using System.Drawing;
+    using PawCraft.Level;
+    using PawCraft.ToolsApi;
 
     /// <summary>
     /// Dig a hole

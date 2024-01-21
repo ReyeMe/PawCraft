@@ -256,7 +256,6 @@
                         vertices[x, y].Y.ToString(CultureInfo.InvariantCulture) + " " +
                         vertices[x, y].Z.ToString(CultureInfo.InvariantCulture);
 
-
                     string x2 = vertices[x, y + 1].X.ToString(CultureInfo.InvariantCulture) + " " +
                         vertices[x, y + 1].Y.ToString(CultureInfo.InvariantCulture) + " " +
                         vertices[x, y + 1].Z.ToString(CultureInfo.InvariantCulture);
@@ -271,7 +270,6 @@
 
                     str.AppendLine(string.Format("{0} {1} {2}", x1, x2, x3));
                     str.AppendLine(string.Format("{0} {1} {2}", x1, x4, x3));
-
                 }
             }
 

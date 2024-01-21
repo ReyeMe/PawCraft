@@ -1,5 +1,10 @@
 ﻿namespace PawCraft
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
     using Obj2Nya;
     using PawCraft.Rendering;
     using PawCraft.Utils;
@@ -8,11 +13,6 @@
     using SharpGL;
     using SharpGL.SceneGraph;
     using SharpGL.SceneGraph.Core;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.IO;
-    using System.Linq;
 
     /// <summary>
     /// Model handler

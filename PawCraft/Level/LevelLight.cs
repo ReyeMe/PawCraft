@@ -2,7 +2,6 @@
 {
     using PawCraft.Utils.Serializer;
     using PawCraft.Utils.Types;
-    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Level light data
@@ -10,16 +9,16 @@
     public struct LevelLight
     {
         /// <summary>
-        /// Light direction
-        /// </summary>
-        [FieldOrder(0)]
-        public FxVector Direction;
-
-        /// <summary>
         /// Light color
         /// </summary>
         [FieldOrder(1)]
         public Color Color;
+
+        /// <summary>
+        /// Light direction
+        /// </summary>
+        [FieldOrder(0)]
+        public FxVector Direction;
 
         /// <summary>
         /// Reserved padding

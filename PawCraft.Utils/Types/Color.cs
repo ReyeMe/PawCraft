@@ -1,52 +1,13 @@
 ﻿namespace PawCraft.Utils.Types
 {
-    using PawCraft.Utils.Serializer;
     using System;
-    using System.Runtime.InteropServices;
+    using PawCraft.Utils.Serializer;
 
     /// <summary>
     /// Color definition
     /// </summary>
     public struct Color
     {
-        /// <summary>
-        /// RGB1555 color depth
-        /// </summary>
-        private const short ColorDepth = 0x1f;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct
-        /// </summary>
-        /// <param name="red">Red color channel</param>
-        /// <param name="green">Green color channel</param>
-        /// <param name="blue">Blue color channel</param>
-        public static Color FromRgb(float red, float green, float blue)
-        {
-            if (red < 0.0f || green < 0.0f || blue < 0.0f || red > 1.0f || green > 1.0f || blue > 1.0f)
-            {
-                throw new ArgumentException("Color channel value must be in range of 0.0f-1.0f!");
-            }
-
-            return Color.FromRgb((byte)(red * byte.MaxValue), (byte)(green * byte.MaxValue), (byte)(blue * byte.MaxValue));
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Color"/> struct
-        /// </summary>
-        /// <param name="red">Red color channel</param>
-        /// <param name="green">Green color channel</param>
-        /// <param name="blue">Blue color channel</param>
-        public static Color FromRgb(byte red, byte green, byte blue)
-        {
-            return new Color
-            {
-                Red = red,
-                Green = green,
-                Blue = blue,
-                Transparent = false
-            };
-        }
-
         /// <summary>
         /// Transparent color
         /// </summary>
@@ -59,20 +20,9 @@
         public ushort ARGB;
 
         /// <summary>
-        /// Gets or sets a transparent bit
+        /// RGB1555 color depth
         /// </summary>
-        public bool Transparent
-        {
-            get
-            {
-                return (this.ARGB & 0x8000) == 0;
-            }
-
-            set
-            {
-                this.ARGB = value ? (ushort)(this.ARGB & 0x7fff) : (ushort)(this.ARGB | 0x8000);
-            }
-        }
+        private const short ColorDepth = 0x1f;
 
         /// <summary>
         /// Gets or sets red channel
@@ -123,6 +73,55 @@
                 byte channelValue = (byte)((byte)(Color.ColorDepth * (value / (float)byte.MaxValue)) & Color.ColorDepth);
                 this.ARGB = (ushort)((this.ARGB & 0xffe0) | channelValue);
             }
+        }
+
+        /// <summary>
+        /// Gets or sets a transparent bit
+        /// </summary>
+        public bool Transparent
+        {
+            get
+            {
+                return (this.ARGB & 0x8000) == 0;
+            }
+
+            set
+            {
+                this.ARGB = value ? (ushort)(this.ARGB & 0x7fff) : (ushort)(this.ARGB | 0x8000);
+            }
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Color"/> struct
+        /// </summary>
+        /// <param name="red">Red color channel</param>
+        /// <param name="green">Green color channel</param>
+        /// <param name="blue">Blue color channel</param>
+        public static Color FromRgb(float red, float green, float blue)
+        {
+            if (red < 0.0f || green < 0.0f || blue < 0.0f || red > 1.0f || green > 1.0f || blue > 1.0f)
+            {
+                throw new ArgumentException("Color channel value must be in range of 0.0f-1.0f!");
+            }
+
+            return Color.FromRgb((byte)(red * byte.MaxValue), (byte)(green * byte.MaxValue), (byte)(blue * byte.MaxValue));
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Color"/> struct
+        /// </summary>
+        /// <param name="red">Red color channel</param>
+        /// <param name="green">Green color channel</param>
+        /// <param name="blue">Blue color channel</param>
+        public static Color FromRgb(byte red, byte green, byte blue)
+        {
+            return new Color
+            {
+                Red = red,
+                Green = green,
+                Blue = blue,
+                Transparent = false
+            };
         }
     }
 }

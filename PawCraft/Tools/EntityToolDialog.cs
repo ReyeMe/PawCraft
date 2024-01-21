@@ -11,6 +11,9 @@
     /// </summary>
     public partial class EntityToolDialog : ToolDialogBase<EntityTool>
     {
+        /// <summary>
+        /// Tool instance
+        /// </summary>
         private readonly EntityTool tool;
 
         /// <summary>
@@ -22,9 +25,13 @@
             this.InitializeComponent();
         }
 
-        private void EntityToolDialog_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Dialog was loaded
+        /// </summary>
+        /// <param name="sender">Dialog instance</param>
+        /// <param name="e">Empty event</param>
+        private void EntityToolDialogLoad(object sender, EventArgs e)
         {
-
             tool.TextureAtlas = ((WorldViewWindow)((PawCraftMainWindow)((Form)this.Parent).MdiParent).WorldView).TextureAtlas;
             tool.Container = ((WorldViewWindow)((PawCraftMainWindow)((Form)this.Parent).MdiParent).WorldView).EntityContainer;
 

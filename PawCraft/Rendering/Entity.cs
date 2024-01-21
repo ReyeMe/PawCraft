@@ -1,22 +1,27 @@
 ﻿namespace PawCraft.Rendering
 {
+    using System;
+    using System.Linq;
     using PawCraft.Level;
     using PawCraft.Utils;
     using PawCraft.Utils.Types;
     using SharpGL;
     using SharpGL.SceneGraph;
-    using SharpGL.SceneGraph.Assets;
     using SharpGL.SceneGraph.Core;
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using static PawCraft.EntityModelHandler;
-    using static PawCraft.TextureHandler;
 
     public class Entity : SceneElement, IRenderable
     {
+        /// <summary>
+        /// Color iterator
+        /// </summary>
+        private static float colorIterator = 0.0f;
+
+        /// <summary>
+        /// Color iterator step
+        /// </summary>
+        private static float colorIteratorStep = 0.1f;
+
         /// <summary>
         /// Index to entity data array
         /// </summary>
@@ -31,49 +36,6 @@
         {
             this.ParentWindow = worldView;
             this.entityDataIndex = dataIndex;
-        }
-
-        /// <summary>
-        /// Gets parent window
-        /// </summary>
-        public WorldViewWindow ParentWindow { get; }
-
-        /// <summary>
-        /// Gets texture atlas
-        /// </summary>
-        public TextureHandler TextureAtlas
-        {
-            get
-            {
-                return this.ParentWindow.TextureAtlas;
-            }
-        }
-
-        /// <summary>
-        /// Gets entity atlas
-        /// </summary>
-        public EntityModelHandler EntityAtlas
-        {
-            get
-            {
-                return this.ParentWindow.EntityAtlas;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether entity is selected
-        /// </summary>
-        public bool Selected { get; set; }
-
-        /// <summary>
-        /// Gets level data
-        /// </summary>
-        public LevelData Level
-        {
-            get
-            {
-                return ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData;
-            }
         }
 
         /// <summary>
@@ -93,14 +55,47 @@
         }
 
         /// <summary>
-        /// Color iterator
+        /// Gets entity atlas
         /// </summary>
-        private static float colorIterator = 0.0f;
+        public EntityModelHandler EntityAtlas
+        {
+            get
+            {
+                return this.ParentWindow.EntityAtlas;
+            }
+        }
 
         /// <summary>
-        /// Color iterator step
+        /// Gets level data
         /// </summary>
-        private static float colorIteratorStep = 0.1f;
+        public LevelData Level
+        {
+            get
+            {
+                return ((PawCraftMainWindow)this.ParentWindow.MdiParent).ViewModel.LevelData;
+            }
+        }
+
+        /// <summary>
+        /// Gets parent window
+        /// </summary>
+        public WorldViewWindow ParentWindow { get; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether entity is selected
+        /// </summary>
+        public bool Selected { get; set; }
+
+        /// <summary>
+        /// Gets texture atlas
+        /// </summary>
+        public TextureHandler TextureAtlas
+        {
+            get
+            {
+                return this.ParentWindow.TextureAtlas;
+            }
+        }
 
         /// <summary>
         /// Render object
@@ -128,7 +123,6 @@
             {
                 model = this.EntityAtlas.GetModel(data.Type.ToString());
             }
-
 
             float height = this.Level.GetTileVerticeHeights(data.X, data.Y).Sum() / 4.0f;
             Vertex position = new Vertex(data.X + 0.5f, data.Y + 0.5f, height);

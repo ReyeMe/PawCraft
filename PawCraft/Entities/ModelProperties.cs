@@ -64,14 +64,13 @@
         public class ModelSelector : StringConverter
         {
             /// <summary>
-            /// Show combobox
+            /// Gets combobox values
             /// </summary>
             /// <param name="context">Type context</param>
-            /// <returns>True to show combobox</returns>
-            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
+            /// <returns>Combobox values</returns>
+            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
             {
-                // True means show a combobox
-                return true;
+                return new StandardValuesCollection(EntityModelHandler.GetNames().ToArray());
             }
 
             /// <summary>
@@ -86,13 +85,14 @@
             }
 
             /// <summary>
-            /// Gets combobox values
+            /// Show combobox
             /// </summary>
             /// <param name="context">Type context</param>
-            /// <returns>Combobox values</returns>
-            public override StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
+            /// <returns>True to show combobox</returns>
+            public override bool GetStandardValuesSupported(ITypeDescriptorContext context)
             {
-                return new StandardValuesCollection(EntityModelHandler.GetNames().ToArray());
+                // True means show a combobox
+                return true;
             }
         }
     }

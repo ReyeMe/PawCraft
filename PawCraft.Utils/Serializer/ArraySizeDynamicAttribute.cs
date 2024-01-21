@@ -12,8 +12,8 @@
         /// Initializes a new instance of the <see cref="ArraySizeDynamicAttribute"/> class
         /// </summary>
         /// <param name="propertyName">Name of the property indicating size of the array</param>
-        public ArraySizeDynamicAttribute(string propertyName) 
-        { 
+        public ArraySizeDynamicAttribute(string propertyName)
+        {
             this.PropertyName = propertyName;
         }
 

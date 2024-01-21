@@ -1,10 +1,6 @@
 ﻿namespace PawCraft.Entities
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     /// <summary>
     /// Specify what dialog to use for the entity settings

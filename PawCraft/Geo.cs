@@ -1,8 +1,8 @@
 ﻿namespace PawCraft
 {
-    using SharpGL.SceneGraph;
     using System;
     using System.Windows.Media.Media3D;
+    using SharpGL.SceneGraph;
 
     /// <summary>
     /// Utility stuff

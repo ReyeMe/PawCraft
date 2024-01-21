@@ -1,5 +1,11 @@
 ﻿namespace PawCraft.Tools
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Drawing;
+    using System.Globalization;
+    using System.Linq;
+    using System.Windows.Forms;
     using PawCraft.Rendering;
     using PawCraft.ToolsApi;
     using SharpGL;
@@ -9,13 +15,6 @@
     using SharpGL.SceneGraph.Cameras;
     using SharpGL.SceneGraph.Core;
     using SharpGL.SceneGraph.Effects;
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Globalization;
-    using System.Linq;
-    using System.Windows.Forms;
-    using System.Windows.Forms.VisualStyles;
 
     /// <summary>
     /// Paint tool dialog

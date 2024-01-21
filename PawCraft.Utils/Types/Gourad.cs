@@ -1,15 +1,21 @@
 ﻿namespace PawCraft.Utils.Types
 {
-    using PawCraft.Utils.Serializer;
     using System;
     using System.Linq;
-    using System.Runtime.InteropServices;
+    using PawCraft.Utils.Serializer;
 
     /// <summary>
     /// Gourad color
     /// </summary>
     public struct Gourad
     {
+        /// <summary>
+        /// Gourad color
+        /// </summary>
+        [ArraySizeStatic(4)]
+        [FieldOrder(0)]
+        public Color[] Colors;
+
         /// <summary>
         /// Create gourad from single color
         /// </summary>
@@ -41,12 +47,5 @@
                 Colors = colors
             };
         }
-
-        /// <summary>
-        /// Gourad color
-        /// </summary>
-        [ArraySizeStatic(4)]
-        [FieldOrder(0)]
-        public Color[] Colors;
     }
 }

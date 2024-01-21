@@ -1,13 +1,11 @@
 ﻿namespace PawCraft.Level
 {
-    using PawCraft.Utils.Serializer;
-    using PawCraft.Utils.Types;
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices;
+    using PawCraft.Utils.Serializer;
+    using PawCraft.Utils.Types;
 
     /// <summary>
     /// Level map data
@@ -15,34 +13,27 @@
     public class LevelData
     {
         /// <summary>
-        /// Current version number
-        /// </summary>
-        public const byte VersionNumber = 0;
-
-        /// <summary>
         /// Size of both map dimensions
         /// </summary>
         public const int MapDimensionSize = 20;
 
         /// <summary>
-        /// File identifier
+        /// Current version number
         /// </summary>
-        [ArraySizeStatic(4)]
-        [FieldOrder(0)]
-        public byte[] Identifier;
+        public const byte VersionNumber = 0;
 
         /// <summary>
-        /// Tile data
+        /// Level entities
         /// </summary>
-        [ArraySizeStatic(400)]
-        [FieldOrder(1)]
-        public TileData[] TileData;
+        [ArraySizeDynamic("EntityCount")]
+        [FieldOrder(6)]
+        public EntityData[] Entities;
 
         /// <summary>
-        /// Level light
+        /// Number of entities in the level
         /// </summary>
-        [FieldOrder(2)]
-        public LevelLight Light;
+        [FieldOrder(5)]
+        public int EntityCount;
 
         /// <summary>
         /// Entity data table
@@ -52,6 +43,19 @@
         public Gourad[] Gourad;
 
         /// <summary>
+        /// File identifier
+        /// </summary>
+        [ArraySizeStatic(4)]
+        [FieldOrder(0)]
+        public byte[] Identifier;
+
+        /// <summary>
+        /// Level light
+        /// </summary>
+        [FieldOrder(2)]
+        public LevelLight Light;
+
+        /// <summary>
         /// Normal vectors
         /// </summary>
         [ArraySizeStatic(400)]
@@ -59,17 +63,11 @@
         public FxVector[] Normals;
 
         /// <summary>
-        /// Number of entities in the level
+        /// Tile data
         /// </summary>
-        [FieldOrder(5)]
-        public int EntityCount;
-
-        /// <summary>
-        /// Level entities
-        /// </summary>
-        [ArraySizeDynamic("EntityCount")]
-        [FieldOrder(6)]
-        public EntityData[] Entities;
+        [ArraySizeStatic(400)]
+        [FieldOrder(1)]
+        public TileData[] TileData;
 
         /// <summary>
         /// Gets or sets tile data of specific tile
@@ -87,6 +85,49 @@
             set
             {
                 this.TileData[LevelData.GeTileArrayIndex(x, y)] = value;
+            }
+        }
+
+        /// <summary>
+        /// Get index in tile array
+        /// </summary>
+        /// <param name="x">X position</param>
+        /// <param name="y">Y position</param>
+        /// <returns><c>-1</c> if out of range</returns>
+        public static int GeTileArrayIndex(int x, int y)
+        {
+            if (x < 0 || y < 0 || y >= LevelData.MapDimensionSize || x >= LevelData.MapDimensionSize)
+            {
+                return -1;
+            }
+
+            return x + (y * LevelData.MapDimensionSize);
+        }
+
+        /// <summary>
+        /// Open file
+        /// </summary>
+        /// <param name="filename">Path and full name of the file with extension</param>
+        /// <returns>Level data</returns>
+        /// <exception cref="FileLoadException">Unknown file format</exception>
+        /// <exception cref="EndOfStreamException">Unexpected EOF</exception>
+        public static LevelData Open(string filename)
+        {
+            using (FileStream stream = File.Open(filename, FileMode.Open))
+            {
+                // Check header of the file
+                byte[] identifier = new byte[4];
+
+                if (stream.Read(identifier, 0, identifier.Length) != identifier.Length ||
+                    !(identifier[0] == 'U' && identifier[1] == 'T' && identifier[2] == 'E' && identifier[3] == LevelData.VersionNumber))
+                {
+                    throw new FileLoadException("Unknown format!");
+                }
+
+                // Seek back to start
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return (LevelData)CustomMarshal.MarshalAsObject(stream, typeof(LevelData));
             }
         }
 
@@ -119,22 +160,6 @@
         }
 
         /// <summary>
-        /// Get index in tile array
-        /// </summary>
-        /// <param name="x">X position</param>
-        /// <param name="y">Y position</param>
-        /// <returns><c>-1</c> if out of range</returns>
-        public static int GeTileArrayIndex(int x, int y)
-        {
-            if (x < 0 || y < 0 || y >= LevelData.MapDimensionSize || x >= LevelData.MapDimensionSize)
-            {
-                return -1;
-            }
-
-            return x + (y * LevelData.MapDimensionSize);
-        }
-
-        /// <summary>
         /// Write to a file file
         /// </summary>
         /// <param name="filename">Path and full name of the file with extension</param>
@@ -148,33 +173,6 @@
             using (FileStream stream = File.Open(filename, FileMode.Create))
             {
                 stream.Write(data.ToArray(), 0, data.Count);
-            }
-        }
-
-        /// <summary>
-        /// Open file
-        /// </summary>
-        /// <param name="filename">Path and full name of the file with extension</param>
-        /// <returns>Level data</returns>
-        /// <exception cref="FileLoadException">Unknown file format</exception>
-        /// <exception cref="EndOfStreamException">Unexpected EOF</exception>
-        public static LevelData Open(string filename)
-        {
-            using (FileStream stream = File.Open(filename, FileMode.Open))
-            {
-                // Check header of the file
-                byte[] identifier = new byte[4];
-
-                if (stream.Read(identifier, 0, identifier.Length) != identifier.Length ||
-                    !(identifier[0] == 'U' && identifier[1] == 'T' && identifier[2] == 'E' && identifier[3] == LevelData.VersionNumber))
-                {
-                    throw new FileLoadException("Unknown format!");
-                }
-
-                // Seek back to start
-                stream.Seek(0, SeekOrigin.Begin);
-
-                return (LevelData)CustomMarshal.MarshalAsObject(stream, typeof(LevelData));
             }
         }
     }

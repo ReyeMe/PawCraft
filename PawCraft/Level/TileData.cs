@@ -1,7 +1,6 @@
 ﻿namespace PawCraft.Level
 {
     using PawCraft.Utils.Serializer;
-    using System.Runtime.InteropServices;
 
     /// <summary>
     /// Tile data
@@ -15,16 +14,42 @@
         public byte DepthAndRotationAndMirror;
 
         /// <summary>
+        /// Offset to the entity data list
+        /// </summary>
+        [FieldOrder(2)]
+        public ushort Dummy;
+
+        /// <summary>
         /// Index of a texture to use
         /// </summary>
         [FieldOrder(1)]
         public byte TextureIndex;
 
         /// <summary>
-        /// Offset to the entity data list
+        /// Texture rotation state
         /// </summary>
-        [FieldOrder(2)]
-        public ushort Dummy;
+        public enum RotationState : byte
+        {
+            /// <summary>
+            /// Do not rotate
+            /// </summary>
+            Rotate0 = 0,
+
+            /// <summary>
+            /// Rotate by 90 degrees
+            /// </summary>
+            Rotate90 = 1,
+
+            /// <summary>
+            /// Rotate by 180 degrees
+            /// </summary>
+            Rotate180 = 2,
+
+            /// <summary>
+            /// Rotate by 270 degrees
+            /// </summary>
+            Rotate270 = 3
+        }
 
         /// <summary>
         /// Gets or sets depth of the tile (depth has 5 bits)
@@ -79,32 +104,6 @@
             {
                 this.DepthAndRotationAndMirror = (byte)((this.DepthAndRotationAndMirror & 0x3F) | ((byte)value << 6));
             }
-        }
-
-        /// <summary>
-        /// Texture rotation state
-        /// </summary>
-        public enum RotationState : byte
-        {
-            /// <summary>
-            /// Do not rotate
-            /// </summary>
-            Rotate0 = 0,
-
-            /// <summary>
-            /// Rotate by 90 degrees
-            /// </summary>
-            Rotate90 = 1,
-
-            /// <summary>
-            /// Rotate by 180 degrees
-            /// </summary>
-            Rotate180 = 2,
-
-            /// <summary>
-            /// Rotate by 270 degrees
-            /// </summary>
-            Rotate270 = 3
         }
     }
 }

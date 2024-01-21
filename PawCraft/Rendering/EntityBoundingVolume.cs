@@ -1,13 +1,11 @@
 ﻿namespace PawCraft.Rendering
 {
-    using SharpGL;
-    using SharpGL.SceneGraph;
-    using SharpGL.SceneGraph.Core;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using SharpGL;
+    using SharpGL.SceneGraph;
+    using SharpGL.SceneGraph.Core;
 
     internal class EntityBoundingVolume : IRenderable
     {
@@ -30,13 +28,10 @@
         private Vertex llh;
         private Vertex lll;
 
-        //
-        // Summary:
-        //     Creates the volume from vertices.
-        //
-        // Parameters:
-        //   vertices:
-        //     The vertices.
+        /// <summary>
+        /// Creates the volume from vertices.
+        /// </summary>
+        /// <param name="vertices">The vertices.</param>
         public void FromVertices(IEnumerable<Vertex> vertices)
         {
             List<Vertex> list = vertices.ToList();
@@ -80,16 +75,11 @@
             }
         }
 
-        //
-        // Summary:
-        //     Render to the provided instance of OpenGL.
-        //
-        // Parameters:
-        //   gl:
-        //     The OpenGL instance.
-        //
-        //   renderMode:
-        //     The render mode.
+        /// <summary>
+        /// Render to the provided instance of OpenGL.
+        /// </summary>
+        /// <param name="gl">The OpenGL instance.</param>
+        /// <param name="renderMode">The render mode.</param>
         public void Render(OpenGL gl, RenderMode renderMode)
         {
             EntityBoundingVolume.colorIterator += EntityBoundingVolume.colorIteratorStep;

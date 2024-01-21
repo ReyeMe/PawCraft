@@ -1,7 +1,7 @@
 ﻿namespace PawCraft.Utils.Types
 {
-    using PawCraft.Utils.Serializer;
     using PawCraft.Utils;
+    using PawCraft.Utils.Serializer;
     using SharpGL.SceneGraph;
 
     /// <summary>

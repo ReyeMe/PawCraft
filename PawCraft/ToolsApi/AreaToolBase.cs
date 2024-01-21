@@ -1,13 +1,13 @@
 ﻿namespace PawCraft.ToolsApi
 {
-    using PawCraft.Level;
-    using SharpGL;
-    using SharpGL.SceneGraph;
     using System;
     using System.ComponentModel;
     using System.ComponentModel.DataAnnotations;
     using System.Drawing;
     using System.Linq;
+    using PawCraft.Level;
+    using SharpGL;
+    using SharpGL.SceneGraph;
 
     /// <summary>
     /// Area tool base

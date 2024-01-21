@@ -1,11 +1,11 @@
 ﻿namespace PawCraft.Tools
 {
+    using System;
+    using System.Drawing;
     using PawCraft.Level;
     using PawCraft.ToolsApi;
     using SharpGL;
     using SharpGL.SceneGraph;
-    using System;
-    using System.Drawing;
     using Color = Utils.Types.Color;
 
     /// <summary>

@@ -1,13 +1,13 @@
 ﻿namespace PawCraft
 {
-    using PawCraft.Properties;
-    using PawCraft.Utils;
-    using SharpGL;
-    using SharpGL.SceneGraph.Assets;
     using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using PawCraft.Properties;
+    using PawCraft.Utils;
+    using SharpGL;
+    using SharpGL.SceneGraph.Assets;
 
     /// <summary>
     /// Texture handler
@@ -15,24 +15,24 @@
     public class TextureHandler : IDisposable
     {
         /// <summary>
-        /// Textures folder
-        /// </summary>
-        private static readonly string textureFolder = Path.Combine(Path.GetDirectoryName(typeof(TextureHandler).Assembly.Location), @"Assets\Textures");
-
-        /// <summary>
         /// Entities textures folder
         /// </summary>
         private static readonly string entityTextureFolder = Path.Combine(Path.GetDirectoryName(typeof(TextureHandler).Assembly.Location), @"Assets\Icons");
 
         /// <summary>
-        /// Loaded textures
+        /// Textures folder
         /// </summary>
-        private readonly List<GlTexture> textures = new List<GlTexture>();
+        private static readonly string textureFolder = Path.Combine(Path.GetDirectoryName(typeof(TextureHandler).Assembly.Location), @"Assets\Textures");
 
         /// <summary>
         /// Loaded entity textures
         /// </summary>
         private readonly List<GlTexture> entityTextures = new List<GlTexture>();
+
+        /// <summary>
+        /// Loaded textures
+        /// </summary>
+        private readonly List<GlTexture> textures = new List<GlTexture>();
 
         /// <summary>
         /// Initializes a new isntance of the <see cref="TextureHandler"/> class
@@ -114,21 +114,6 @@
         /// <summary>
         /// Get loaded texture
         /// </summary>
-        /// <param name="index">Texture index</param>
-        /// <returns>Loaded texture</returns>
-        public GlTexture GetTexture(int index)
-        {
-            if (index >= 0 && index < this.textures.Count)
-            {
-                return this.textures[index];
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Get loaded texture
-        /// </summary>
         /// <param name="name">Texture name</param>
         /// <returns>Loaded texture</returns>
         public GlTexture GetEntityTexture(string name)
@@ -141,6 +126,21 @@
             }
 
             return found;
+        }
+
+        /// <summary>
+        /// Get loaded texture
+        /// </summary>
+        /// <param name="index">Texture index</param>
+        /// <returns>Loaded texture</returns>
+        public GlTexture GetTexture(int index)
+        {
+            if (index >= 0 && index < this.textures.Count)
+            {
+                return this.textures[index];
+            }
+
+            return null;
         }
 
         /// <summary>

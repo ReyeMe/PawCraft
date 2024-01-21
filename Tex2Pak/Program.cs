@@ -1,18 +1,25 @@
 ﻿namespace Tex2Pak
 {
-    using Obj2Nya;
-    using PawCraft.Utils;
-    using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.IO;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
+    using Obj2Nya;
+    using PawCraft.Utils;
 
+    /// <summary>
+    /// Main program class
+    /// </summary>
     internal class Program
     {
-        static void Main(string[] args)
+        /// <summary>
+        /// Main program entry
+        /// </summary>
+        /// <param name="args">
+        /// Program agrs
+        /// <para>First is path to the folder with png/bmp/tga textures, second is path to the pak file</para>
+        /// </param>
+        private static void Main(string[] args)
         {
             if (args.Length == 2)
             {

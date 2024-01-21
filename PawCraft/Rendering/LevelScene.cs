@@ -1,10 +1,10 @@
 ﻿namespace PawCraft.Rendering
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using SharpGL;
     using SharpGL.SceneGraph.Cameras;
     using SharpGL.SceneGraph.Core;
-    using System.Collections.Generic;
-    using System.Linq;
 
     /// <summary>
     /// Level scene
@@ -108,10 +108,10 @@
             return resultSet.OrderBy(result => result.MinumumZ).Select(result => (ElementType)result.Element);
         }
 
-        //
-        // Summary:
-        //     This function draws all of the objects in the scene (i.e. every quadric in the
-        //     quadrics arraylist etc).
+        /// <summary>
+        /// This function draws all of the objects in the scene (i.e. every quadric in the quadrics arraylist etc).
+        /// </summary>
+        /// <param name="camera"></param>
         public override void Draw(Camera camera = null)
         {
             if (camera == null)
