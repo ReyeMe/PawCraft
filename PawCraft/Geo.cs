@@ -37,7 +37,7 @@
         public static float GetAngleTo(this Vertex vector, Vertex other)
         {
             Vertex cross = vector.VectorProduct(other);
-            float dot = other.ScalarProduct(vector);
+            float dot = vector.ScalarProduct(other);
             return (float)Math.Atan2(cross.Magnitude(), dot);
         }
 

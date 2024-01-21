@@ -1,6 +1,9 @@
 ﻿namespace PawCraft.Utils
 {
     using System;
+    using System.Drawing;
+    using System.IO;
+    using System.Windows.Media.Imaging;
 
     /// <summary>
     /// Help methods
@@ -70,6 +73,43 @@
         public static double ToRadians(this double value)
         {
             return value * (Math.PI / 180.0);
+        }
+
+        /// <summary>
+        /// Gets bitmap image from file
+        /// </summary>
+        /// <param name="file">File path</param>
+        /// <returns>Bitmap image</returns>
+        public static Bitmap GetBitmap(string file)
+        {
+            if (file.ToLower().EndsWith(".tga"))
+            {
+                using (Stream fileStream = File.OpenRead(file))
+                {
+                    using (BinaryReader reader = new BinaryReader(fileStream))
+                    {
+                        TgaLib.TgaImage image = new TgaLib.TgaImage(reader);
+                        BitmapSource source = image.GetBitmap();
+                        Bitmap bitmap;
+
+                        using (MemoryStream outStream = new MemoryStream())
+                        {
+                            BitmapEncoder enc = new BmpBitmapEncoder();
+
+                            BitmapFrame frame = BitmapFrame.Create(source);
+                            enc.Frames.Add(frame);
+                            enc.Save(outStream);
+                            bitmap = new Bitmap(outStream);
+                        }
+
+                        return bitmap;
+                    }
+                }
+            }
+            else
+            {
+                return new Bitmap(file);
+            }
         }
     }
 }
