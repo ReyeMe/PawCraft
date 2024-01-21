@@ -108,7 +108,7 @@
             this.date.Name = "date";
             this.date.Size = new System.Drawing.Size(31, 13);
             this.date.TabIndex = 3;
-            this.date.Text = "2023";
+            this.date.Text = "2024";
             // 
             // About
             // 
