@@ -76,11 +76,11 @@
 
             if (properties != null)
             {
-                this.properties.SelectedObject = Activator.CreateInstance(properties.Dialog, new[] { this.entity });
+                this.properties.SelectedObject = Activator.CreateInstance(properties.Dialog, new[] { this.entity.Data });
             }
             else
             {
-                this.properties.SelectedObject = new BaseEntityProperties(this.entity);
+                this.properties.SelectedObject = new BaseEntityProperties(this.entity.Data);
             }
         }
     }

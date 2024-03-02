@@ -1,5 +1,6 @@
 ﻿namespace PawCraft.Entities
 {
+    using PawCraft.Level;
     using PawCraft.Rendering;
     using System;
     using System.ComponentModel;
@@ -14,9 +15,9 @@
         /// Initializes a new instance of the <see cref="ModelProperties"/> class
         /// </summary>
         /// <param name="entity">Entity data</param>
-        public ModelProperties(Entity entity) : base(entity)
+        public ModelProperties(EntityData entity) : base(entity)
         {
-            // Do nothing
+            this.HasCollisions = true;
         }
 
         /// <summary>
@@ -28,12 +29,12 @@
         {
             get
             {
-                return this.Entity.Data.Reserved[0] != 0;
+                return this.Entity.Reserved[0] != 0;
             }
 
             set
             {
-                this.Entity.Data.Reserved[0] = (byte)(value ? 1 : 0);
+                this.Entity.Reserved[0] = (byte)(value ? 1 : 0);
             }
         }
 
@@ -48,13 +49,13 @@
         {
             get
             {
-                return EntityModelHandler.GetModelName(this.Entity.Data.Reserved[1]);
+                return EntityModelHandler.GetModelName(this.Entity.Reserved[1]);
             }
 
             set
             {
                 int index = EntityModelHandler.GetNames().ToList().IndexOf(value);
-                this.Entity.Data.Reserved[1] = (byte)Math.Max(Math.Min(index, byte.MaxValue), 0);
+                this.Entity.Reserved[1] = (byte)Math.Max(Math.Min(index, byte.MaxValue), 0);
             }
         }
 

@@ -1,7 +1,7 @@
 ﻿namespace PawCraft.Entities
 {
     using System.ComponentModel;
-    using PawCraft.Rendering;
+    using PawCraft.Level;
 
     /// <summary>
     /// Model properties
@@ -12,7 +12,7 @@
         /// Initializes a new instance of the <see cref="CrateProperties"/> class
         /// </summary>
         /// <param name="entity">Entity data</param>
-        public CrateProperties(Entity entity) : base(entity)
+        public CrateProperties(EntityData entity) : base(entity)
         {
             // Do nothing
         }
@@ -26,12 +26,12 @@
         {
             get
             {
-                return (this.Entity.Data.Reserved[0] & 0x02) != 0;
+                return (this.Entity.Reserved[0] & 0x02) != 0;
             }
 
             set
             {
-                this.Entity.Data.Reserved[0] = (byte)((this.Entity.Data.Reserved[0] & 0xfd) | (value ? 0x02 : 0x00));
+                this.Entity.Reserved[0] = (byte)((this.Entity.Reserved[0] & 0xfd) | (value ? 0x02 : 0x00));
             }
         }
 
@@ -45,12 +45,12 @@
         {
             get
             {
-                return (this.Entity.Data.Reserved[0] & 0x01) != 0;
+                return (this.Entity.Reserved[0] & 0x01) != 0;
             }
 
             set
             {
-                this.Entity.Data.Reserved[0] = (byte)((this.Entity.Data.Reserved[0] & 0xfe) | (value ? 0x01 : 0x00));
+                this.Entity.Reserved[0] = (byte)((this.Entity.Reserved[0] & 0xfe) | (value ? 0x01 : 0x00));
             }
         }
 
@@ -64,12 +64,12 @@
         {
             get
             {
-                return (this.Entity.Data.Reserved[0] & 0x04) != 0;
+                return (this.Entity.Reserved[0] & 0x04) != 0;
             }
 
             set
             {
-                this.Entity.Data.Reserved[0] = (byte)((this.Entity.Data.Reserved[0] & 0xfb) | (value ? 0x04 : 0x00));
+                this.Entity.Reserved[0] = (byte)((this.Entity.Reserved[0] & 0xfb) | (value ? 0x04 : 0x00));
             }
         }
 
@@ -83,12 +83,12 @@
         {
             get
             {
-                return this.Entity.Data.Reserved[1];
+                return this.Entity.Reserved[1];
             }
 
             set
             {
-                this.Entity.Data.Reserved[1] = value;
+                this.Entity.Reserved[1] = value;
             }
         }
     }

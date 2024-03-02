@@ -3,7 +3,6 @@
     using PawCraft.Level;
     using PawCraft.Rendering;
     using PawCraft.ToolsApi;
-    using PawCraft.Utils.Types;
     using SharpGL;
     using System.Collections.Generic;
     using System.Drawing;
@@ -21,14 +20,14 @@
         public EntitiesContainer Container { get; set; }
 
         /// <summary>
-        /// Gets or sets currently selected entity
-        /// </summary>
-        public Level.EntityData.EntityType SelectedEntity { get; set; }
-
-        /// <summary>
         /// Gets or sets texture atlas
         /// </summary>
         public TextureHandler TextureAtlas { get; set; }
+
+        /// <summary>
+        /// Gets entity data
+        /// </summary>
+        public EntityData SelectedEntity { get; set; } = new EntityData { Type = EntityData.EntityType.Empty };
 
         /// <summary>
         /// Apply tool to the target tile
@@ -37,14 +36,13 @@
         /// <param name="level">Level data</param>
         public override void Apply(Point targetTile, LevelData level)
         {
-            if (this.SelectedEntity != EntityData.EntityType.Empty &&
+            if (this.SelectedEntity.Type != EntityData.EntityType.Empty &&
                 !level.Entities.Any(entity => entity.X == targetTile.X && entity.Y == targetTile.Y))
             {
                 level.Entities = new List<EntityData>(level.Entities).Concat(
                     new[] {
-                        new EntityData
+                        new EntityData(this.SelectedEntity)
                         {
-                            Type = this.SelectedEntity,
                             X = (ushort)targetTile.X,
                             Y = (ushort)targetTile.Y
                         }
@@ -63,7 +61,7 @@
         /// <param name="level">Level data</param>
         public override void Draw2D(Graphics gr, Point targetTile, int bitmapScale, LevelData level)
         {
-            if (this.SelectedEntity != EntityData.EntityType.Empty)
+            if (this.SelectedEntity.Type != EntityData.EntityType.Empty)
             {
             }
         }
@@ -76,7 +74,7 @@
         /// <param name="level">Level data</param>
         public override void Draw3D(OpenGL gl, Point targetTile, LevelData level)
         {
-            if (this.SelectedEntity != EntityData.EntityType.Empty)
+            if (this.SelectedEntity.Type != EntityData.EntityType.Empty)
             {
                 double maxDepth = 2.0f;
                 float tileMiddleDepth = (float)level.GetTileVerticeHeights(targetTile.X, targetTile.Y).Sum() / 4.0f;

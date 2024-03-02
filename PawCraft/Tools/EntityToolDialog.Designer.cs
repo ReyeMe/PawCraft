@@ -30,6 +30,7 @@
         {
             this.currentEntity = new System.Windows.Forms.ComboBox();
             this.entityTypeLabel = new System.Windows.Forms.Label();
+            this.properties = new System.Windows.Forms.PropertyGrid();
             this.SuspendLayout();
             // 
             // currentEntity
@@ -52,10 +53,21 @@
             this.entityTypeLabel.TabIndex = 4;
             this.entityTypeLabel.Text = "Entity type";
             // 
+            // properties
+            // 
+            this.properties.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.properties.Location = new System.Drawing.Point(0, 30);
+            this.properties.Name = "properties";
+            this.properties.Size = new System.Drawing.Size(260, 230);
+            this.properties.TabIndex = 5;
+            // 
             // EntityToolDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.properties);
             this.Controls.Add(this.entityTypeLabel);
             this.Controls.Add(this.currentEntity);
             this.Name = "EntityToolDialog";
@@ -70,5 +82,6 @@
 
         private System.Windows.Forms.ComboBox currentEntity;
         private System.Windows.Forms.Label entityTypeLabel;
+        private System.Windows.Forms.PropertyGrid properties;
     }
 }

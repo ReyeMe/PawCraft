@@ -41,6 +41,27 @@
         public ushort Y;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="EntityData"/> class
+        /// </summary>
+        public EntityData()
+        {
+            // Do nothing
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityData"/> class
+        /// </summary>
+        /// <param name="other">Data to copy</param>
+        public EntityData(EntityData other)
+        {
+            this.Direction = other.Direction;
+            this.X = other.X;
+            this.Y = other.Y;
+            this.Reserved = other.Reserved;
+            this.Type = other.Type;
+        }
+
+        /// <summary>
         /// Type of the entity in this block
         /// </summary>
         public enum EntityType : int

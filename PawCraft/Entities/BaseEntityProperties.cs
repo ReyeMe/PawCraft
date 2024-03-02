@@ -1,10 +1,11 @@
 ﻿namespace PawCraft.Entities
 {
-    using PawCraft.Rendering;
-    using PawCraft.Utils;
     using System;
     using System.ComponentModel;
     using System.Drawing;
+    using PawCraft.Level;
+    using PawCraft.Rendering;
+    using PawCraft.Utils;
 
     /// <summary>
     /// Base entity properties
@@ -15,7 +16,7 @@
         /// Initializes a new instance of the <see cref="BaseEntityProperties"/> class
         /// </summary>
         /// <param name="entity">Entity data</param>
-        public BaseEntityProperties(Entity entity)
+        public BaseEntityProperties(EntityData entity)
         {
             this.Entity = entity;
         }
@@ -29,13 +30,13 @@
         {
             get
             {
-                return new Point(this.Entity.Data.X, this.Entity.Data.Y);
+                return new Point(this.Entity.X, this.Entity.Y);
             }
 
             set
             {
-                this.Entity.Data.X = (ushort)Math.Max(Math.Min(value.X, Level.LevelData.MapDimensionSize - 1), 0);
-                this.Entity.Data.Y = (ushort)Math.Max(Math.Min(value.Y, Level.LevelData.MapDimensionSize - 1), 0);
+                this.Entity.X = (ushort)Math.Max(Math.Min(value.X, Level.LevelData.MapDimensionSize - 1), 0);
+                this.Entity.Y = (ushort)Math.Max(Math.Min(value.Y, Level.LevelData.MapDimensionSize - 1), 0);
             }
         }
 
@@ -48,18 +49,18 @@
         {
             get
             {
-                return Math.Round(this.Entity.Data.Direction.FromFixed().FromRadians(), 2);
+                return Math.Round(this.Entity.Direction.FromFixed().FromRadians(), 2);
             }
 
             set
             {
-                this.Entity.Data.Direction = Math.Round(value, 2).ToRadians().ToFixed();
+                this.Entity.Direction = Math.Round(value, 2).ToRadians().ToFixed();
             }
         }
 
         /// <summary>
         /// Gets entity data
         /// </summary>
-        protected Entity Entity { get; }
+        protected EntityData Entity { get; }
     }
 }
