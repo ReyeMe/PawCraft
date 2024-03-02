@@ -19,6 +19,7 @@
             this.link.Links.Add(new LinkLabel.Link(12, 6, "https://reye.me"));
             this.link.Links.Add(new LinkLabel.Link(34, 6, "https://reye.me"));
             this.link.Links.Add(new LinkLabel.Link(28, 4, string.Empty));
+            this.link.Links.Add(new LinkLabel.Link(42, 7, string.Empty));
         }
 
         /// <summary>

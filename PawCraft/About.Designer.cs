@@ -95,7 +95,7 @@
             this.link.Name = "link";
             this.link.Size = new System.Drawing.Size(400, 39);
             this.link.TabIndex = 4;
-            this.link.Text = "Created by: ReyeMe\r\nArt by: Am25, ReyeMe";
+            this.link.Text = "Created by: ReyeMe\r\nArt by: Am25, ReyeMe, AnriFox";
             this.link.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.link.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
