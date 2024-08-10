@@ -17,15 +17,24 @@
         /// </param>
         private static void Main(string[] args)
         {
-            if (args.Length == 2)
+            if (args.Length >= 2)
             {
                 Console.WriteLine("source: " + args[0]);
                 Console.WriteLine("target: " + args[1]);
 
                 if (File.Exists(args[0]))
                 {
-                    NyaGroup group = Wavefront.Import(args[0]);
-                    File.WriteAllBytes(args[1], PawCraft.Utils.Serializer.CustomMarshal.MarshalAsBytes(group));
+                    if (args.Length > 2 && args[2] == "/s")
+                    {
+                        NyaSmoothGroup group = WavefrontSmooth.Import(args[0]);
+                        File.WriteAllBytes(args[1], PawCraft.Utils.Serializer.CustomMarshal.MarshalAsBytes(group));
+                    }
+                    else
+                    {
+                        NyaGroup group = Wavefront.Import(args[0]);
+                        File.WriteAllBytes(args[1], PawCraft.Utils.Serializer.CustomMarshal.MarshalAsBytes(group));
+                    }
+
                     Console.WriteLine("Done.");
                 }
                 else

@@ -14,23 +14,23 @@
     /// <summary>
     /// OBJ import
     /// </summary>
-    public static class Wavefront
+    public static class WavefrontSmooth
     {
         /// <summary>
         /// Import from file
         /// </summary>
         /// <param name="inputFile">File path</param>
         /// <returns>Imported <see cref="Group"/></returns>
-        public static NyaGroup Import(string inputFile)
+        public static NyaSmoothGroup Import(string inputFile)
         {
             List<FxVector> vertices = new List<FxVector>();
             List<FxVector> normals = new List<FxVector>();
-            List<NyaMesh> models = new List<NyaMesh>();
+            List<NyaSmoothMesh> models = new List<NyaSmoothMesh>();
             List<float[]> texCoords = new List<float[]>();
             List<Tuple<string, NyaTexture>> textures = new List<Tuple<string, NyaTexture>>();
             string lastMaterial = string.Empty;
 
-            Dictionary<string, object> materials = Wavefront.ReadMtl(inputFile);
+            Dictionary<string, object> materials = WavefrontSmooth.ReadMtl(inputFile);
 
             foreach (string line in File.ReadAllLines(inputFile).Where(line => line.StartsWith("vn") && line.Contains(' ')))
             {
@@ -39,7 +39,7 @@
                 switch (lineCode)
                 {
                     case "vn":
-                        normals.Add(Wavefront.ParseVertex(line));
+                        normals.Add(WavefrontSmooth.ParseVertex(line));
                         break;
 
                     default:
@@ -54,7 +54,7 @@
                 switch (lineCode)
                 {
                     case "o":
-                        models.Add(new NyaMesh());
+                        models.Add(new NyaSmoothMesh());
                         break;
 
                     case "usemtl":
@@ -62,21 +62,21 @@
                         break;
 
                     case "v":
-                        vertices.Add(Wavefront.ParseVertex(line));
+                        vertices.Add(WavefrontSmooth.ParseVertex(line));
                         break;
 
                     case "vt":
-                        texCoords.Add(Wavefront.ParseTex(line));
+                        texCoords.Add(WavefrontSmooth.ParseTex(line));
                         break;
 
                     case "f":
 
                         if (!models.Any())
                         {
-                            models.Add(new NyaMesh());
+                            models.Add(new NyaSmoothMesh());
                         }
 
-                        Tuple<List<int>, List<int>, List<int>> face = Wavefront.ParseFace(line);
+                        Tuple<List<int>, List<int>, List<int>> face = WavefrontSmooth.ParseFace(line);
                         object material = materials.ContainsKey(lastMaterial) ? materials[lastMaterial] : null;
                         bool doNotSetFlag = false;
                         NyaFaceFlags faceFlags = new NyaFaceFlags();
@@ -91,7 +91,7 @@
                             faceFlags.HasTexture = true;
                         }
 
-                        NyaTexture texture = Wavefront.AddFaceWithVertices(face, vertices, normals, texCoords, material, models.Last());
+                        NyaTexture texture = WavefrontSmooth.AddFaceWithVertices(face, vertices, normals, texCoords, material, models.Last());
 
                         // Read flags
                         int separator = lastMaterial.LastIndexOf('_');
@@ -131,7 +131,7 @@
             }
 
             // Return group
-            return new NyaGroup
+            return new NyaSmoothGroup
             {
                 MeshCount = models.Count,
                 TextureCount = textures.Count,
@@ -147,11 +147,12 @@
         /// <param name="vertices">Global vertices</param>
         /// <param name="normals">Global normals</param>
         /// <param name="mesh">Mesh instance</param>
-        private static NyaTexture AddFaceWithVertices(Tuple<List<int>, List<int>, List<int>> face, List<FxVector> vertices, List<FxVector> normals, List<float[]> texCoords, object material, NyaMesh mesh)
+        private static NyaTexture AddFaceWithVertices(Tuple<List<int>, List<int>, List<int>> face, List<FxVector> vertices, List<FxVector> normals, List<float[]> texCoords, object material, NyaSmoothMesh mesh)
         {
             List<int> points = face.Item2;
             List<int> norms = face.Item1;
             List<int> tex = face.Item3;
+            List<FxVector> faceVertexNormals = new List<FxVector>();
             NyaTexture texture = null;
             Vertex normal = new Vertex();
 
@@ -168,10 +169,12 @@
             polygon.Normal = FxVector.FromVertex(normal);
 
             List<short> facePoints = new List<short>();
+            int counter = 0;
 
             foreach (int facePoint in points)
             {
                 FxVector point = vertices[facePoint];
+                FxVector xNormal = normals[counter++];
                 int index = mesh.Points.ToList().FindIndex(meshPoint => meshPoint.X == point.X && meshPoint.Y == point.Y && meshPoint.Z == point.Z);
 
                 if (index < 0)
@@ -181,6 +184,7 @@
                 }
 
                 facePoints.Add((short)index);
+                faceVertexNormals.Add(xNormal);
             }
 
             if (facePoints.Count < 3 || facePoints.Count > 4)
@@ -193,6 +197,7 @@
                 facePoints.Add(facePoints.Last());
             }
 
+            mesh.Normals = mesh.Normals.Concat(faceVertexNormals).ToArray();
             polygon.Vertices = facePoints.ToArray();
             mesh.Polygons = mesh.Polygons.Concat(new[] { polygon }).ToArray();
 
@@ -244,7 +249,7 @@
         /// <returns>Solid color</returns>
         private static PawCraft.Utils.Types.Color ParseColor(string line)
         {
-            float[] color = Wavefront.ParseVertexFloat(line);
+            float[] color = WavefrontSmooth.ParseVertexFloat(line);
             return PawCraft.Utils.Types.Color.FromRgb((byte)(byte.MaxValue * color[0]), (byte)(byte.MaxValue * color[1]), (byte)(byte.MaxValue * color[2]));
         }
 
@@ -321,7 +326,7 @@
         /// <returns>Parsed vertex</returns>
         private static FxVector ParseVertex(string line)
         {
-            return FxVector.FromArray(Wavefront.ParseVertexFloat(line));
+            return FxVector.FromArray(WavefrontSmooth.ParseVertexFloat(line));
         }
 
         /// <summary>
@@ -381,13 +386,13 @@
 
                             if (materials[lastMaterial] == null)
                             {
-                                materials[lastMaterial] = Wavefront.ParseColor(line);
+                                materials[lastMaterial] = WavefrontSmooth.ParseColor(line);
                             }
 
                             break;
 
                         case "map_kd":
-                            string file = Wavefront.GetAbsoluteTexturePath(line.Replace(lineCode, string.Empty).Trim(), modelDirectory);
+                            string file = WavefrontSmooth.GetAbsoluteTexturePath(line.Replace(lineCode, string.Empty).Trim(), modelDirectory);
 
                             if (!string.IsNullOrWhiteSpace(file) && File.Exists(file))
                             {

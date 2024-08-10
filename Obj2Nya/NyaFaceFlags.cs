@@ -37,6 +37,38 @@
         }
 
         /// <summary>
+        /// Gets or sets a flag indicating whether face has half transparency effect
+        /// </summary>
+        public bool IsHalfTransparent
+        {
+            get
+            {
+                return (this.Flags & 0x10) != 0;
+            }
+
+            set
+            {
+                this.Flags = (byte)((this.Flags & 0xef) | (value ? 0x10 : 0));
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a flag indicating whether face is double sided
+        /// </summary>
+        public bool IsDoubleSided
+        {
+            get
+            {
+                return (this.Flags & 0x20) != 0;
+            }
+
+            set
+            {
+                this.Flags = (byte)((this.Flags & 0xdf) | (value ? 0x20 : 0));
+            }
+        }
+
+        /// <summary>
         /// Gets or sets a flag indicating whether face has a texture
         /// </summary>
         public bool HasTexture
