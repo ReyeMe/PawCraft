@@ -9,29 +9,35 @@
     public class NyaGroup
     {
         /// <summary>
-        /// Gets number of meshes in group
+        /// Gets or sets group type
         /// </summary>
         [FieldOrder(0)]
+        public int Type { get; set; } = 0;
+
+        /// <summary>
+        /// Gets number of meshes in group
+        /// </summary>
+        [FieldOrder(1)]
         public int MeshCount { get; set; }
 
         /// <summary>
         /// Gets or sets meshes in group
         /// </summary>
         [ArraySizeDynamic("MeshCount")]
-        [FieldOrder(2)]
+        [FieldOrder(3)]
         public NyaMesh[] Meshes { get; set; } = new NyaMesh[0];
 
         /// <summary>
         /// Gets number of textures in the file
         /// </summary>
-        [FieldOrder(1)]
+        [FieldOrder(2)]
         public int TextureCount { get; set; }
 
         /// <summary>
         /// Gets or sets textures in the file
         /// </summary>
         [ArraySizeDynamic("TextureCount")]
-        [FieldOrder(3)]
+        [FieldOrder(4)]
         public NyaTexture[] Textures { get; set; } = new NyaTexture[0];
     }
 
@@ -41,29 +47,35 @@
     public class NyaSmoothGroup
     {
         /// <summary>
-        /// Gets number of meshes in group
+        /// Gets or sets group type
         /// </summary>
         [FieldOrder(0)]
+        public int Type { get; set; } = 1;
+
+        /// <summary>
+        /// Gets number of meshes in group
+        /// </summary>
+        [FieldOrder(1)]
         public int MeshCount { get; set; }
 
         /// <summary>
         /// Gets or sets meshes in group
         /// </summary>
         [ArraySizeDynamic("MeshCount")]
-        [FieldOrder(2)]
+        [FieldOrder(3)]
         public NyaSmoothMesh[] Meshes { get; set; } = new NyaSmoothMesh[0];
 
         /// <summary>
         /// Gets number of textures in the file
         /// </summary>
-        [FieldOrder(1)]
+        [FieldOrder(2)]
         public int TextureCount { get; set; }
 
         /// <summary>
         /// Gets or sets textures in the file
         /// </summary>
         [ArraySizeDynamic("TextureCount")]
-        [FieldOrder(3)]
+        [FieldOrder(4)]
         public NyaTexture[] Textures { get; set; } = new NyaTexture[0];
     }
 }

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Diagnostics.Eventing.Reader;
     using System.Drawing;
     using System.IO;
     using System.Linq;
@@ -151,19 +152,33 @@
             public EntityModel(string file, string name, OpenGL gl)
             {
                 this.Name = name;
+                int type;
 
                 // Load model
                 using (Stream stream = File.OpenRead(file))
                 {
-                    this.Mesh = (NyaGroup)CustomMarshal.MarshalAsObject(stream, typeof(NyaGroup));
+                    type = (int)CustomMarshal.MarshalAsObject(stream, typeof(int));
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    if (type == 1)
+                    {
+                        this.Mesh = (NyaSmoothGroup)CustomMarshal.MarshalAsObject(stream, typeof(NyaSmoothGroup));
+                    }
+                    else
+                    {
+                        this.Mesh = (NyaGroup)CustomMarshal.MarshalAsObject(stream, typeof(NyaGroup));
+                    }
                 }
 
                 // Load bounding box
                 this.cube = new EntityBoundingVolume();
-                this.cube.FromVertices(this.Mesh.Meshes.SelectMany(mesh => mesh.Points.Select(point => FxVector.ToVertex(point))));
+                IEnumerable<FxVector> points = type == 0 ? ((NyaGroup)this.Mesh).Meshes.SelectMany(mesh => mesh.Points) : ((NyaSmoothGroup)this.Mesh).Meshes.SelectMany(mesh => mesh.Points);
+                this.cube.FromVertices(points.Select(point => FxVector.ToVertex(point)));
 
                 // Load textures
-                foreach (NyaTexture tex in this.Mesh.Textures)
+                IEnumerable<NyaTexture> textures = type == 0 ? ((NyaGroup)this.Mesh).Textures : ((NyaSmoothGroup)this.Mesh).Textures;
+
+                foreach (NyaTexture tex in textures)
                 {
                     using (Bitmap bitmap = new Bitmap(tex.Width, tex.Height))
                     {
@@ -186,7 +201,7 @@
             /// <summary>
             /// Gets raw entity mesh
             /// </summary>
-            public NyaGroup Mesh { get; }
+            public object Mesh { get; }
 
             /// <summary>
             /// Gets entity namea
@@ -202,56 +217,117 @@
             /// <param name="renderMode">Render mode</param>
             public void Render(OpenGL gl, Vertex lightDir, bool selected, RenderMode renderMode)
             {
-                foreach (NyaMesh mesh in this.Mesh.Meshes)
+                if (this.Mesh is NyaSmoothGroup smooth)
                 {
-                    for (int face = 0; face < mesh.PolygonCount; face++)
+                    foreach (NyaSmoothMesh mesh in smooth.Meshes)
                     {
-                        float[] color = new[] { 1.0f, 1.0f, 1.0f };
-                        Vertex normal = FxVector.ToVertex(mesh.Polygons[face].Normal);
-
-                        if (renderMode != RenderMode.HitTest)
+                        for (int face = 0; face < mesh.PolygonCount; face++)
                         {
-                            if (mesh.FaceFlags[face].HasTexture)
+                            float[] color = new[] { 1.0f, 1.0f, 1.0f };
+
+                            if (renderMode != RenderMode.HitTest)
                             {
-                                gl.Enable(OpenGL.GL_TEXTURE_2D);
-                                this.textures[mesh.FaceFlags[face].TextureId].Bind(gl);
-                            }
-                            else
-                            {
-                                color = new[]
+                                if (mesh.FaceFlags[face].HasTexture)
                                 {
+                                    gl.Enable(OpenGL.GL_TEXTURE_2D);
+                                    this.textures[mesh.FaceFlags[face].TextureId].Bind(gl);
+                                }
+                                else
+                                {
+                                    color = new[]
+                                    {
                                     mesh.FaceFlags[face].BaseColor.Red / (float)byte.MaxValue,
                                     mesh.FaceFlags[face].BaseColor.Green / (float)byte.MaxValue,
                                     mesh.FaceFlags[face].BaseColor.Blue / (float)byte.MaxValue
                                 };
+                                }
+
+                            }
+                            gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
+                            gl.Enable(OpenGL.GL_BLEND);
+                            gl.Begin(OpenGL.GL_QUADS);
+
+                            for (int point = 0; point < 4; point++)
+                            {
+                                FxVector vertexFxNormal = mesh.Normals[mesh.Polygons[face].Vertices[point]];
+                                Vertex vertexNormal = FxVector.ToVertex(vertexFxNormal);
+                                float strength = Math.Max(Math.Min(-vertexNormal.ScalarProduct(lightDir), 1.0f), (Math.Abs(new Vertex(0.0f, 0.0f, 1.0f).ScalarProduct(lightDir)) / 3.0f));
+
+                                color = new[]
+                                {
+                                    color[0] * strength,
+                                    color[1] * strength,
+                                    color[2] * strength
+                                };
+
+                                gl.Color(color);
+                                gl.TexCoord(EntityModel.textureCoords[point]);
+                                gl.Normal(FxVector.ToArray(vertexFxNormal));
+                                gl.Vertex(FxVector.ToArray(mesh.Points[mesh.Polygons[face].Vertices[point]]));
                             }
 
-                            float strength = Math.Max(Math.Min(-normal.ScalarProduct(lightDir), 1.0f), (Math.Abs(new Vertex(0.0f, 0.0f, 1.0f).ScalarProduct(lightDir)) / 3.0f));
+                            gl.End();
 
-                            color = new[]
+                            if (mesh.FaceFlags[face].HasTexture)
                             {
+                                gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
+                            }
+                        }
+                    }
+                }
+                else if (this.Mesh is NyaGroup group)
+                {
+                    foreach (NyaMesh mesh in group.Meshes)
+                    {
+                        for (int face = 0; face < mesh.PolygonCount; face++)
+                        {
+                            float[] color = new[] { 1.0f, 1.0f, 1.0f };
+                            Vertex normal = FxVector.ToVertex(mesh.Polygons[face].Normal);
+
+                            if (renderMode != RenderMode.HitTest)
+                            {
+                                if (mesh.FaceFlags[face].HasTexture)
+                                {
+                                    gl.Enable(OpenGL.GL_TEXTURE_2D);
+                                    this.textures[mesh.FaceFlags[face].TextureId].Bind(gl);
+                                }
+                                else
+                                {
+                                    color = new[]
+                                    {
+                                    mesh.FaceFlags[face].BaseColor.Red / (float)byte.MaxValue,
+                                    mesh.FaceFlags[face].BaseColor.Green / (float)byte.MaxValue,
+                                    mesh.FaceFlags[face].BaseColor.Blue / (float)byte.MaxValue
+                                };
+                                }
+
+                                float strength = Math.Max(Math.Min(-normal.ScalarProduct(lightDir), 1.0f), (Math.Abs(new Vertex(0.0f, 0.0f, 1.0f).ScalarProduct(lightDir)) / 3.0f));
+
+                                color = new[]
+                                {
                                 color[0] * strength,
                                 color[1] * strength,
                                 color[2] * strength
                             };
-                        }
-                        gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
-                        gl.Enable(OpenGL.GL_BLEND);
-                        gl.Begin(OpenGL.GL_QUADS);
+                            }
+                            gl.BlendFunc(OpenGL.GL_SRC_ALPHA, OpenGL.GL_ONE_MINUS_SRC_ALPHA);
+                            gl.Enable(OpenGL.GL_BLEND);
+                            gl.Begin(OpenGL.GL_QUADS);
 
-                        for (int point = 0; point < 4; point++)
-                        {
-                            gl.Color(color);
-                            gl.TexCoord(EntityModel.textureCoords[point]);
-                            gl.Normal(normal);
-                            gl.Vertex(FxVector.ToArray(mesh.Points[mesh.Polygons[face].Vertices[point]]));
-                        }
+                            for (int point = 0; point < 4; point++)
+                            {
+                                gl.Color(color);
+                                gl.TexCoord(EntityModel.textureCoords[point]);
+                                gl.Normal(normal);
+                                gl.Vertex(FxVector.ToArray(mesh.Points[mesh.Polygons[face].Vertices[point]]));
+                            }
 
-                        gl.End();
+                            gl.End();
 
-                        if (mesh.FaceFlags[face].HasTexture)
-                        {
-                            gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
+                            if (mesh.FaceFlags[face].HasTexture)
+                            {
+                                gl.BindTexture(OpenGL.GL_TEXTURE_2D, 0);
+                            }
                         }
                     }
                 }

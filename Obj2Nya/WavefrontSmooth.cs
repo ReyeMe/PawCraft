@@ -32,7 +32,7 @@
 
             Dictionary<string, object> materials = WavefrontSmooth.ReadMtl(inputFile);
 
-            foreach (string line in File.ReadAllLines(inputFile).Where(line => line.StartsWith("vn") && line.Contains(' ')))
+            foreach (string line in File.ReadAllLines(inputFile).Where(line => !line.StartsWith("#") && line.Contains(' ')))
             {
                 string lineCode = line.Substring(0, line.IndexOf(' ')).Trim();
 
@@ -42,17 +42,6 @@
                         normals.Add(WavefrontSmooth.ParseVertex(line));
                         break;
 
-                    default:
-                        break;
-                }
-            }
-
-            foreach (string line in File.ReadAllLines(inputFile).Where(line => !line.StartsWith("#") && line.Contains(' ')))
-            {
-                string lineCode = line.Substring(0, line.IndexOf(' ')).Trim();
-
-                switch (lineCode)
-                {
                     case "o":
                         models.Add(new NyaSmoothMesh());
                         break;
@@ -174,17 +163,17 @@
             foreach (int facePoint in points)
             {
                 FxVector point = vertices[facePoint];
-                FxVector xNormal = normals[counter++];
+                FxVector xNormal = normals[norms[counter++]];
                 int index = mesh.Points.ToList().FindIndex(meshPoint => meshPoint.X == point.X && meshPoint.Y == point.Y && meshPoint.Z == point.Z);
 
                 if (index < 0)
                 {
                     mesh.Points = mesh.Points.Concat(new[] { point }).ToArray();
                     index = mesh.Points.Length - 1;
+                    faceVertexNormals.Add(xNormal);
                 }
 
                 facePoints.Add((short)index);
-                faceVertexNormals.Add(xNormal);
             }
 
             if (facePoints.Count < 3 || facePoints.Count > 4)
@@ -266,7 +255,7 @@
 
             foreach (string vertex in line.Substring(1).Trim().Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
             {
-                string[] components = vertex.Split(new[] { '/' }, StringSplitOptions.None);
+                string[] components = vertex.Split(new[] { '/' });
 
                 if (components.Any())
                 {
