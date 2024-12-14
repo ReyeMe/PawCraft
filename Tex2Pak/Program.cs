@@ -31,7 +31,7 @@
                     {
                         using (Bitmap bitmap = Helpers.GetBitmap(file))
                         {
-                            textures.Add(new NyaTexture(bitmap));
+                            textures.Add(new NyaTexture(Path.GetFileNameWithoutExtension(file), bitmap));
                         }
                     }
 

@@ -51,7 +51,7 @@
                         break;
 
                     case "v":
-                        vertices.Add(WavefrontSmooth.ParseVertex(line));
+                        vertices.Add(WavefrontSmooth.ParseVertex(line, 10.0f));
                         break;
 
                     case "vt":
@@ -102,9 +102,13 @@
                                 faceFlags.TextureId = textures.Count - 1;
                                 faceFlags.HasTexture = true;
                             }
-                            else
+                            else if (materials.ContainsKey(lastMaterial))
                             {
                                 faceFlags.BaseColor = (PawCraft.Utils.Types.Color)materials[lastMaterial];
+                            }
+                            else
+                            {
+                                faceFlags.BaseColor = PawCraft.Utils.Types.Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue);
                             }
                         }
 
@@ -196,7 +200,7 @@
                 // TODO: Add UV unwrap
                 using (Bitmap result = GlTexture.GetBitmap((string)material))
                 {
-                    texture = new NyaTexture(result);
+                    texture = new NyaTexture(Path.GetFileNameWithoutExtension(material as string), result);
                 }
             }
 
@@ -312,18 +316,20 @@
         /// Parse vertex
         /// </summary>
         /// <param name="line">Vertex line</param>
+        /// <param name="scale">Vertex scale</param>
         /// <returns>Parsed vertex</returns>
-        private static FxVector ParseVertex(string line)
+        private static FxVector ParseVertex(string line, float scale = 1.0f)
         {
-            return FxVector.FromArray(WavefrontSmooth.ParseVertexFloat(line));
+            return FxVector.FromArray(WavefrontSmooth.ParseVertexFloat(line, scale));
         }
 
         /// <summary>
         /// Parse vertex
         /// </summary>
         /// <param name="line">Vertex line</param>
+        /// <param name="scale">Vertex scale</param>
         /// <returns>Parsed vertex</returns>
-        private static float[] ParseVertexFloat(string line)
+        private static float[] ParseVertexFloat(string line, float scale = 1.0f)
         {
             List<float> coordinates = line
                 .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
@@ -333,9 +339,11 @@
                 {
                     float value = 0.0f;
                     float.TryParse(coordinate, System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out value);
-                    return value;
+                    return value * scale;
                 })
                 .ToList();
+
+            coordinates[1] *= -1.0f;
 
             return coordinates.ToArray();
         }
@@ -349,12 +357,6 @@
         {
             Dictionary<string, object> materials = new Dictionary<string, object>();
             string modelDirectory = Path.GetDirectoryName(waveFrontFile);
-
-            if (string.IsNullOrEmpty(modelDirectory))
-            {
-                return null;
-            }
-
             string mtlFile = Path.Combine(modelDirectory, Path.GetFileNameWithoutExtension(waveFrontFile) + ".mtl");
             string lastMaterial = string.Empty;
 

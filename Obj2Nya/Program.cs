@@ -1,7 +1,10 @@
 ﻿namespace Obj2Nya
 {
     using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
     using System.IO;
+    using System.Linq;
 
     /// <summary>
     /// Main program class
@@ -17,25 +20,38 @@
         /// </param>
         private static void Main(string[] args)
         {
+            Console.ReadLine();
             if (args.Length >= 2)
             {
-                Console.WriteLine("source: " + args[0]);
-                Console.WriteLine("target: " + args[1]);
+                bool hasFlag = args.Last().StartsWith("/");
+                string[] inputFiles = args.Take(args.Length - (hasFlag ? 2 : 1)).ToArray();
+                string target = args[args.Length - (hasFlag ? 2 : 1)];
+                Console.WriteLine("sources: " + string.Join(", ", inputFiles));
+                Console.WriteLine("target: " + target);
 
-                if (File.Exists(args[0]))
+                if (inputFiles.All(file => File.Exists(file)))
                 {
-                    if (args.Length > 2 && args[2] == "/s")
+                    object result = null;
+
+                    if (hasFlag && args.Last(file => file.StartsWith("/")) == "/s")
                     {
-                        NyaSmoothGroup group = WavefrontSmooth.Import(args[0]);
-                        File.WriteAllBytes(args[1], PawCraft.Utils.Serializer.CustomMarshal.MarshalAsBytes(group));
+                        result = Program.MergeSmoothGroup(inputFiles.Select(file => WavefrontSmooth.Import(file)));
                     }
                     else
                     {
-                        NyaGroup group = Wavefront.Import(args[0]);
-                        File.WriteAllBytes(args[1], PawCraft.Utils.Serializer.CustomMarshal.MarshalAsBytes(group));
+                        result = Program.MergeGroup(inputFiles.Select(file => Wavefront.Import(file)));
                     }
 
-                    Console.WriteLine("Done.");
+                    if (result != null)
+                    {
+                        File.WriteAllBytes(target, PawCraft.Utils.Serializer.CustomMarshal.MarshalAsBytes(result));
+                        Console.WriteLine("Done.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Failed!");
+                        Environment.ExitCode = 3;
+                    }
                 }
                 else
                 {
@@ -48,6 +64,70 @@
                 Console.WriteLine("Source and target path reuqired!");
                 Environment.ExitCode = 1;
             }
+        }
+
+        /// <summary>
+        /// Merge mesh groups together
+        /// </summary>
+        /// <param name="group">All groups</param>
+        /// <returns>Merged groups</returns>
+        private static NyaGroup MergeGroup(IEnumerable<NyaGroup> group)
+        {
+            NyaGroup result = group.First();
+
+            foreach (NyaGroup toMerge in group.Skip(1))
+            {
+                // Merge textures
+                result.Textures = result.Textures.Concat(toMerge.Textures.Where(texture => !result.Textures.Any(has => has.Name == texture.Name))).ToArray();
+                result.TextureCount = result.Textures.Length;
+
+                // Merge meshes
+                foreach (NyaMesh mesh in toMerge.Meshes)
+                {
+                    foreach (NyaFaceFlags flag in mesh.FaceFlags.Where(flag => flag.HasTexture))
+                    {
+                        flag.TextureId = result.Textures.ToList().FindIndex(texture => texture.Name == toMerge.Textures[flag.TextureId].Name);
+                    }
+
+                    result.Meshes = result.Meshes.Concat(new[] { mesh }).ToArray();
+                }
+
+                result.MeshCount = result.Meshes.Length;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Merge smooth mesh groups together
+        /// </summary>
+        /// <param name="group">All groups</param>
+        /// <returns>Merged groups</returns>
+        private static NyaSmoothGroup MergeSmoothGroup(IEnumerable<NyaSmoothGroup> group)
+        {
+            NyaSmoothGroup result = group.First();
+
+            foreach (NyaSmoothGroup toMerge in group.Skip(1))
+            {
+                // Merge textures
+                result.Textures = result.Textures.Concat(toMerge.Textures.Where(texture => !result.Textures.Any(has => has.Name == texture.Name))).ToArray();
+                result.TextureCount = result.Textures.Length;
+
+                // Merge meshes
+                foreach (NyaSmoothMesh mesh in toMerge.Meshes)
+                {
+                    foreach (NyaFaceFlags flag in mesh.FaceFlags.Where(flag => flag.HasTexture))
+                    {
+                        flag.TextureId = result.Textures.ToList().FindIndex(texture => texture.Name == toMerge.Textures[flag.TextureId].Name);
+                    }
+
+                    result.Meshes = result.Meshes.Concat(new[] { mesh }).ToArray();
+                }
+
+                result.MeshCount = result.Meshes.Length;
+            }
+
+            return result;
         }
     }
 }

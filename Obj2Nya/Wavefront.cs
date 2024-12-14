@@ -202,7 +202,7 @@
                 // TODO: Add UV unwrap
                 using (Bitmap result = GlTexture.GetBitmap((string)material))
                 {
-                    texture = new NyaTexture(result);
+                    texture = new NyaTexture(Path.GetFileNameWithoutExtension(material as string), result);
                 }
             }
 
@@ -355,12 +355,6 @@
         {
             Dictionary<string, object> materials = new Dictionary<string, object>();
             string modelDirectory = Path.GetDirectoryName(waveFrontFile);
-
-            if (string.IsNullOrEmpty(modelDirectory))
-            {
-                return null;
-            }
-
             string mtlFile = Path.Combine(modelDirectory, Path.GetFileNameWithoutExtension(waveFrontFile) + ".mtl");
             string lastMaterial = string.Empty;
 

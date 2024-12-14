@@ -18,9 +18,11 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="NyaTexture" class
         /// </summary>
+        /// <param name="name">Texture name</param>
         /// <param name="bitmap">Bitmap data</param>
-        public NyaTexture(System.Drawing.Bitmap bitmap) : this()
+        public NyaTexture(string name, System.Drawing.Bitmap bitmap) : this()
         {
+            this.Name = name;
             this.Width = (ushort)bitmap.Width;
             this.Height = (ushort)bitmap.Height;
             List<Color> colors = new List<Color>();
@@ -56,6 +58,11 @@
         /// Gets data length
         /// </summary>
         public int DataLength => this.Width * this.Height;
+
+        /// <summary>
+        /// Material name
+        /// </summary>
+        public string Name { get; }
 
         /// <summary>
         /// Gets image height
